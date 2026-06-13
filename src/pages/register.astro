@@ -7,27 +7,30 @@ const error = Astro.url.searchParams.get("error");
 ---
 
 <BaseLayout title="注册 - 理哩的个人空间" currentUser={currentUser}>
-  <section class="mx-auto max-w-sm">
-    <p class="mb-3 text-sm text-[var(--color-muted)]">Account</p>
-    <h1 class="text-3xl font-semibold tracking-normal">注册</h1>
-    {error && <p class="mt-5 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-    <form class="mt-6 space-y-4" method="post" action="/api/register">
+  <section class="mx-auto grid max-w-4xl gap-5 md:grid-cols-[0.85fr_1.15fr]">
+    <aside class="border border-[var(--color-line)] bg-[#f9f6ee] p-8">
+      <p class="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">Reader</p>
+      <h1 class="font-serif-title mt-4 text-4xl font-bold tracking-normal">注册</h1>
+      <p class="mt-5 leading-8 text-[var(--color-muted)]">普通用户默认是读者身份，只能阅读公开且已发布的内容。</p>
+    </aside>
+    <form class="border border-[var(--color-line)] bg-[var(--color-panel)] p-8" method="post" action="/api/register">
+      {error && <p class="mb-5 border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
       <label class="block text-sm">
         <span class="text-[var(--color-muted)]">用户名</span>
-        <input class="mt-2 w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="username" autocomplete="username" required />
+        <input class="mt-2 min-h-11 w-full border border-[var(--color-line)] bg-white/70 px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="username" autocomplete="username" required />
       </label>
-      <label class="block text-sm">
+      <label class="mt-5 block text-sm">
         <span class="text-[var(--color-muted)]">显示名</span>
-        <input class="mt-2 w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="display_name" autocomplete="name" />
+        <input class="mt-2 min-h-11 w-full border border-[var(--color-line)] bg-white/70 px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="display_name" autocomplete="name" />
       </label>
-      <label class="block text-sm">
+      <label class="mt-5 block text-sm">
         <span class="text-[var(--color-muted)]">密码</span>
-        <input class="mt-2 w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="password" type="password" autocomplete="new-password" required />
+        <input class="mt-2 min-h-11 w-full border border-[var(--color-line)] bg-white/70 px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="password" type="password" autocomplete="new-password" required />
       </label>
-      <button class="w-full rounded-md bg-[var(--color-ink)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-accent)]" type="submit">注册</button>
+      <button class="mt-7 min-h-11 w-full bg-[var(--color-accent)] px-4 py-3 text-sm font-medium text-[#fffdf7] hover:bg-[var(--color-ink)]" type="submit">注册</button>
+      <p class="mt-5 text-sm text-[var(--color-muted)]">
+        已有账号？<a class="text-[var(--color-ink)] underline underline-offset-4" href="/login">去登录</a>
+      </p>
     </form>
-    <p class="mt-5 text-sm text-[var(--color-muted)]">
-      已有账号？<a class="text-[var(--color-ink)] underline underline-offset-4" href="/login">去登录</a>
-    </p>
   </section>
 </BaseLayout>

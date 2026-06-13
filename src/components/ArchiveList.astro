@@ -1,0 +1,22 @@
+---
+import type { ArchiveGroup } from "../lib/content";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+  groups: ArchiveGroup[];
+  showStatus?: boolean;
+}
+
+const { groups, showStatus = false } = Astro.props;
+---
+
+<div class="space-y-10">
+  {groups.map((group) => (
+    <section class="grid gap-4 md:grid-cols-[120px_1fr]">
+      <h2 class="font-serif-title text-4xl font-bold leading-none text-[var(--color-accent)]">{group.year}</h2>
+      <div class="border-t border-[var(--color-line)]">
+        {group.posts.map((post) => <PostCard post={post} variant="row" showStatus={showStatus} />)}
+      </div>
+    </section>
+  ))}
+</div>

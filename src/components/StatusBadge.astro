@@ -1,0 +1,21 @@
+---
+import type { PostStatus, PostVisibility } from "../lib/content";
+
+interface Props {
+  status: PostStatus;
+  visibility: PostVisibility;
+}
+
+const { status, visibility } = Astro.props;
+const badges: Array<{ label: string; className: string }> = [];
+
+if (visibility === "private") badges.push({ label: "仅自己可见", className: "border-[var(--color-accent)] text-[var(--color-accent)]" });
+if (status === "draft") badges.push({ label: "草稿", className: "border-[var(--color-olive)] text-[var(--color-olive)]" });
+if (status === "archived") badges.push({ label: "已归档", className: "border-[var(--color-blue)] text-[var(--color-blue)]" });
+---
+
+{badges.map((badge) => (
+  <span class={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs leading-none ${badge.className}`}>
+    {badge.label}
+  </span>
+))}

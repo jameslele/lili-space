@@ -1,0 +1,15 @@
+---
+import EmptyState from "../components/EmptyState.astro";
+import GalleryGrid from "../components/GalleryGrid.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getFeaturedGalleryAssets } from "../lib/content";
+
+const currentUser = Astro.locals.currentUser;
+const assets = await getFeaturedGalleryAssets(currentUser);
+---
+
+<BaseLayout title="照片 - 理哩的个人空间" currentUser={currentUser}>
+  <SectionHeader title="照片" note="精选图片会在这里形成另一条目录" />
+  {assets.length > 0 ? <GalleryGrid assets={assets} /> : <EmptyState title="还没有精选照片" description="这里会展示 media_assets.featured = true 的公开图片。V1 先保留基础网格。" />}
+</BaseLayout>

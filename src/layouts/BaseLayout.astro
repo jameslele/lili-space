@@ -15,10 +15,8 @@ const navItems: Array<{ href: string; label: string }> = [
   { href: "/gallery", label: "照片" },
   { href: "/about", label: "关于" },
 ];
-
-if (currentUser?.role === "admin") {
-  navItems.push({ href: "/admin", label: "后台" });
-}
+const leftNavItems = navItems;
+const isAdmin = currentUser?.role === "admin";
 ---
 
 <!doctype html>
@@ -29,34 +27,48 @@ if (currentUser?.role === "admin") {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body>
-    <div class="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5">
-      <header class="flex items-center justify-between border-b border-[var(--color-line)] py-6">
-        <a class="text-lg font-semibold tracking-normal" href="/">理哩的个人空间</a>
-        <nav class="hidden items-center gap-5 text-sm text-[var(--color-muted)] sm:flex">
-          {navItems.map((item) => <a class="hover:text-[var(--color-ink)]" href={item.href}>{item.label}</a>)}
+  <body class="bg-[var(--color-paper)]">
+    <div class="mx-auto flex min-h-screen w-full max-w-[1220px] flex-col px-[18px] sm:px-6">
+      <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-[var(--color-panel)] focus:px-4 focus:py-2" href="#main">跳到正文</a>
+      <header class="grid gap-4 border-b border-[var(--color-line)] py-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:py-6">
+        <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-[var(--color-muted)] lg:justify-start">
+          {leftNavItems.map((item) => <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href={item.href}>{item.label}</a>)}
+        </nav>
+        <a class="font-serif-title text-center text-2xl font-bold tracking-normal sm:text-3xl" href="/">理哩的个人空间</a>
+        <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-[var(--color-muted)] lg:justify-end">
           {
             currentUser ? (
               <>
-                <span>{currentUser.username}</span>
+                {isAdmin && <a class="min-h-11 py-3 font-semibold text-[var(--color-accent)] hover:text-[var(--color-ink)]" href="/admin">后台</a>}
+                <span class="min-h-11 py-3">{currentUser.display_name || currentUser.username}</span>
                 <form method="post" action="/api/logout">
-                  <button class="hover:text-[var(--color-ink)]" type="submit">退出</button>
+                  <button class="min-h-11 cursor-pointer py-3 hover:text-[var(--color-ink)]" type="submit">退出</button>
                 </form>
               </>
             ) : (
               <>
-                <a class="hover:text-[var(--color-ink)]" href="/login">登录</a>
-                <a class="hover:text-[var(--color-ink)]" href="/register">注册</a>
+                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/login">登录</a>
+                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/register">注册</a>
               </>
             )
           }
         </nav>
       </header>
-      <main class="flex-1 py-12">
+
+      <div class="grid grid-cols-1 gap-2 border-b border-[var(--color-line)] py-3 text-xs tracking-normal text-[var(--color-muted)] sm:grid-cols-3">
+        <span>私人博客目录</span>
+        <span class="sm:text-center">文字 / 照片 / 归档</span>
+        <span class="sm:text-right">{isAdmin ? "管理员前台视图" : "公开阅读"}</span>
+      </div>
+
+      <main id="main" class="flex-1 py-9 sm:py-12">
         <slot />
       </main>
-      <footer class="border-t border-[var(--color-line)] py-8 text-sm text-[var(--color-muted)]">
-        以文字、照片和时间整理个人空间。
+      <footer class="border-t border-[var(--color-line)] py-10 text-sm leading-7 text-[var(--color-muted)]">
+        <div class="grid gap-2 sm:grid-cols-[1fr_auto]">
+          <p>以文字、照片和时间整理个人空间。</p>
+          <p>长期回看，安静留存。</p>
+        </div>
       </footer>
     </div>
   </body>

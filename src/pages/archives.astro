@@ -1,0 +1,16 @@
+---
+import ArchiveList from "../components/ArchiveList.astro";
+import EmptyState from "../components/EmptyState.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { canViewAllPosts, getArchiveGroups } from "../lib/content";
+
+const currentUser = Astro.locals.currentUser;
+const groups = await getArchiveGroups(currentUser);
+const showStatus = canViewAllPosts(currentUser);
+---
+
+<BaseLayout title="归档 - 理哩的个人空间" currentUser={currentUser}>
+  <SectionHeader title="归档" note="按年份回看所有可见文章" />
+  {groups.length > 0 ? <ArchiveList groups={groups} showStatus={showStatus} /> : <EmptyState title="还没有可见文章" description="有文章发布后，归档会按时间自然长出来。" />}
+</BaseLayout>

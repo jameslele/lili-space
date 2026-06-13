@@ -1,0 +1,31 @@
+---
+import ArchiveList from "../../components/ArchiveList.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { canViewAllPosts, getTagPage } from "../../lib/content";
+
+export const prerender = false;
+
+const currentUser = Astro.locals.currentUser;
+const page = await getTagPage(Astro.params.slug ?? "", currentUser);
+const showStatus = canViewAllPosts(currentUser);
+
+if (!page) {
+  Astro.response.status = 404;
+}
+---
+
+<BaseLayout title={page ? `#${page.tag.name} - 理哩的个人空间` : "标签不存在 - 理哩的个人空间"} currentUser={currentUser}>
+  {page ? (
+    <>
+      <section class="mb-10 border-b border-[var(--color-line)] pb-8">
+        <p class="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">Tag</p>
+        <h1 class="font-serif-title mt-3 text-5xl font-bold">#{page.tag.name}</h1>
+        <p class="mt-4 max-w-2xl leading-7 text-[var(--color-muted)]">{page.posts.length} 篇文章带着这个标签。</p>
+      </section>
+      {page.posts.length > 0 ? <ArchiveList groups={page.archive} showStatus={showStatus} /> : <EmptyState title="这个标签还没有可见文章" description="等文章发布后，它们会按年份收在这里。" />}
+    </>
+  ) : (
+    <EmptyState title="没有找到这个标签" description="请从标签页重新进入。" />
+  )}
+</BaseLayout>

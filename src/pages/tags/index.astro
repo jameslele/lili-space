@@ -1,0 +1,25 @@
+---
+import EmptyState from "../../components/EmptyState.astro";
+import SectionHeader from "../../components/SectionHeader.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getTagsWithCounts } from "../../lib/content";
+
+const currentUser = Astro.locals.currentUser;
+const tags = await getTagsWithCounts(currentUser);
+---
+
+<BaseLayout title="标签 - 理哩的个人空间" currentUser={currentUser}>
+  <SectionHeader title="标签" note="关键词是文章之间的小路" />
+  {tags.length > 0 ? (
+    <section class="flex flex-wrap gap-3">
+      {tags.map((tag) => (
+        <a class="min-h-11 rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-4 py-3 text-sm text-[var(--color-muted)] transition hover:border-[var(--color-ink)] hover:text-[var(--color-ink)]" href={`/tags/${tag.slug}`}>
+          #{tag.name}
+          <span class="ml-2 text-xs text-[var(--color-accent)]">{tag.postCount ?? 0}</span>
+        </a>
+      ))}
+    </section>
+  ) : (
+    <EmptyState title="还没有标签" description="标签会在文章之间形成更细的小目录。" />
+  )}
+</BaseLayout>

@@ -1,19 +1,55 @@
 ---
-import IslandStatus from "../components/IslandStatus";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EmptyState from "../components/EmptyState.astro";
+import PostCard from "../components/PostCard.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import { canViewAllPosts, getPostsForViewer } from "../lib/content";
 
 const currentUser = Astro.locals.currentUser;
+const showStatus = canViewAllPosts(currentUser);
+const posts = await getPostsForViewer(currentUser);
+const [heroPost, ...restPosts] = posts;
+const stackPosts = restPosts.slice(0, 2);
+const featurePosts = restPosts.slice(2, 8);
 ---
 
 <BaseLayout currentUser={currentUser}>
-  <section class="max-w-3xl">
-    <p class="mb-4 text-sm text-[var(--color-muted)]">Personal Blog Space</p>
-    <h1 class="text-4xl font-semibold leading-tight tracking-normal sm:text-5xl">理哩的个人空间</h1>
-    <p class="mt-6 max-w-2xl text-lg leading-8 text-[var(--color-muted)]">
-      这里是 V2 项目的前台基础布局。后续会接入文章、分类、标签、归档和照片内容。
-    </p>
-    <div class="mt-8">
-      <IslandStatus client:idle />
-    </div>
-  </section>
+  <h1 class="sr-only">理哩的个人空间</h1>
+  {posts.length > 0 ? (
+    <>
+      <section class="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+        <PostCard post={heroPost} variant="cover" showStatus={showStatus} />
+        <div class="grid gap-5">
+          {stackPosts.map((post) => <PostCard post={post} variant="stack" showStatus={showStatus} />)}
+          {stackPosts.length === 0 && (
+            <div class="border border-dashed border-[var(--color-line)] bg-[var(--color-panel)] p-8 text-sm leading-7 text-[var(--color-muted)]">
+              更多文章会出现在这里，形成杂志侧栏的阅读节奏。
+            </div>
+          )}
+        </div>
+      </section>
+
+      {showStatus && (
+        <div class="mt-8 flex flex-col gap-3 border border-[#ead1aa] bg-[#fff7e8] p-4 text-sm leading-7 text-[#7e5122] sm:flex-row sm:items-center sm:justify-between">
+          <span>管理员视图会把私密、草稿、归档文章纳入前台目录。</span>
+          <span class="flex flex-wrap gap-2">
+            <span class="rounded-full border border-[var(--color-accent)] px-2.5 py-1 text-xs text-[var(--color-accent)]">仅自己可见</span>
+            <span class="rounded-full border border-[var(--color-olive)] px-2.5 py-1 text-xs text-[var(--color-olive)]">草稿</span>
+            <span class="rounded-full border border-[var(--color-blue)] px-2.5 py-1 text-xs text-[var(--color-blue)]">已归档</span>
+          </span>
+        </div>
+      )}
+
+      <SectionHeader title="最新文章" note="统一文章 · 分类 · 标签 · 归档" level="h2" />
+      {featurePosts.length > 0 ? (
+        <section class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {featurePosts.map((post) => <PostCard post={post} variant="feature" showStatus={showStatus} />)}
+        </section>
+      ) : (
+        <EmptyState title="目录还在变厚" description="当前文章数量还不多，后续内容导入后，这里会铺开成更完整的杂志目录。" />
+      )}
+    </>
+  ) : (
+    <EmptyState title="还没有可公开阅读的文章" description="访客和普通用户只会看到公开且已发布的文章。管理员登录后可以在前台看到草稿、私密与归档内容。" />
+  )}
 </BaseLayout>

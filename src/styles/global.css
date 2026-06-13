@@ -3,18 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --color-paper: #fbfaf7;
-  --color-ink: #24211d;
-  --color-muted: #716b63;
-  --color-line: #e7e1d8;
-  --color-accent: #8c5f3d;
+  --color-paper: #f7f3eb;
+  --color-panel: #fffdf7;
+  --color-ink: #171514;
+  --color-muted: #6f6a63;
+  --color-line: #d8cec0;
+  --color-accent: #b14d32;
+  --color-olive: #697052;
+  --color-blue: #496477;
+  --color-gold: #b48b45;
 }
 
 html {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family:
-    "Noto Serif SC", "Songti SC", "STSong", "Times New Roman", serif;
+    "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 body {
@@ -27,6 +31,24 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
 ::selection {
-  background: #ead8c5;
+  background: #ead1aa;
+}
+
+.font-serif-title {
+  font-family:
+    "Noto Serif SC", "Songti SC", "STSong", "Times New Roman", serif;
 }

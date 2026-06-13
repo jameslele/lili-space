@@ -1,0 +1,24 @@
+---
+import type { GalleryAsset } from "../lib/content";
+
+interface Props {
+  assets: GalleryAsset[];
+}
+
+const { assets } = Astro.props;
+---
+
+{assets.length > 0 ? (
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {assets.map((asset, index) => (
+      <figure class={`border border-[var(--color-line)] bg-[var(--color-panel)] ${index % 5 === 0 ? "sm:col-span-2" : ""}`}>
+        <img class="aspect-[4/3] h-full w-full object-cover" src={asset.public_url} alt={asset.alt || asset.file_name} loading={index > 1 ? "lazy" : undefined} />
+        {(asset.caption || asset.alt) && <figcaption class="px-4 py-3 text-sm leading-6 text-[var(--color-muted)]">{asset.caption || asset.alt}</figcaption>}
+      </figure>
+    ))}
+  </div>
+) : (
+  <div class="border border-dashed border-[var(--color-line)] bg-[var(--color-panel)] p-8 text-sm leading-7 text-[var(--color-muted)]">
+    还没有设为精选的公开照片。等后续媒体内容进入后，这里会成为照片目录。
+  </div>
+)}

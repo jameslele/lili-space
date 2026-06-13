@@ -1,0 +1,69 @@
+---
+interface Props {
+  html: string;
+}
+
+const { html } = Astro.props;
+---
+
+<article class="markdown-content font-serif-title max-w-none text-lg leading-9 text-[#38302a]" set:html={html} />
+
+<style>
+  .markdown-content :global(h1),
+  .markdown-content :global(h2),
+  .markdown-content :global(h3) {
+    color: var(--color-ink);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 2.1em 0 0.7em;
+  }
+
+  .markdown-content :global(h1) {
+    font-size: 2.25rem;
+  }
+
+  .markdown-content :global(h2) {
+    font-size: 1.75rem;
+  }
+
+  .markdown-content :global(p),
+  .markdown-content :global(ul),
+  .markdown-content :global(ol),
+  .markdown-content :global(blockquote) {
+    margin: 1.25em 0;
+  }
+
+  .markdown-content :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .markdown-content :global(blockquote) {
+    border-bottom: 1px solid var(--color-line);
+    border-top: 1px solid var(--color-line);
+    color: var(--color-accent);
+    font-size: 1.35rem;
+    padding: 1rem 0;
+  }
+
+  .markdown-content :global(img) {
+    margin: 2rem 0;
+    width: 100%;
+  }
+
+  .markdown-content :global(code) {
+    background: #efe7db;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.86em;
+    padding: 0.1rem 0.3rem;
+  }
+
+  .markdown-content :global(pre) {
+    background: #25211d;
+    color: #fffdf7;
+    overflow-x: auto;
+    padding: 1rem;
+  }
+</style>

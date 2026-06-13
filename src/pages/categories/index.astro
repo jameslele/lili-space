@@ -1,0 +1,21 @@
+---
+import CategoryPill from "../../components/CategoryPill.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import SectionHeader from "../../components/SectionHeader.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCategoriesWithCounts } from "../../lib/content";
+
+const currentUser = Astro.locals.currentUser;
+const categories = await getCategoriesWithCounts(currentUser);
+---
+
+<BaseLayout title="分类 - 理哩的个人空间" currentUser={currentUser}>
+  <SectionHeader title="分类" note="把生活痕迹放回熟悉的栏目里" />
+  {categories.length > 0 ? (
+    <section class="grid overflow-hidden border-l border-t border-[var(--color-line)] sm:grid-cols-2 lg:grid-cols-3">
+      {categories.map((category) => <CategoryPill category={category} />)}
+    </section>
+  ) : (
+    <EmptyState title="还没有分类" description="分类会在这里作为博客的目录骨架出现。" />
+  )}
+</BaseLayout>

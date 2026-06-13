@@ -1,0 +1,19 @@
+---
+import type { TagSummary } from "../lib/content";
+
+interface Props {
+  tags: TagSummary[];
+}
+
+const { tags } = Astro.props;
+---
+
+{tags.length > 0 && (
+  <div class="flex flex-wrap gap-2">
+    {tags.map((tag) => (
+      <a class="rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-3 py-1.5 text-sm text-[var(--color-muted)] transition hover:border-[var(--color-ink)] hover:text-[var(--color-ink)]" href={`/tags/${tag.slug}`}>
+        #{tag.name}
+      </a>
+    ))}
+  </div>
+)}

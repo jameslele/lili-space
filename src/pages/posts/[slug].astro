@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MarkdownContent from "../../components/MarkdownContent.astro";
+import PostMeta from "../../components/PostMeta.astro";
+import StatusBadge from "../../components/StatusBadge.astro";
+import TagList from "../../components/TagList.astro";
+import { canViewAllPosts, getPostBySlugForViewer } from "../../lib/content";
+
+export const prerender = false;
+
+const currentUser = Astro.locals.currentUser;
+const slug = Astro.params.slug ?? "";
+const post = await getPostBySlugForViewer(slug, currentUser);
+const showStatus = canViewAllPosts(currentUser);
+
+if (!post) {
+  Astro.response.status = 404;
+}
+---
+
+<BaseLayout title={post ? `${post.title} - 理哩的个人空间` : "文章不存在 - 理哩的个人空间"} currentUser={currentUser}>
+  {post ? (
+    <article class="mx-auto max-w-5xl">
+      <div class="grid gap-8 lg:grid-cols-[0.82fr_1fr] lg:items-start">
+        <div class="lg:sticky lg:top-8">
+          {post.cover_url ? (
+            <img class="aspect-[4/5] w-full object-cover" src={post.cover_url} alt={post.title} />
+          ) : (
+            <div class="aspect-[4/5] w-full bg-[linear-gradient(135deg,#ddd0c1,#efe7db_46%,#c9b292)]"></div>
+          )}
+        </div>
+        <div class="border border-[var(--color-line)] bg-[var(--color-panel)] p-6 sm:p-10 lg:p-12">
+          <p class="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">文章详情</p>
+          <h1 class="font-serif-title mt-4 text-4xl font-bold leading-tight sm:text-6xl">{post.title}</h1>
+          <div class="mt-5">
+            <PostMeta post={post} showStatus={showStatus} />
+          </div>
+          {showStatus && (
+            <div class="mt-4 flex flex-wrap gap-2">
+              <StatusBadge status={post.status} visibility={post.visibility} />
+            </div>
+          )}
+          <div class="mt-6">
+            <TagList tags={post.tags} />
+          </div>
+          <div class="mt-10">
+            <MarkdownContent html={post.renderedHtml} />
+          </div>
+        </div>
+      </div>
+    </article>
+  ) : (
+    <section class="mx-auto max-w-xl border border-dashed border-[var(--color-line)] bg-[var(--color-panel)] p-8">
+      <p class="text-sm uppercase tracking-[0.18em] text-[var(--color-muted)]">404</p>
+      <h1 class="font-serif-title mt-3 text-3xl font-semibold">没有找到这篇文章</h1>
+      <p class="mt-4 leading-7 text-[var(--color-muted)]">它可能不存在，或者当前账号没有阅读权限。</p>
+      <a class="mt-6 inline-block min-h-11 py-3 text-sm underline underline-offset-4" href="/">回到首页</a>
+    </section>
+  )}
+</BaseLayout>
