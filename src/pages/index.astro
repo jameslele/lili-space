@@ -10,7 +10,7 @@ const showStatus = canViewAllPosts(currentUser);
 const posts = await getPostsForViewer(currentUser);
 const [heroPost, ...restPosts] = posts;
 const stackPosts = restPosts.slice(0, 2);
-const featurePosts = restPosts.slice(2, 8);
+const featurePosts = restPosts.slice(2);
 ---
 
 <BaseLayout currentUser={currentUser}>

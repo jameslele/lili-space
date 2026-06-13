@@ -15,5 +15,5 @@ const { post, showStatus = false } = Astro.props;
   <time datetime={post.published_at ?? post.created_at}>{formatPostDate(post)}</time>
   {post.category && <a class="hover:text-[var(--color-ink)]" href={`/categories/${post.category.slug}`}>{post.category.name}</a>}
   {post.tags.slice(0, 3).map((tag) => <a class="hover:text-[var(--color-ink)]" href={`/tags/${tag.slug}`}>#{tag.name}</a>)}
-  {showStatus && <StatusBadge status={post.status} visibility={post.visibility} />}
+  {showStatus && <StatusBadge status={post.status} visibility={post.visibility} noindex={post.noindex} />}
 </div>

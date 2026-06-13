@@ -5,6 +5,8 @@ import type { CurrentUser } from "./auth";
 import { isAdmin } from "./auth";
 import { createServiceRoleSupabaseClient } from "./supabase/server";
 
+type Viewer = CurrentUser | null | undefined;
+
 export type PostStatus = "draft" | "published" | "archived";
 export type PostVisibility = "public" | "private";
 
@@ -112,15 +114,23 @@ export function canViewAllPosts(user: CurrentUser | null | undefined) {
   return isAdmin(user);
 }
 
-export function canViewPost(post: Pick<PostSummary, "status" | "visibility">, user: CurrentUser | null | undefined) {
-  return canViewAllPosts(user) || (post.status === "published" && post.visibility === "public");
+export function canViewPost(post: Pick<PostSummary, "status" | "visibility">, viewer: Viewer) {
+  return canViewAllPosts(viewer) || isPublicPublishedPost(post);
 }
 
-export async function getPostsForViewer(user: CurrentUser | null | undefined, options: { limit?: number; includeNoindex?: boolean } = {}) {
+export function isPublicPublishedPost(post: Pick<PostSummary, "status" | "visibility">) {
+  return post.status === "published" && post.visibility === "public";
+}
+
+export function isHiddenFromHome(post: Pick<PostSummary, "noindex">, viewer: Viewer) {
+  return !canViewAllPosts(viewer) && post.noindex;
+}
+
+export async function getPostsForViewer(viewer: Viewer, options: { limit?: number; includeNoindex?: boolean } = {}) {
   const supabase = createServiceRoleSupabaseClient();
   let query = supabase.from("posts").select(postSelect).order("published_at", { ascending: false, nullsFirst: false });
 
-  if (!canViewAllPosts(user)) {
+  if (!canViewAllPosts(viewer)) {
     query = query.eq("status", "published").eq("visibility", "public");
     if (!options.includeNoindex) query = query.eq("noindex", false);
   }
@@ -133,30 +143,31 @@ export async function getPostsForViewer(user: CurrentUser | null | undefined, op
   return attachTags((data ?? []) as RawPost[]);
 }
 
-export async function getPostBySlugForViewer(slug: string, user: CurrentUser | null | undefined) {
+export async function getPostBySlugForViewer(slug: string, viewer: Viewer) {
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("posts").select(postDetailSelect).eq("slug", slug).maybeSingle();
   if (error) throw error;
   if (!data) return null;
 
   const [post] = await attachTags([data as RawPost]);
-  if (!post || !canViewPost(post, user)) return null;
+  if (!post || !canViewPost(post, viewer)) return null;
 
   const rawHtml = (data as RawPost).html || await marked.parse((data as RawPost).markdown ?? "");
+  const renderedHtml = await signPrivateMediaUrls(sanitizeRenderedHtml(rawHtml), viewer);
   return {
     ...post,
     markdown: (data as RawPost).markdown ?? "",
     html: (data as RawPost).html ?? null,
-    renderedHtml: sanitizeRenderedHtml(rawHtml),
+    renderedHtml,
   } satisfies PostDetail;
 }
 
-export async function getCategoriesWithCounts(user: CurrentUser | null | undefined) {
+export async function getCategoriesWithCounts(viewer: Viewer) {
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("categories").select("*").order("sort_order", { ascending: true });
   if (error) throw error;
 
-  const posts = await getPostsForViewer(user, { includeNoindex: true });
+  const posts = await getPostsForViewer(viewer, { includeNoindex: true });
   const counts = countBy(posts.map((post) => post.category?.id).filter(Boolean) as string[]);
 
   return ((data ?? []) as CategorySummary[]).map((category) => ({
@@ -165,21 +176,21 @@ export async function getCategoriesWithCounts(user: CurrentUser | null | undefin
   }));
 }
 
-export async function getCategoryPage(slug: string, user: CurrentUser | null | undefined) {
-  const categories = await getCategoriesWithCounts(user);
+export async function getCategoryPage(slug: string, viewer: Viewer) {
+  const categories = await getCategoriesWithCounts(viewer);
   const category = categories.find((item) => item.slug === slug);
   if (!category) return null;
 
-  const posts = (await getPostsForViewer(user, { includeNoindex: true })).filter((post) => post.category?.id === category.id);
+  const posts = (await getPostsForViewer(viewer, { includeNoindex: true })).filter((post) => post.category?.id === category.id);
   return { category, posts, archive: groupPostsByYear(posts) };
 }
 
-export async function getTagsWithCounts(user: CurrentUser | null | undefined) {
+export async function getTagsWithCounts(viewer: Viewer) {
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("tags").select("*").order("name", { ascending: true });
   if (error) throw error;
 
-  const posts = await getPostsForViewer(user, { includeNoindex: true });
+  const posts = await getPostsForViewer(viewer, { includeNoindex: true });
   const counts = new Map<string, number>();
   for (const post of posts) {
     for (const tag of post.tags) {
@@ -190,33 +201,39 @@ export async function getTagsWithCounts(user: CurrentUser | null | undefined) {
   return ((data ?? []) as TagSummary[]).map((tag) => ({ ...tag, postCount: counts.get(tag.id) ?? 0 }));
 }
 
-export async function getTagPage(slug: string, user: CurrentUser | null | undefined) {
-  const tags = await getTagsWithCounts(user);
+export async function getTagPage(slug: string, viewer: Viewer) {
+  const tags = await getTagsWithCounts(viewer);
   const tag = tags.find((item) => item.slug === slug);
   if (!tag) return null;
 
-  const posts = (await getPostsForViewer(user, { includeNoindex: true })).filter((post) => post.tags.some((item) => item.id === tag.id));
+  const posts = (await getPostsForViewer(viewer, { includeNoindex: true })).filter((post) => post.tags.some((item) => item.id === tag.id));
   return { tag, posts, archive: groupPostsByYear(posts) };
 }
 
-export async function getArchiveGroups(user: CurrentUser | null | undefined) {
-  return groupPostsByYear(await getPostsForViewer(user, { includeNoindex: true }));
+export async function getArchiveGroups(viewer: Viewer) {
+  return groupPostsByYear(await getPostsForViewer(viewer, { includeNoindex: true }));
 }
 
-export async function getFeaturedGalleryAssets(user: CurrentUser | null | undefined) {
+export async function getFeaturedGalleryAssets(viewer: Viewer) {
   const supabase = createServiceRoleSupabaseClient();
   let query = supabase
     .from("media_assets")
-    .select("id, file_name, public_url, alt, caption, width, height, created_at, bucket, featured")
+    .select("id, file_name, public_url, alt, caption, width, height, created_at, bucket, storage_path, featured")
     .eq("featured", true)
     .order("created_at", { ascending: false });
 
-  if (!canViewAllPosts(user)) query = query.eq("bucket", "public-media");
+  if (!canViewAllPosts(viewer)) query = query.eq("bucket", "public-media");
 
   const { data, error } = await query;
   if (error) throw error;
 
-  return (data ?? []) as GalleryAsset[];
+  const assets = data ?? [];
+  if (!canViewAllPosts(viewer)) return assets as GalleryAsset[];
+
+  return Promise.all(assets.map(async (asset) => ({
+    ...asset,
+    public_url: asset.bucket === "private-media" ? await createPrivateMediaSignedUrl(asset.storage_path, supabase) : asset.public_url,
+  }))) as Promise<GalleryAsset[]>;
 }
 
 export function groupPostsByYear(posts: PostSummary[]): ArchiveGroup[] {
@@ -310,4 +327,27 @@ function sanitizeRenderedHtml(html: string) {
       audio: sanitizeHtml.simpleTransform("audio", { controls: "" }, true),
     },
   });
+}
+
+async function signPrivateMediaUrls(html: string, viewer: Viewer) {
+  if (!canViewAllPosts(viewer) || !html.includes("/private-media/")) return html;
+
+  const supabase = createServiceRoleSupabaseClient();
+  const matches = [...html.matchAll(/https:\/\/[^"'\s<>]+\/storage\/v1\/object\/public\/private-media\/([^"'\s<>]+)/g)];
+  if (matches.length === 0) return html;
+
+  let signedHtml = html;
+  for (const match of matches) {
+    const originalUrl = match[0];
+    const storagePath = decodeURIComponent(match[1]);
+    const signedUrl = await createPrivateMediaSignedUrl(storagePath, supabase);
+    signedHtml = signedHtml.split(originalUrl).join(signedUrl);
+  }
+  return signedHtml;
+}
+
+async function createPrivateMediaSignedUrl(storagePath: string, supabase: ReturnType<typeof createServiceRoleSupabaseClient>) {
+  const { data, error } = await supabase.storage.from("private-media").createSignedUrl(storagePath, 60 * 60);
+  if (error) throw error;
+  return data.signedUrl;
 }
