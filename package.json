@@ -11,6 +11,7 @@
     "test": "vitest run",
     "migrate:lilisong": "node scripts/migrate-lilisong.mjs",
     "migrate:lilisong-media": "node scripts/migrate-lilisong-media.mjs",
+    "gallery:feature": "node scripts/feature-gallery-media.mjs",
     "verify:supabase": "node scripts/verify-supabase.mjs"
   },
   "overrides": {

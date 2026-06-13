@@ -6,16 +6,25 @@ interface Props {
 }
 
 const { assets } = Astro.props;
+
+function getDisplayCaption(asset: GalleryAsset) {
+  if (asset.alt) return asset.alt;
+  if (!asset.caption || asset.caption.startsWith("Migrated from ")) return null;
+  return asset.caption;
+}
 ---
 
 {assets.length > 0 ? (
   <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    {assets.map((asset, index) => (
-      <figure class={`border border-[var(--color-line)] bg-[var(--color-panel)] ${index % 5 === 0 ? "sm:col-span-2" : ""}`}>
-        <img class="aspect-[4/3] h-full w-full object-cover" src={asset.public_url} alt={asset.alt || asset.file_name} loading={index > 1 ? "lazy" : undefined} />
-        {(asset.caption || asset.alt) && <figcaption class="px-4 py-3 text-sm leading-6 text-[var(--color-muted)]">{asset.caption || asset.alt}</figcaption>}
-      </figure>
-    ))}
+    {assets.map((asset, index) => {
+      const caption = getDisplayCaption(asset);
+      return (
+        <figure class={`border border-[var(--color-line)] bg-[var(--color-panel)] ${index % 5 === 0 ? "sm:col-span-2" : ""}`}>
+          <img class="aspect-[4/3] h-full w-full object-cover" src={asset.public_url} alt={asset.alt || asset.file_name} loading={index > 1 ? "lazy" : undefined} />
+          {caption && <figcaption class="px-4 py-3 text-sm leading-6 text-[var(--color-muted)]">{caption}</figcaption>}
+        </figure>
+      );
+    })}
   </div>
 ) : (
   <div class="border border-dashed border-[var(--color-line)] bg-[var(--color-panel)] p-8 text-sm leading-7 text-[var(--color-muted)]">

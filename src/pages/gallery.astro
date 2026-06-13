@@ -11,5 +11,5 @@ const assets = await getFeaturedGalleryAssets(currentUser);
 
 <BaseLayout title="照片 - 理哩的个人空间" currentUser={currentUser}>
   <SectionHeader title="照片" note="精选图片会在这里形成另一条目录" />
-  {assets.length > 0 ? <GalleryGrid assets={assets} /> : <EmptyState title="还没有精选照片" description="这里会展示 media_assets.featured = true 的公开图片。V1 先保留基础网格。" />}
+  {assets.length > 0 ? <GalleryGrid assets={assets} /> : <EmptyState title="还没有精选照片" description="等我慢慢挑一些适合长期回看的照片放到这里，它会像另一条安静的目录。" />}
 </BaseLayout>
