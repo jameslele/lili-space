@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SESSION_COOKIE_NAME, getCurrentUserFromToken } from "../lib/auth";
+
+const currentUser = await getCurrentUserFromToken(Astro.cookies.get(SESSION_COOKIE_NAME)?.value);
+const error = Astro.url.searchParams.get("error");
+const next = Astro.url.searchParams.get("next") ?? "";
+---
+
+<BaseLayout title="登录 - 理哩的个人空间" currentUser={currentUser}>
+  <section class="mx-auto max-w-sm">
+    <p class="mb-3 text-sm text-[var(--color-muted)]">Account</p>
+    <h1 class="text-3xl font-semibold tracking-normal">登录</h1>
+    {error && <p class="mt-5 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+    <form class="mt-6 space-y-4" method="post" action="/api/login">
+      <input type="hidden" name="next" value={next} />
+      <label class="block text-sm">
+        <span class="text-[var(--color-muted)]">用户名</span>
+        <input class="mt-2 w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="username" autocomplete="username" required />
+      </label>
+      <label class="block text-sm">
+        <span class="text-[var(--color-muted)]">密码</span>
+        <input class="mt-2 w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 outline-none focus:border-[var(--color-accent)]" name="password" type="password" autocomplete="current-password" required />
+      </label>
+      <button class="w-full rounded-md bg-[var(--color-ink)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-accent)]" type="submit">登录</button>
+    </form>
+    <p class="mt-5 text-sm text-[var(--color-muted)]">
+      没有账号？<a class="text-[var(--color-ink)] underline underline-offset-4" href="/register">去注册</a>
+    </p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,45 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "后台 - 理哩的个人空间" } = Astro.props;
+const adminNavItems = [
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/posts", label: "Posts" },
+  { href: "/admin/categories", label: "Categories" },
+  { href: "/admin/media", label: "Media" },
+  { href: "/admin/settings", label: "Settings" },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-[#f7f5f1]">
+    <div class="min-h-screen lg:grid lg:grid-cols-[220px_1fr]">
+      <aside class="border-b border-[var(--color-line)] bg-white/70 px-5 py-5 lg:border-b-0 lg:border-r">
+        <a class="block text-base font-semibold" href="/admin">理哩后台</a>
+        <nav class="mt-6 flex gap-4 overflow-x-auto text-sm text-[var(--color-muted)] lg:flex-col lg:gap-2">
+          {adminNavItems.map((item) => <a class="rounded-md px-2 py-1.5 hover:bg-[#eee8df] hover:text-[var(--color-ink)]" href={item.href}>{item.label}</a>)}
+        </nav>
+      </aside>
+      <div class="flex min-w-0 flex-col">
+        <header class="flex items-center justify-between border-b border-[var(--color-line)] bg-white/70 px-6 py-4">
+          <span class="text-sm text-[var(--color-muted)]">写作与内容管理骨架</span>
+          <a class="text-sm text-[var(--color-muted)] hover:text-[var(--color-ink)]" href="/">返回前台</a>
+        </header>
+        <main class="flex-1 px-6 py-8">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

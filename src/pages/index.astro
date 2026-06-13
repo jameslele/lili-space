@@ -1,0 +1,19 @@
+---
+import IslandStatus from "../components/IslandStatus";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const currentUser = Astro.locals.currentUser;
+---
+
+<BaseLayout currentUser={currentUser}>
+  <section class="max-w-3xl">
+    <p class="mb-4 text-sm text-[var(--color-muted)]">Personal Blog Space</p>
+    <h1 class="text-4xl font-semibold leading-tight tracking-normal sm:text-5xl">理哩的个人空间</h1>
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-[var(--color-muted)]">
+      这里是 V2 项目的前台基础布局。后续会接入文章、分类、标签、归档和照片内容。
+    </p>
+    <div class="mt-8">
+      <IslandStatus client:idle />
+    </div>
+  </section>
+</BaseLayout>

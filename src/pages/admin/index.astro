@@ -1,0 +1,16 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+
+const currentUser = Astro.locals.currentUser;
+---
+
+<AdminLayout title="后台 - 理哩的个人空间">
+  <section class="max-w-4xl">
+    <p class="mb-3 text-sm text-[var(--color-muted)]">Admin Shell</p>
+    <h1 class="text-3xl font-semibold tracking-normal">后台基础布局</h1>
+    <p class="mt-4 max-w-2xl leading-7 text-[var(--color-muted)]">
+      当前仅保留后台路由与布局空壳。登录、权限、文章管理、媒体管理和编辑器将在后续阶段实现。
+    </p>
+    {currentUser && <p class="mt-6 text-sm text-[var(--color-muted)]">当前登录：{currentUser.username}</p>}
+  </section>
+</AdminLayout>

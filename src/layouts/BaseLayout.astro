@@ -1,0 +1,63 @@
+---
+import "../styles/global.css";
+import type { CurrentUser } from "../lib/auth";
+
+interface Props {
+  title?: string;
+  currentUser?: CurrentUser | null;
+}
+
+const { title = "理哩的个人空间", currentUser = null } = Astro.props;
+const navItems: Array<{ href: string; label: string }> = [
+  { href: "/", label: "首页" },
+  { href: "/categories", label: "分类" },
+  { href: "/archives", label: "归档" },
+  { href: "/gallery", label: "照片" },
+  { href: "/about", label: "关于" },
+];
+
+if (currentUser?.role === "admin") {
+  navItems.push({ href: "/admin", label: "后台" });
+}
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5">
+      <header class="flex items-center justify-between border-b border-[var(--color-line)] py-6">
+        <a class="text-lg font-semibold tracking-normal" href="/">理哩的个人空间</a>
+        <nav class="hidden items-center gap-5 text-sm text-[var(--color-muted)] sm:flex">
+          {navItems.map((item) => <a class="hover:text-[var(--color-ink)]" href={item.href}>{item.label}</a>)}
+          {
+            currentUser ? (
+              <>
+                <span>{currentUser.username}</span>
+                <form method="post" action="/api/logout">
+                  <button class="hover:text-[var(--color-ink)]" type="submit">退出</button>
+                </form>
+              </>
+            ) : (
+              <>
+                <a class="hover:text-[var(--color-ink)]" href="/login">登录</a>
+                <a class="hover:text-[var(--color-ink)]" href="/register">注册</a>
+              </>
+            )
+          }
+        </nav>
+      </header>
+      <main class="flex-1 py-12">
+        <slot />
+      </main>
+      <footer class="border-t border-[var(--color-line)] py-8 text-sm text-[var(--color-muted)]">
+        以文字、照片和时间整理个人空间。
+      </footer>
+    </div>
+  </body>
+</html>

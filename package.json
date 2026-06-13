@@ -1,0 +1,36 @@
+{
+  "name": "lili-space",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "verify:supabase": "node scripts/verify-supabase.mjs"
+  },
+  "overrides": {
+    "vite": "^7.2.7"
+  },
+  "dependencies": {
+    "@astrojs/node": "^10.1.4",
+    "@astrojs/react": "^5.0.7",
+    "@supabase/supabase-js": "^2.86.0",
+    "astro": "^6.4.6",
+    "bcrypt": "^6.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tailwindcss": "^3.4.18"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/bcrypt": "^6.0.0",
+    "@types/node": "^25.9.3",
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.8"
+  }
+}

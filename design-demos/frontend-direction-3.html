@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>方向 C · 旧博客归档馆</title>
+    <!--
+      Huashu Design assumptions:
+      1. 方向 C 不是复古模板，而是强调“旧内容、旧时间、旧分类仍可被长期检索”。
+      2. 视觉锚点是纸质档案、索引卡、年份目录和细密分隔线。
+      3. 页面仍是前台博客，不做后台管理界面。
+    -->
+    <style>
+      :root {
+        --paper: #ece5d8;
+        --card: #fff9ec;
+        --ink: #211d17;
+        --muted: #6f6253;
+        --line: #c8baa5;
+        --line-dark: #3a3329;
+        --red: #9f3d2e;
+        --green: #556a4b;
+        --blue: #435b70;
+        --stamp: #835f3b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(rgba(58, 51, 41, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(58, 51, 41, 0.025) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        color: var(--ink);
+        font-family: "Noto Serif SC", "Songti SC", serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .archive-shell {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 22px auto 50px;
+        border: 2px solid var(--line-dark);
+        background: rgba(255, 249, 236, 0.72);
+        box-shadow: 10px 10px 0 rgba(58, 51, 41, 0.12);
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        border-bottom: 2px solid var(--line-dark);
+      }
+
+      .brand-box {
+        padding: 26px;
+        border-right: 2px solid var(--line-dark);
+      }
+
+      .brand-box h1 {
+        margin: 0;
+        font-size: 34px;
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      .brand-box p {
+        margin: 18px 0 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .nav-zone {
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--line-dark);
+      }
+
+      nav a,
+      nav span {
+        padding: 13px 18px;
+        border-right: 1px solid var(--line-dark);
+        font-size: 14px;
+      }
+
+      nav .admin {
+        color: var(--red);
+        font-weight: 700;
+      }
+
+      .ledger {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .ledger div {
+        padding: 24px;
+        border-right: 1px solid var(--line);
+      }
+
+      .ledger div:last-child {
+        border-right: 0;
+      }
+
+      .ledger strong {
+        display: block;
+        font-size: 32px;
+      }
+
+      .ledger span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+      }
+
+      aside {
+        border-right: 2px solid var(--line-dark);
+        padding: 22px;
+      }
+
+      .side-title {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 0 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line-dark);
+        font-size: 14px;
+        color: var(--stamp);
+      }
+
+      .index-list {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 28px;
+      }
+
+      .index-list a {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 7px 0;
+        border-bottom: 1px dotted var(--line);
+        font-size: 14px;
+      }
+
+      .content {
+        padding: 28px;
+      }
+
+      .admin-note {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: center;
+        margin-bottom: 22px;
+        padding: 11px 14px;
+        border: 1px dashed var(--red);
+        color: var(--red);
+        background: rgba(255, 249, 236, 0.8);
+        font-size: 14px;
+      }
+
+      .badge-line {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        display: inline-flex;
+        padding: 2px 8px;
+        border: 1px solid currentColor;
+        font-size: 12px;
+        background: var(--card);
+      }
+
+      .private {
+        color: var(--red);
+      }
+
+      .draft {
+        color: var(--green);
+      }
+
+      .archived {
+        color: var(--blue);
+      }
+
+      .feature-card {
+        display: grid;
+        grid-template-columns: 120px 1fr 170px;
+        gap: 20px;
+        padding: 22px;
+        margin-bottom: 16px;
+        background: var(--card);
+        border: 1px solid var(--line-dark);
+      }
+
+      .date-card {
+        border-right: 1px solid var(--line);
+        padding-right: 18px;
+      }
+
+      .date-card strong {
+        display: block;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .date-card span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .feature-card h2 {
+        margin: 0 0 10px;
+        font-size: 31px;
+        line-height: 1.28;
+        font-weight: 700;
+      }
+
+      .feature-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .card-meta {
+        display: grid;
+        gap: 8px;
+        align-content: start;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .stamp {
+        display: inline-block;
+        width: max-content;
+        transform: rotate(-4deg);
+        border: 2px solid currentColor;
+        padding: 5px 9px;
+        color: var(--stamp);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+      }
+
+      .article {
+        margin-top: 34px;
+        background: var(--card);
+        border: 2px solid var(--line-dark);
+      }
+
+      .article-head {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        border-bottom: 2px solid var(--line-dark);
+      }
+
+      .article-head .file-no {
+        padding: 20px;
+        border-right: 2px solid var(--line-dark);
+        color: var(--stamp);
+      }
+
+      .article-title {
+        padding: 24px;
+      }
+
+      .article-title h2 {
+        margin: 8px 0 12px;
+        font-size: clamp(40px, 6vw, 76px);
+        line-height: 1.05;
+      }
+
+      .article-body {
+        padding: 34px min(7vw, 86px);
+        max-width: 880px;
+      }
+
+      .article-body p {
+        font-size: 18px;
+        line-height: 2;
+        margin: 22px 0;
+      }
+
+      blockquote {
+        margin: 34px 0;
+        padding: 24px;
+        background: #f2e7d2;
+        border-left: 8px solid var(--stamp);
+        font-size: 24px;
+      }
+
+      .directory {
+        margin-top: 34px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .box {
+        background: var(--card);
+        border: 1px solid var(--line-dark);
+      }
+
+      .box h2 {
+        margin: 0;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line-dark);
+        font-size: 24px;
+      }
+
+      .cat-row,
+      .archive-row {
+        display: grid;
+        grid-template-columns: 120px 1fr 52px;
+        gap: 14px;
+        padding: 13px 18px;
+        border-bottom: 1px dotted var(--line);
+        font-size: 14px;
+      }
+
+      .cat-row:last-child,
+      .archive-row:last-child {
+        border-bottom: 0;
+      }
+
+      .auth-row {
+        margin-top: 34px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .auth {
+        background: var(--card);
+        border: 1px solid var(--line-dark);
+        padding: 22px;
+      }
+
+      .auth h2 {
+        margin: 0 0 16px;
+        font-size: 26px;
+      }
+
+      label {
+        display: block;
+        margin-top: 13px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      input {
+        width: 100%;
+        margin-top: 7px;
+        border: 1px solid var(--line-dark);
+        background: #fffef8;
+        padding: 10px;
+        font: inherit;
+      }
+
+      button {
+        margin-top: 18px;
+        border: 2px solid var(--line-dark);
+        background: var(--line-dark);
+        color: var(--card);
+        padding: 9px 17px;
+        font: inherit;
+      }
+
+      footer {
+        padding: 18px 26px;
+        border-top: 2px solid var(--line-dark);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 880px) {
+        header,
+        .main-grid,
+        .article-head,
+        .directory,
+        .auth-row,
+        .feature-card {
+          grid-template-columns: 1fr;
+        }
+
+        .brand-box,
+        aside,
+        .date-card,
+        .article-head .file-no {
+          border-right: 0;
+        }
+
+        .ledger {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="archive-shell">
+      <header>
+        <section class="brand-box">
+          <h1>理哩的<br />个人空间</h1>
+          <p>私人博客归档馆。按年份、分类、标签和照片，把生活留下索引。</p>
+        </section>
+        <section class="nav-zone">
+          <nav>
+            <a href="#">首页</a><a href="#">分类</a><a href="#">归档</a><a href="#">照片</a><a href="#">关于</a><a class="admin" href="#">后台</a><span>root</span><a href="#">退出</a>
+          </nav>
+          <div class="ledger">
+            <div><strong>2020</strong><span>建站与最早的日记</span></div>
+            <div><strong>10</strong><span>个主分类</span></div>
+            <div><strong>root</strong><span>管理员前台视图</span></div>
+            <div><strong>private</strong><span>私密内容仅管理员可见</span></div>
+          </div>
+        </section>
+      </header>
+
+      <div class="main-grid">
+        <aside>
+          <div class="side-title"><span>分类索引</span><span>CAT</span></div>
+          <div class="index-list">
+            <a href="#"><span>游游逛逛</span><em>12</em></a>
+            <a href="#"><span>卿卿我我</span><em>8</em></a>
+            <a href="#"><span>少侠</span><em>6</em></a>
+            <a href="#"><span>浮光片影</span><em>9</em></a>
+            <a href="#"><span>但是还有书籍</span><em>7</em></a>
+            <a href="#"><span>网站日记</span><em>5</em></a>
+          </div>
+
+          <div class="side-title"><span>年份归档</span><span>ARC</span></div>
+          <div class="index-list">
+            <a href="#"><span>2022</span><em>14</em></a>
+            <a href="#"><span>2021</span><em>7</em></a>
+            <a href="#"><span>2020</span><em>18</em></a>
+          </div>
+        </aside>
+
+        <main class="content">
+          <div class="admin-note">
+            <span>管理员视图：包含草稿、已归档和仅自己可见内容。</span>
+            <div class="badge-line"><span class="badge private">仅自己可见</span><span class="badge draft">草稿</span><span class="badge archived">已归档</span></div>
+          </div>
+
+          <article class="feature-card">
+            <div class="date-card"><strong>07.29</strong><span>2022 / 少侠</span></div>
+            <div>
+              <span class="stamp">FILE 022</span>
+              <h2>初印象</h2>
+              <p>如果从一开始，便认定他是大神，就算日后多么寻常，我都能给他吹出花来。</p>
+            </div>
+            <div class="card-meta"><span>#回忆</span><span>#少侠</span><span class="badge private">仅自己可见</span></div>
+          </article>
+
+          <article class="feature-card">
+            <div class="date-card"><strong>03.30</strong><span>2020 / 游游逛逛</span></div>
+            <div>
+              <span class="stamp">FILE 004</span>
+              <h2>一座城——北京</h2>
+              <p>梨汤、糖葫芦、胡同路。它不是旅游攻略，是短暂生活过的痕迹。</p>
+            </div>
+            <div class="card-meta"><span>#北京</span><span>#城市</span><span>#游记</span></div>
+          </article>
+
+          <article class="feature-card">
+            <div class="date-card"><strong>05.11</strong><span>2022 / 书籍</span></div>
+            <div>
+              <span class="stamp">FILE 019</span>
+              <h2>北野武的小酒馆</h2>
+              <p>虽然辛苦，我还是会选择那种滚烫的人生。读书笔记也可以成为自己的档案。</p>
+            </div>
+            <div class="card-meta"><span>#推荐</span><span class="badge archived">已归档</span></div>
+          </article>
+
+          <section class="article">
+            <div class="article-head">
+              <div class="file-no"><strong>文章详情</strong><br />POST-PRIVATE-001</div>
+              <div class="article-title">
+                <span class="stamp">管理员可读</span>
+                <h2>念念不忘，必有回响</h2>
+                <div class="badge-line"><span>2022.07.29</span><span>少侠</span><span>#圣诞节</span><span class="badge private">仅自己可见</span><span class="badge draft">草稿</span></div>
+              </div>
+            </div>
+            <div class="article-body">
+              <p>十一月末正是赏银杏的好时候，华政园里恰好有一处赏银杏的好去处，在六三楼。</p>
+              <p>六三楼显得朴实无华。从正面看，依然是红砖灰瓦的样式；而在背面，却毗邻着一座浅黄色墙面的小矮房。</p>
+              <blockquote>有些回忆适合放在公开页面，有些只适合留在管理员前台视图里。</blockquote>
+              <p>旧博客气质的好处，是它不急着把所有内容包装成新的。它允许文章带着旧日期、旧分类、旧标题继续存在。</p>
+            </div>
+          </section>
+
+          <section class="directory">
+            <div class="box">
+              <h2>分类 / 标签呈现</h2>
+              <div class="cat-row"><strong>花花草草</strong><span>春分、立夏、立冬</span><em>3</em></div>
+              <div class="cat-row"><strong>码农小知识</strong><span>WordPress、插件记录、技术</span><em>4</em></div>
+              <div class="cat-row"><strong>浮光片影</strong><span>照片、视频、Gallery</span><em>9</em></div>
+              <div class="cat-row"><strong>未分类</strong><span>迁移待整理内容</span><em>1</em></div>
+            </div>
+
+            <div class="box">
+              <h2>归档 / 年份索引</h2>
+              <div class="archive-row"><strong>2022</strong><span>初印象 / 念念不忘 / 北野武的小酒馆</span><em>14</em></div>
+              <div class="archive-row"><strong>2021</strong><span>周六黄昏 / 日常-2</span><em>7</em></div>
+              <div class="archive-row"><strong>2020</strong><span>网站日记 / 北京 / 春分 / 夏至</span><em>18</em></div>
+            </div>
+          </section>
+
+          <section class="auth-row">
+            <div class="auth">
+              <span class="stamp">LOGIN</span>
+              <h2>登录</h2>
+              <label>用户名<input placeholder="root" /></label>
+              <label>密码<input placeholder="••••••" type="password" /></label>
+              <button>登录</button>
+            </div>
+            <div class="auth">
+              <span class="stamp">REGISTER</span>
+              <h2>注册</h2>
+              <label>用户名<input placeholder="reader" /></label>
+              <label>显示名<input placeholder="理哩的朋友" /></label>
+              <label>密码<input placeholder="不少于 4 位" type="password" /></label>
+              <button>注册</button>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer>方向 C 强调时间、索引和旧内容迁移后的归档秩序。</footer>
+    </div>
+  </body>
+</html>

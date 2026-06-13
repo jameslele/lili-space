@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const currentUser = Astro.locals.currentUser;
+---
+
+<BaseLayout title="无权限 - 理哩的个人空间" currentUser={currentUser}>
+  <section class="mx-auto max-w-xl">
+    <p class="mb-3 text-sm text-[var(--color-muted)]">Forbidden</p>
+    <h1 class="text-3xl font-semibold tracking-normal">无权限访问</h1>
+    <p class="mt-4 leading-7 text-[var(--color-muted)]">当前账号不能进入后台。</p>
+    <a class="mt-6 inline-block text-sm underline underline-offset-4" href="/">返回首页</a>
+  </section>
+</BaseLayout>
