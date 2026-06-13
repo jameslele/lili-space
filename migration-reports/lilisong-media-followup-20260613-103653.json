@@ -1,0 +1,67 @@
+{
+  "createdAt": "2026-06-13T10:36:53.457Z",
+  "backupPath": "/Users/a/lili-space/migration-reports/backups/posts-media-followup-backup-20260613-103653.json",
+  "updatedPosts": 5,
+  "uploads": [
+    {
+      "slug": "我们毕业了",
+      "title": "我们毕业了",
+      "kind": "video",
+      "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/07/%E6%88%91%E4%BB%AC%E6%AF%95%E4%B8%9A%E5%95%A6.mov",
+      "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/07/76944aaefccf3ad1-1080p.mp4",
+      "localPath": "/Users/a/lili-space/.migration-cache/lilisong-media/transcoded-1080p/76944aaefccf3ad1-我们毕业啦-1080p.mp4",
+      "storagePath": "lilisong/2020/07/76944aaefccf3ad1-1080p.mp4",
+      "sizeBytes": 7774319,
+      "sizeMB": 7.41,
+      "sourceUrl": null
+    },
+    {
+      "slug": "春分",
+      "title": "春分",
+      "kind": "video",
+      "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/06/%E6%98%A5%E5%88%86%E8%B8%8F%E6%98%A5.mov",
+      "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/06/5154aab4d3d7c192-1080p.mp4",
+      "localPath": "/Users/a/lili-space/.migration-cache/lilisong-media/transcoded-1080p/5154aab4d3d7c192-media-1080p.mp4",
+      "storagePath": "lilisong/2020/06/5154aab4d3d7c192-1080p.mp4",
+      "sizeBytes": 23844507,
+      "sizeMB": 22.74,
+      "sourceUrl": null
+    },
+    {
+      "slug": "春娇百魅",
+      "title": "春娇百媚",
+      "kind": "video",
+      "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/%E8%8A%B1%E8%8A%B1%E8%8D%89%E8%8D%89.mov",
+      "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/04/c95b3a1531a23bf5-1080p.mp4",
+      "localPath": "/Users/a/lili-space/.migration-cache/lilisong-media/transcoded-1080p/c95b3a1531a23bf5-media-1080p.mp4",
+      "storagePath": "lilisong/2020/04/c95b3a1531a23bf5-1080p.mp4",
+      "sizeBytes": 6265537,
+      "sizeMB": 5.98,
+      "sourceUrl": null
+    },
+    {
+      "slug": "新年录音",
+      "title": "新年录音",
+      "kind": "audio",
+      "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/12/2021%E5%B9%B4%E6%96%B0%E5%B9%B4%E5%BD%95%E9%9F%B3.m4a",
+      "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/12/3db14c6594692577-media.m4a",
+      "localPath": "/Users/a/lili-space/.migration-cache/lilisong-media/3db14c6594692577-media.m4a",
+      "storagePath": "lilisong/2021/12/3db14c6594692577-media.m4a",
+      "sizeBytes": 5661282,
+      "sizeMB": 5.4,
+      "sourceUrl": null
+    },
+    {
+      "slug": "立夏",
+      "title": "立夏",
+      "kind": "cover",
+      "oldUrl": "https://bluesnail-assets.oss-cn-hangzhou.aliyuncs.com/uPic/IMG_0589.jpg",
+      "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/covers/lixia-unsplash-NQryA5y-8pc.jpg",
+      "localPath": "/Users/a/lili-space/.migration-cache/lilisong-media/lixia-unsplash-NQryA5y-8pc.jpg",
+      "storagePath": "lilisong/covers/lixia-unsplash-NQryA5y-8pc.jpg",
+      "sizeBytes": 248584,
+      "sizeMB": 0.24,
+      "sourceUrl": "https://unsplash.com/photos/a-beautiful-lotus-flower-blooming-gracefully-NQryA5y-8pc"
+    }
+  ]
+}

@@ -52,6 +52,18 @@ const { html } = Astro.props;
     width: 100%;
   }
 
+  .markdown-content :global(video),
+  .markdown-content :global(audio),
+  .markdown-content :global(iframe) {
+    display: block;
+    margin: 2rem auto;
+    max-width: 100%;
+  }
+
+  .markdown-content :global(iframe) {
+    width: 100%;
+  }
+
   .markdown-content :global(code) {
     background: #efe7db;
     border-radius: 4px;

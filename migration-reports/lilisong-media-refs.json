@@ -678,5 +678,16 @@
     "isCover": false,
     "likelyLilisongOss": true,
     "needsMigration": true
+  },
+  {
+    "title": "夏至",
+    "slug": "夏至",
+    "file": "夏至.md",
+    "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/06/%E5%B0%8F%E7%99%BD%E8%8F%8A.jpeg",
+    "type": "image",
+    "isCover": false,
+    "likelyLilisongOss": true,
+    "needsMigration": true,
+    "note": "Discovered in migrated markdown video poster attribute during media migration validation."
   }
 ]

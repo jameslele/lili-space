@@ -4,7 +4,7 @@ import MarkdownContent from "../../components/MarkdownContent.astro";
 import PostMeta from "../../components/PostMeta.astro";
 import StatusBadge from "../../components/StatusBadge.astro";
 import TagList from "../../components/TagList.astro";
-import { canViewAllPosts, getPostBySlugForViewer } from "../../lib/content";
+import { canViewAllPosts, formatPostDate, getPostBySlugForViewer } from "../../lib/content";
 
 export const prerender = false;
 
@@ -20,16 +20,27 @@ if (!post) {
 
 <BaseLayout title={post ? `${post.title} - 理哩的个人空间` : "文章不存在 - 理哩的个人空间"} currentUser={currentUser}>
   {post ? (
-    <article class="mx-auto max-w-5xl">
-      <div class="grid gap-8 lg:grid-cols-[0.82fr_1fr] lg:items-start">
-        <div class="lg:sticky lg:top-8">
-          {post.cover_url ? (
-            <img class="aspect-[4/5] w-full object-cover" src={post.cover_url} alt={post.title} />
-          ) : (
-            <div class="aspect-[4/5] w-full bg-[linear-gradient(135deg,#ddd0c1,#efe7db_46%,#c9b292)]"></div>
-          )}
-        </div>
-        <div class="border border-[var(--color-line)] bg-[var(--color-panel)] p-6 sm:p-10 lg:p-12">
+    <article class="mx-auto max-w-3xl">
+      {post.cover_url ? (
+        <header class="relative mx-auto overflow-hidden border border-[var(--color-line)] bg-[#ddd0c1]">
+          <img class="aspect-[4/3] max-h-[560px] w-full object-cover sm:aspect-[16/9]" src={post.cover_url} alt={post.title} />
+          <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/68"></div>
+          <div class="absolute inset-x-0 bottom-0 p-6 text-[#fffdf7] sm:p-10">
+            <h1 class="font-serif-title max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">{post.title}</h1>
+            <div class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-[#fffdf7]/85">
+              <time datetime={post.published_at ?? post.created_at}>{formatPostDate(post)}</time>
+              {post.category && <a class="hover:text-white" href={`/categories/${post.category.slug}`}>{post.category.name}</a>}
+              {post.tags.slice(0, 3).map((tag) => <a class="hover:text-white" href={`/tags/${tag.slug}`}>#{tag.name}</a>)}
+            </div>
+            {showStatus && (
+              <div class="mt-4 flex flex-wrap gap-2">
+                <StatusBadge status={post.status} visibility={post.visibility} />
+              </div>
+            )}
+          </div>
+        </header>
+      ) : (
+        <header class="mx-auto border border-[var(--color-line)] bg-[var(--color-panel)] p-6 sm:p-10">
           <p class="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">文章详情</p>
           <h1 class="font-serif-title mt-4 text-4xl font-bold leading-tight sm:text-6xl">{post.title}</h1>
           <div class="mt-5">
@@ -43,10 +54,17 @@ if (!post) {
           <div class="mt-6">
             <TagList tags={post.tags} />
           </div>
-          <div class="mt-10">
-            <MarkdownContent html={post.renderedHtml} />
-          </div>
+        </header>
+      )}
+
+      {post.cover_url && post.tags.length > 0 && (
+        <div class="mx-auto mt-8">
+          <TagList tags={post.tags} />
         </div>
+      )}
+
+      <div class="mx-auto mt-10 border border-[var(--color-line)] bg-[var(--color-panel)] px-6 py-8 sm:px-10 sm:py-12">
+        <MarkdownContent html={post.renderedHtml} />
       </div>
     </article>
   ) : (

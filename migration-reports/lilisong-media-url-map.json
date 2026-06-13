@@ -1,0 +1,1316 @@
+[
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33771589036543_.pic_.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/da421a3778ecbbe2-33771589036543_.pic_.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/da421a3778ecbbe2-33771589036543_.pic_.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/da421a3778ecbbe2-33771589036543_.pic_.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 166074,
+    "refs": [
+      {
+        "title": "你是我清香馥郁的牛油果汁",
+        "slug": "你是我清香馥郁的牛油果汁",
+        "file": "你是我清香馥郁的牛油果汁.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33771589036543_.pic_.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33761589036542_.pic_.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/8be4c56d0a89af37-33761589036542_.pic_.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/8be4c56d0a89af37-33761589036542_.pic_.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/8be4c56d0a89af37-33761589036542_.pic_.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 132994,
+    "refs": [
+      {
+        "title": "你是我清香馥郁的牛油果汁",
+        "slug": "你是我清香馥郁的牛油果汁",
+        "file": "你是我清香馥郁的牛油果汁.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33761589036542_.pic_.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33731589036539_.pic_.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/e4b296bf178ce590-33731589036539_.pic_.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/e4b296bf178ce590-33731589036539_.pic_.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/e4b296bf178ce590-33731589036539_.pic_.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 147488,
+    "refs": [
+      {
+        "title": "你是我清香馥郁的牛油果汁",
+        "slug": "你是我清香馥郁的牛油果汁",
+        "file": "你是我清香馥郁的牛油果汁.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33731589036539_.pic_.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33791589036545_.pic_.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/0c937887d7f04800-33791589036545_.pic_.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/0c937887d7f04800-33791589036545_.pic_.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/0c937887d7f04800-33791589036545_.pic_.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 101070,
+    "refs": [
+      {
+        "title": "你是我清香馥郁的牛油果汁",
+        "slug": "你是我清香馥郁的牛油果汁",
+        "file": "你是我清香馥郁的牛油果汁.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33791589036545_.pic_.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33781589036544_.pic_.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/167d2da7e4d67c21-33781589036544_.pic_.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/167d2da7e4d67c21-33781589036544_.pic_.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/167d2da7e4d67c21-33781589036544_.pic_.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 84079,
+    "refs": [
+      {
+        "title": "你是我清香馥郁的牛油果汁",
+        "slug": "你是我清香馥郁的牛油果汁",
+        "file": "你是我清香馥郁的牛油果汁.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33781589036544_.pic_.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33751589036541_.pic_.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/4a3d8969a2fc2ca2-33751589036541_.pic_.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/4a3d8969a2fc2ca2-33751589036541_.pic_.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/4a3d8969a2fc2ca2-33751589036541_.pic_.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 158337,
+    "refs": [
+      {
+        "title": "你是我清香馥郁的牛油果汁",
+        "slug": "你是我清香馥郁的牛油果汁",
+        "file": "你是我清香馥郁的牛油果汁.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/05/33751589036541_.pic_.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%80%A6%E7%84%B6%E5%BF%83%E5%8A%A8.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/07/2b5057f9573a55e4-media.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/07/2b5057f9573a55e4-media.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/2b5057f9573a55e4-怦然心动.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 211437,
+    "refs": [
+      {
+        "title": "初印象",
+        "slug": "初印象-2017",
+        "file": "初印象（2017）.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%80%A6%E7%84%B6%E5%BF%83%E5%8A%A8.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/EB7F0326-4E80-4D2E-BA42-F522B84A992C-scaled.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/aa464fdde42639cd-EB7F0326-4E80-4D2E-BA42-F522B84A992C-scaled.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/aa464fdde42639cd-EB7F0326-4E80-4D2E-BA42-F522B84A992C-scaled.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/aa464fdde42639cd-EB7F0326-4E80-4D2E-BA42-F522B84A992C-scaled.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 646682,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/EB7F0326-4E80-4D2E-BA42-F522B84A992C-scaled.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      },
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/EB7F0326-4E80-4D2E-BA42-F522B84A992C-scaled.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/FB529871-902D-49D2-8F0D-2ADAAE6B7F25-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/922c77a69e0a5ef1-FB529871-902D-49D2-8F0D-2ADAAE6B7F25-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/922c77a69e0a5ef1-FB529871-902D-49D2-8F0D-2ADAAE6B7F25-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/922c77a69e0a5ef1-FB529871-902D-49D2-8F0D-2ADAAE6B7F25-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 123474,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/FB529871-902D-49D2-8F0D-2ADAAE6B7F25-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/8A829123-EFF8-4EC1-BC31-BC884070CAC4-1-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/840321616735e302-8A829123-EFF8-4EC1-BC31-BC884070CAC4-1-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/840321616735e302-8A829123-EFF8-4EC1-BC31-BC884070CAC4-1-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/840321616735e302-8A829123-EFF8-4EC1-BC31-BC884070CAC4-1-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 253511,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/8A829123-EFF8-4EC1-BC31-BC884070CAC4-1-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/455FC7F0-BB54-4286-B601-224B6073CB94-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/5287eafa378fd7a9-455FC7F0-BB54-4286-B601-224B6073CB94-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/5287eafa378fd7a9-455FC7F0-BB54-4286-B601-224B6073CB94-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/5287eafa378fd7a9-455FC7F0-BB54-4286-B601-224B6073CB94-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 141496,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/455FC7F0-BB54-4286-B601-224B6073CB94-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/9F6F8EE4-8224-49F3-A14E-873F86C436CA-3-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/9fdea8502677540a-9F6F8EE4-8224-49F3-A14E-873F86C436CA-3-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/9fdea8502677540a-9F6F8EE4-8224-49F3-A14E-873F86C436CA-3-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/9fdea8502677540a-9F6F8EE4-8224-49F3-A14E-873F86C436CA-3-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 260828,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/9F6F8EE4-8224-49F3-A14E-873F86C436CA-3-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/AF88CF1B-AE58-411C-B8B2-1E5C0E6E9C47-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/1a2db89979c0d3bf-AF88CF1B-AE58-411C-B8B2-1E5C0E6E9C47-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/1a2db89979c0d3bf-AF88CF1B-AE58-411C-B8B2-1E5C0E6E9C47-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/1a2db89979c0d3bf-AF88CF1B-AE58-411C-B8B2-1E5C0E6E9C47-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 113875,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/AF88CF1B-AE58-411C-B8B2-1E5C0E6E9C47-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/58421274-5A62-4367-9FBF-022384B31A77-768x1024.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/0004ebaf1ab61d8a-58421274-5A62-4367-9FBF-022384B31A77-768x1024.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/0004ebaf1ab61d8a-58421274-5A62-4367-9FBF-022384B31A77-768x1024.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/0004ebaf1ab61d8a-58421274-5A62-4367-9FBF-022384B31A77-768x1024.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 93122,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/58421274-5A62-4367-9FBF-022384B31A77-768x1024.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/51CD0BDC-8F96-41EF-A7CC-21F1709C0790-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/47086051bd744dcb-51CD0BDC-8F96-41EF-A7CC-21F1709C0790-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/47086051bd744dcb-51CD0BDC-8F96-41EF-A7CC-21F1709C0790-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/47086051bd744dcb-51CD0BDC-8F96-41EF-A7CC-21F1709C0790-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 233374,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/51CD0BDC-8F96-41EF-A7CC-21F1709C0790-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/5111C1EB-12E8-49EF-AB5D-7C0E034343E7-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/4d6365e899a67ed1-5111C1EB-12E8-49EF-AB5D-7C0E034343E7-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/4d6365e899a67ed1-5111C1EB-12E8-49EF-AB5D-7C0E034343E7-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/4d6365e899a67ed1-5111C1EB-12E8-49EF-AB5D-7C0E034343E7-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 133057,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/5111C1EB-12E8-49EF-AB5D-7C0E034343E7-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/8EAE0B19-DB53-4E43-858C-8915D5D774F7-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/cb7aca376c1c8e0c-8EAE0B19-DB53-4E43-858C-8915D5D774F7-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/cb7aca376c1c8e0c-8EAE0B19-DB53-4E43-858C-8915D5D774F7-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/cb7aca376c1c8e0c-8EAE0B19-DB53-4E43-858C-8915D5D774F7-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 84675,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/8EAE0B19-DB53-4E43-858C-8915D5D774F7-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1911-768x1024.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/5e7c873dc1e72214-IMG_1911-768x1024.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/5e7c873dc1e72214-IMG_1911-768x1024.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/5e7c873dc1e72214-IMG_1911-768x1024.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 187528,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1911-768x1024.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1906-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/ce3ad2ecb30a4c1c-IMG_1906-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/ce3ad2ecb30a4c1c-IMG_1906-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/ce3ad2ecb30a4c1c-IMG_1906-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 71029,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1906-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1942-3-768x1024.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/eec44fe99cd789f1-IMG_1942-3-768x1024.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/eec44fe99cd789f1-IMG_1942-3-768x1024.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/eec44fe99cd789f1-IMG_1942-3-768x1024.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 89288,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1942-3-768x1024.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1890-1024x768.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/4feda5436a84c575-IMG_1890-1024x768.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/4feda5436a84c575-IMG_1890-1024x768.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/4feda5436a84c575-IMG_1890-1024x768.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 105426,
+    "refs": [
+      {
+        "title": "一座城——北京",
+        "slug": "北京",
+        "file": "北京.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1890-1024x768.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511192742339-20220511212008130.png",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/05/cd15a0ffc32eccbf-image-20220511192742339-20220511212008130.png",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/cd15a0ffc32eccbf-image-20220511192742339-20220511212008130.png",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/cd15a0ffc32eccbf-image-20220511192742339-20220511212008130.png",
+    "contentType": "image/png",
+    "sizeBytes": 1294895,
+    "refs": [
+      {
+        "title": "北野武的小酒馆",
+        "slug": "北野武的小酒馆",
+        "file": "北野武的小酒馆.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511192742339-20220511212008130.png",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      },
+      {
+        "title": "北野武的小酒馆",
+        "slug": "北野武的小酒馆",
+        "file": "北野武的小酒馆.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511192742339-20220511212008130.png",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511212045736.png",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/05/ea0a15f7226f41cd-image-20220511212045736.png",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/ea0a15f7226f41cd-image-20220511212045736.png",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/ea0a15f7226f41cd-image-20220511212045736.png",
+    "contentType": "image/png",
+    "sizeBytes": 12889347,
+    "refs": [
+      {
+        "title": "北野武的小酒馆",
+        "slug": "北野武的小酒馆",
+        "file": "北野武的小酒馆.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511212045736.png",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511192447876-20220511212007739.png",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/05/0a3cf2352edc14dd-image-20220511192447876-20220511212007739.png",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/0a3cf2352edc14dd-image-20220511192447876-20220511212007739.png",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/0a3cf2352edc14dd-image-20220511192447876-20220511212007739.png",
+    "contentType": "image/png",
+    "sizeBytes": 1344649,
+    "refs": [
+      {
+        "title": "北野武的小酒馆",
+        "slug": "北野武的小酒馆",
+        "file": "北野武的小酒馆.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511192447876-20220511212007739.png",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511194353734-20220511212009163.png",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/05/fcd7d07acbfb2d04-image-20220511194353734-20220511212009163.png",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/fcd7d07acbfb2d04-image-20220511194353734-20220511212009163.png",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/fcd7d07acbfb2d04-image-20220511194353734-20220511212009163.png",
+    "contentType": "image/png",
+    "sizeBytes": 2641459,
+    "refs": [
+      {
+        "title": "北野武的小酒馆",
+        "slug": "北野武的小酒馆",
+        "file": "北野武的小酒馆.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220511194353734-20220511212009163.png",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/11/live-house.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/11/83b22841d0c1ffc4-live-house.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/11/83b22841d0c1ffc4-live-house.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/83b22841d0c1ffc4-live-house.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 5316629,
+    "refs": [
+      {
+        "title": "周六黄昏",
+        "slug": "周六黄昏",
+        "file": "周六黄昏.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/11/live-house.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      },
+      {
+        "title": "周六黄昏",
+        "slug": "周六黄昏",
+        "file": "周六黄昏.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/11/live-house.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/WechatIMG40474.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/03/3f794b6581e8b41e-WechatIMG40474.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/03/3f794b6581e8b41e-WechatIMG40474.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/3f794b6581e8b41e-WechatIMG40474.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 5563095,
+    "refs": [
+      {
+        "title": "将WordPress上传限制改为120m",
+        "slug": "将wordpress上传限制改为120m",
+        "file": "将wordpress上传限制改为120m.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/WechatIMG40474.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/WechatIMG352.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/07/fc816d77b55dc25e-WechatIMG352.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/07/fc816d77b55dc25e-WechatIMG352.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/fc816d77b55dc25e-WechatIMG352.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 65992,
+    "refs": [
+      {
+        "title": "念念不忘，必有回响",
+        "slug": "念念不忘-必有回响",
+        "file": "念念不忘，必有回响.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/WechatIMG352.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E5%B0%8F%E5%AE%87%E5%AE%99.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/05/dc691322e6c3671f-media.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/dc691322e6c3671f-media.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/dc691322e6c3671f-media.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 83287,
+    "refs": [
+      {
+        "title": "推荐",
+        "slug": "推荐",
+        "file": "推荐.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E5%B0%8F%E5%AE%87%E5%AE%99.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      },
+      {
+        "title": "推荐",
+        "slug": "推荐",
+        "file": "推荐.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E5%B0%8F%E5%AE%87%E5%AE%99.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220519131720212.png",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/05/a45b2ef28f9f9a86-image-20220519131720212.png",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/a45b2ef28f9f9a86-image-20220519131720212.png",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/a45b2ef28f9f9a86-image-20220519131720212.png",
+    "contentType": "image/png",
+    "sizeBytes": 995925,
+    "refs": [
+      {
+        "title": "推荐",
+        "slug": "推荐",
+        "file": "推荐.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/image-20220519131720212.png",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E5%96%9C%E5%89%A7%E5%A4%A7%E8%B5%9B.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/05/32d96e6279251a13-media.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/32d96e6279251a13-media.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/32d96e6279251a13-media.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 169691,
+    "refs": [
+      {
+        "title": "推荐",
+        "slug": "推荐",
+        "file": "推荐.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E5%96%9C%E5%89%A7%E5%A4%A7%E8%B5%9B.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%80%A6%E7%84%B6%E5%BF%83%E5%8A%A81.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/09/b412d5f1ba060469-1.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/09/b412d5f1ba060469-1.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/b412d5f1ba060469-1.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 99683,
+    "refs": [
+      {
+        "title": "怦然心动",
+        "slug": "斯人若彩虹",
+        "file": "斯人若彩虹.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%80%A6%E7%84%B6%E5%BF%83%E5%8A%A81.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220夕阳.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/cecb51a8130dccf2-20210220.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/cecb51a8130dccf2-20210220.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/cecb51a8130dccf2-20210220.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 241825,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常-2",
+        "file": "日常-2.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220夕阳.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      },
+      {
+        "title": "日常",
+        "slug": "日常-2",
+        "file": "日常-2.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220夕阳.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220早餐2.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/c991a172d4c8d660-20210220-2.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/c991a172d4c8d660-20210220-2.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/c991a172d4c8d660-20210220-2.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 428793,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常-2",
+        "file": "日常-2.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220早餐2.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220早餐.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/42e27bfecaf25dd1-20210220.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/42e27bfecaf25dd1-20210220.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/42e27bfecaf25dd1-20210220.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 185667,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常-2",
+        "file": "日常-2.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220早餐.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220楼梯间.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/1b2e76e41579a3a6-20210220.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/1b2e76e41579a3a6-20210220.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/1b2e76e41579a3a6-20210220.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 212944,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常-2",
+        "file": "日常-2.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220楼梯间.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220晚餐.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/787956137b2514f5-20210220.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/787956137b2514f5-20210220.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/787956137b2514f5-20210220.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 244505,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常-2",
+        "file": "日常-2.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210220晚餐.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210218矮凳.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/3750f35ad2840653-20210218.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/3750f35ad2840653-20210218.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/3750f35ad2840653-20210218.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 2430873,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常",
+        "file": "日常.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210218矮凳.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210218keep.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/7fdaafd41a5b2069-20210218keep.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/7fdaafd41a5b2069-20210218keep.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/7fdaafd41a5b2069-20210218keep.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 242269,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常",
+        "file": "日常.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210218keep.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210218晚饭.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/02/be0a7b694be0827f-20210218.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/02/be0a7b694be0827f-20210218.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/be0a7b694be0827f-20210218.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 1910000,
+    "refs": [
+      {
+        "title": "日常",
+        "slug": "日常",
+        "file": "日常.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/02/20210218晚饭.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/one%20day.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2022/07/16dc854d1afc0688-one-day.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/07/16dc854d1afc0688-one-day.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/16dc854d1afc0688-one-day.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 308861,
+    "refs": [
+      {
+        "title": "朋友未满",
+        "slug": "朋友未满-2018",
+        "file": "朋友未满（2018）.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/one%20day.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%A1%82%E6%9E%97-1.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2015/04/1f537ec2aba39567-1.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2015/04/1f537ec2aba39567-1.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/1f537ec2aba39567-1.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 133681,
+    "refs": [
+      {
+        "title": "独行在桂林",
+        "slug": "独行在桂林",
+        "file": "独行在桂林.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%A1%82%E6%9E%97-1.jpg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      },
+      {
+        "title": "独行在桂林",
+        "slug": "独行在桂林",
+        "file": "独行在桂林.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%A1%82%E6%9E%97-1.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%A1%82%E6%9E%97-2.jpg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2015/04/eec6828283e45ff1-2.jpg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2015/04/eec6828283e45ff1-2.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/eec6828283e45ff1-2.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 412416,
+    "refs": [
+      {
+        "title": "独行在桂林",
+        "slug": "独行在桂林",
+        "file": "独行在桂林.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/uPic/%E6%A1%82%E6%9E%97-2.jpg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/11/立冬-花.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2021/11/bc8703f7bd250185-media.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2021/11/bc8703f7bd250185-media.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/bc8703f7bd250185-media.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 3067012,
+    "refs": [
+      {
+        "title": "立冬",
+        "slug": "立冬",
+        "file": "立冬.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/11/立冬-花.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      },
+      {
+        "title": "立冬",
+        "slug": "立冬",
+        "file": "立冬.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2021/11/立冬-花.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "failed",
+    "oldUrl": "https://bluesnail-assets.oss-cn-hangzhou.aliyuncs.com/uPic/IMG_0589.jpg",
+    "newUrl": null,
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2022/05/c43fa14bfa481841-IMG_0589.jpg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/c43fa14bfa481841-IMG_0589.jpg",
+    "contentType": null,
+    "sizeBytes": null,
+    "refs": [
+      {
+        "title": "立夏",
+        "slug": "立夏",
+        "file": "立夏.md",
+        "url": "https://bluesnail-assets.oss-cn-hangzhou.aliyuncs.com/uPic/IMG_0589.jpg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": false,
+        "needsMigration": true
+      }
+    ],
+    "error": "HTTP 404"
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1055.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/a72b07c004f288b8-IMG_1055.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/a72b07c004f288b8-IMG_1055.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/a72b07c004f288b8-IMG_1055.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 48662,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_1055.jpeg",
+        "type": "image",
+        "isCover": true,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2684.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/6e7085ae8c414799-IMG_2684.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/6e7085ae8c414799-IMG_2684.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/6e7085ae8c414799-IMG_2684.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 2174940,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2684.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2722.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/69861074df87d808-IMG_2722.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/69861074df87d808-IMG_2722.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/69861074df87d808-IMG_2722.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 14122025,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2722.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2965-2.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/5aa0041f9d966213-IMG_2965-2.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/5aa0041f9d966213-IMG_2965-2.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/5aa0041f9d966213-IMG_2965-2.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 12420261,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2965-2.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2968-7.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/77c16b861c498a21-IMG_2968-7.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/77c16b861c498a21-IMG_2968-7.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/77c16b861c498a21-IMG_2968-7.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 8904506,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2968-7.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2972-1.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/f83e7b02754fbaba-IMG_2972-1.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/f83e7b02754fbaba-IMG_2972-1.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/f83e7b02754fbaba-IMG_2972-1.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 9566521,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_2972-1.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_7770-1.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/239f94b5e16be7b1-IMG_7770-1.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/239f94b5e16be7b1-IMG_7770-1.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/239f94b5e16be7b1-IMG_7770-1.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 8794398,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_7770-1.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_7776.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/05/e9d614c10c6dfc59-IMG_7776.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/05/e9d614c10c6dfc59-IMG_7776.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/e9d614c10c6dfc59-IMG_7776.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 9222300,
+    "refs": [
+      {
+        "title": "花花草草",
+        "slug": "花花草草",
+        "file": "花花草草.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/04/IMG_7776.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true
+      }
+    ]
+  },
+  {
+    "status": "ready",
+    "oldUrl": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/06/%E5%B0%8F%E7%99%BD%E8%8F%8A.jpeg",
+    "newUrl": "https://wyblqoatpkvdqlnzlihz.supabase.co/storage/v1/object/public/public-media/lilisong/2020/06/6a97fff2163601f2-media.jpeg",
+    "type": "image",
+    "bucket": "public-media",
+    "storagePath": "lilisong/2020/06/6a97fff2163601f2-media.jpeg",
+    "cachePath": "/Users/a/lili-space/.migration-cache/lilisong-media/6a97fff2163601f2-media.jpeg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 189911,
+    "refs": [
+      {
+        "title": "夏至",
+        "slug": "夏至",
+        "file": "夏至.md",
+        "url": "https://lilisong-assets.oss-cn-hangzhou.aliyuncs.com/2020/06/%E5%B0%8F%E7%99%BD%E8%8F%8A.jpeg",
+        "type": "image",
+        "isCover": false,
+        "likelyLilisongOss": true,
+        "needsMigration": true,
+        "note": "Discovered in migrated markdown video poster attribute during media migration validation."
+      }
+    ]
+  }
+]
