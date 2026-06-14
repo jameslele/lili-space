@@ -115,8 +115,8 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
     setSaveState("submitting");
   }
 
-  function insertMarkdownImage(asset: AdminMediaAsset) {
-    const imageMarkdown = `![${escapeMarkdownAlt(asset.alt || asset.file_name)}](${asset.public_url})`;
+  function insertMedia(asset: AdminMediaAsset) {
+    const mediaMarkdown = createMediaSnippet(asset);
 
     if (crepeRef.current) {
       let usedSavedCursor = false;
@@ -125,7 +125,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
         if (!view.hasFocus()) {
           usedSavedCursor = restoreLastEditorSelection(ctx, lastSelectionRef.current);
         }
-        insert(imageMarkdown, true)(ctx);
+        insert(mediaMarkdown, true)(ctx);
         lastSelectionRef.current = {
           from: view.state.selection.from,
           to: view.state.selection.to,
@@ -135,15 +135,15 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
       const nextMarkdown = crepeRef.current.getMarkdown();
       setMarkdown(nextMarkdown);
       if (markdownInputRef.current) markdownInputRef.current.value = nextMarkdown;
-      setInsertState(usedSavedCursor ? "图片已插入到刚才的光标位置，保存后会进入文章内容。" : "图片已插入编辑区，保存后会进入文章内容。");
+      setInsertState(usedSavedCursor ? "媒体已插入到刚才的光标位置，保存后会进入文章内容。" : "媒体已插入编辑区，保存后会进入文章内容。");
       setSaveState("dirty");
       return;
     }
 
-    const nextMarkdown = `${markdown.trimEnd()}\n\n${imageMarkdown}\n`;
+    const nextMarkdown = `${markdown.trimEnd()}\n\n${mediaMarkdown}\n`;
     setMarkdown(nextMarkdown);
     if (markdownInputRef.current) markdownInputRef.current.value = nextMarkdown;
-    setInsertState("图片已追加到正文末尾，保存后会进入文章内容。");
+    setInsertState("媒体已追加到正文末尾，保存后会进入文章内容。");
     setSaveState("dirty");
   }
 
@@ -156,7 +156,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
     setSaveState("dirty");
   }
 
-  async function uploadImage(file: File, purpose: "cover" | "body") {
+  async function uploadMedia(file: File, purpose: "cover" | "body") {
     const formData = new FormData();
     formData.set("intent", "upload");
     formData.set("file", file);
@@ -165,7 +165,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
     formData.set("alt", file.name.replace(/\.[^.]+$/, ""));
     formData.set("featured", "false");
     setUploadState("上传中...");
-    setLoadingMessage(purpose === "cover" ? "正在上传封面..." : "正在上传图片...");
+    setLoadingMessage(purpose === "cover" ? "正在上传封面..." : "正在上传媒体...");
 
     try {
       const response = await fetch("/admin/media/action", {
@@ -184,7 +184,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
 
       setAvailableMedia((items) => [result.asset!, ...items]);
       if (purpose === "cover") selectCover(result.asset);
-      if (purpose === "body") insertMarkdownImage(result.asset);
+      if (purpose === "body") insertMedia(result.asset);
       setUploadState("上传成功。");
     } finally {
       setLoadingMessage("");
@@ -349,15 +349,15 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
                 <span className="font-medium">上传为封面</span>
                 <input className="min-h-10 border border-[var(--color-line)] bg-white px-3 py-2" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => {
                   const file = event.target.files?.[0];
-                  if (file) void uploadImage(file, "cover");
+                  if (file) void uploadMedia(file, "cover");
                   event.currentTarget.value = "";
                 }} />
               </label>
               <label className="grid gap-1">
                 <span className="font-medium">上传并插入正文</span>
-                <input className="min-h-10 border border-[var(--color-line)] bg-white px-3 py-2" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => {
+                <input className="min-h-10 border border-[var(--color-line)] bg-white px-3 py-2" type="file" accept="image/jpeg,image/png,image/webp,image/gif,audio/mpeg,audio/mp4,audio/wav,video/mp4,video/quicktime,video/webm" onChange={(event) => {
                   const file = event.target.files?.[0];
-                  if (file) void uploadImage(file, "body");
+                  if (file) void uploadMedia(file, "body");
                   event.currentTarget.value = "";
                 }} />
               </label>
@@ -367,17 +367,25 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
             <div className="mt-5 max-h-72 space-y-3 overflow-auto">
               {availableMedia.length > 0 ? availableMedia.map((asset) => (
                 <article className="grid grid-cols-[72px_1fr] gap-3 border border-[var(--color-line)] bg-[#fdfbf7] p-2" key={asset.id}>
-                  <img className="h-16 w-16 object-cover" src={asset.display_url || asset.public_url} alt={asset.alt || asset.file_name} />
+                  {asset.mime_type.startsWith("image/") ? (
+                    <img className="h-16 w-16 object-cover" src={asset.display_url || asset.public_url} alt={asset.alt || asset.file_name} />
+                  ) : (
+                    <div className="flex h-16 w-16 items-center justify-center border border-[var(--color-line)] bg-white text-xs text-[var(--color-muted)]">
+                      {asset.mime_type.startsWith("audio/") ? "音频" : asset.mime_type.startsWith("video/") ? "视频" : "文件"}
+                    </div>
+                  )}
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{asset.file_name}</p>
                     <p className="text-xs text-[var(--color-muted)]">{asset.bucket === "private-media" ? "仅自己可见" : "公开"}</p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onPointerDown={(event) => event.preventDefault()} onMouseDown={(event) => event.preventDefault()} onClick={() => selectCover(asset)}>设为封面</button>
-                      <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onPointerDown={(event) => event.preventDefault()} onMouseDown={(event) => event.preventDefault()} onClick={() => insertMarkdownImage(asset)}>插入正文</button>
+                      {asset.mime_type.startsWith("image/") && (
+                        <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onPointerDown={(event) => event.preventDefault()} onMouseDown={(event) => event.preventDefault()} onClick={() => selectCover(asset)}>设为封面</button>
+                      )}
+                      <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onPointerDown={(event) => event.preventDefault()} onMouseDown={(event) => event.preventDefault()} onClick={() => insertMedia(asset)}>插入正文</button>
                     </div>
                   </div>
                 </article>
-              )) : <p className="text-sm text-[var(--color-muted)]">还没有可选择的图片。</p>}
+              )) : <p className="text-sm text-[var(--color-muted)]">还没有可选择的媒体。</p>}
             </div>
           </section>
 
@@ -424,6 +432,22 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
 
 function escapeMarkdownAlt(value: string) {
   return value.replace(/[[\]]/g, "");
+}
+
+function escapeHtmlAttribute(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function createMediaSnippet(asset: AdminMediaAsset) {
+  const alt = escapeMarkdownAlt(asset.alt || asset.file_name);
+  if (asset.mime_type.startsWith("image/")) return `![${alt}](${asset.public_url})`;
+  if (asset.mime_type.startsWith("audio/")) {
+    return `<audio controls src="${escapeHtmlAttribute(asset.public_url)}"></audio>`;
+  }
+  if (asset.mime_type.startsWith("video/")) {
+    return `<video controls src="${escapeHtmlAttribute(asset.public_url)}"></video>`;
+  }
+  return `[${alt}](${asset.public_url})`;
 }
 
 function restoreLastEditorSelection(ctx: Parameters<Parameters<Crepe["editor"]["action"]>[0]>[0], selection: { from: number; to: number } | null) {

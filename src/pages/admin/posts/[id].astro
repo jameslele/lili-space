@@ -3,12 +3,12 @@ import AdminPageHeader from "../../../components/admin/AdminPageHeader.astro";
 import AdminStatusBadge from "../../../components/admin/AdminStatusBadge.astro";
 import PostEditor from "../../../components/admin/PostEditor";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
-import { getAdminPostById, listAdminCategories, listAdminImageMedia, listAdminTags } from "../../../lib/admin";
+import { getAdminPostById, listAdminCategories, listAdminMediaForPicker, listAdminTags } from "../../../lib/admin";
 
 const post = await getAdminPostById(Astro.params.id ?? "");
 if (!post) return Astro.redirect("/admin/posts", 303);
 
-const [categories, tags, mediaAssets] = await Promise.all([listAdminCategories(), listAdminTags(), listAdminImageMedia({ limit: 40 })]);
+const [categories, tags, mediaAssets] = await Promise.all([listAdminCategories(), listAdminTags(), listAdminMediaForPicker({ limit: 40 })]);
 const success = Astro.url.searchParams.get("success");
 const error = Astro.url.searchParams.get("error");
 ---

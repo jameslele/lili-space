@@ -63,6 +63,10 @@ export interface GalleryAsset {
   width: number | null;
   height: number | null;
   created_at: string;
+  bucket: string;
+  storage_path: string;
+  featured: boolean;
+  sort_order: number;
 }
 
 export interface PaginatedResult<T> {
@@ -272,8 +276,10 @@ export async function getFeaturedGalleryAssets(viewer: Viewer) {
   const supabase = createServiceRoleSupabaseClient();
   let query = supabase
     .from("media_assets")
-    .select("id, file_name, public_url, alt, caption, width, height, created_at, bucket, storage_path, featured")
+    .select("id, file_name, public_url, alt, caption, width, height, created_at, bucket, storage_path, featured, sort_order")
     .eq("featured", true)
+    .ilike("mime_type", "image/%")
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (!canViewAllPosts(viewer)) query = query.eq("bucket", "public-media");
@@ -301,8 +307,10 @@ export async function getFeaturedGalleryAssetsPage(
   const supabase = createServiceRoleSupabaseClient();
   let query = supabase
     .from("media_assets")
-    .select("id, file_name, public_url, alt, caption, width, height, created_at, bucket, storage_path, featured", { count: "exact" })
+    .select("id, file_name, public_url, alt, caption, width, height, created_at, bucket, storage_path, featured, sort_order", { count: "exact" })
     .eq("featured", true)
+    .ilike("mime_type", "image/%")
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false })
     .range(from, to);
 
@@ -440,7 +448,8 @@ async function countFeaturedGalleryAssets(viewer: Viewer) {
   let query = supabase
     .from("media_assets")
     .select("id", { count: "exact", head: true })
-    .eq("featured", true);
+    .eq("featured", true)
+    .ilike("mime_type", "image/%");
 
   if (!canViewAllPosts(viewer)) query = query.eq("bucket", "public-media");
 

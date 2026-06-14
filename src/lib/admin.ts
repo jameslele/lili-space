@@ -54,6 +54,7 @@ export interface AdminMediaAsset {
   alt: string | null;
   caption: string | null;
   featured: boolean;
+  sort_order: number;
   created_at: string;
   size_bytes: number | null;
   posts: { id: string; title: string; slug: string } | { id: string; title: string; slug: string }[] | null;
@@ -304,10 +305,15 @@ export async function listAdminMediaPage(options: AdminMediaListOptions = {}): P
 
   let query = supabase
     .from("media_assets")
-    .select("id, file_name, mime_type, bucket, storage_path, public_url, alt, caption, featured, created_at, size_bytes, posts!media_assets_post_id_fkey(id, title, slug)", { count: "exact" })
-    .order("created_at", { ascending: false });
+    .select("id, file_name, mime_type, bucket, storage_path, public_url, alt, caption, featured, sort_order, created_at, size_bytes, posts!media_assets_post_id_fkey(id, title, slug)", { count: "exact" });
 
-  if (options.featuredOnly) query = query.eq("featured", true);
+  if (options.featuredOnly) {
+    query = query.order("sort_order", { ascending: true }).order("created_at", { ascending: false });
+  } else {
+    query = query.order("created_at", { ascending: false });
+  }
+
+  if (options.featuredOnly) query = query.eq("featured", true).ilike("mime_type", "image/%");
   if (options.featured === "featured") query = query.eq("featured", true);
   if (options.featured === "normal") query = query.eq("featured", false);
   if (options.visibility === "public") query = query.eq("bucket", supabaseEnv.publicBucket);
@@ -359,8 +365,13 @@ export async function listAdminImageMedia(options: { limit?: number } = {}) {
   return options.limit ? images.slice(0, options.limit) : images;
 }
 
+export async function listAdminMediaForPicker(options: { limit?: number } = {}) {
+  const assets = await listAdminMedia();
+  return options.limit ? assets.slice(0, options.limit) : assets;
+}
+
 export async function uploadAdminMedia(input: UploadAdminMediaInput) {
-  validateUploadImage(input.file);
+  const mediaKind = validateUploadMedia(input.file);
   const supabase = createServiceRoleSupabaseClient();
   const bucket = resolveBucketForPostVisibility(input.visibility);
   const storagePath = await buildUploadPath(input.file);
@@ -385,14 +396,14 @@ export async function uploadAdminMedia(input: UploadAdminMediaInput) {
     public_url: publicUrl,
     alt: input.alt?.trim() || stripExtension(input.file.name),
     caption: input.caption?.trim() || null,
-    featured: input.featured ?? false,
+    featured: mediaKind === "image" ? input.featured ?? false : false,
     size_bytes: input.file.size,
   };
 
   const { data, error } = await supabase
     .from("media_assets")
     .insert(record)
-    .select("id, file_name, mime_type, bucket, storage_path, public_url, alt, caption, featured, created_at, size_bytes, posts!media_assets_post_id_fkey(id, title, slug)")
+    .select("id, file_name, mime_type, bucket, storage_path, public_url, alt, caption, featured, sort_order, created_at, size_bytes, posts!media_assets_post_id_fkey(id, title, slug)")
     .single();
 
   if (error) {
@@ -408,8 +419,49 @@ export async function uploadAdminMedia(input: UploadAdminMediaInput) {
 }
 
 export async function toggleMediaFeatured(id: string, featured: boolean) {
-  const { error } = await createServiceRoleSupabaseClient().from("media_assets").update({ featured }).eq("id", id);
+  const supabase = createServiceRoleSupabaseClient();
+  const { data: asset, error: readError } = await supabase
+    .from("media_assets")
+    .select("mime_type, sort_order")
+    .eq("id", id)
+    .single();
+  if (readError) throw readError;
+  if (featured && !asset.mime_type.startsWith("image/")) throw new Error("只有图片可以加入照片精选");
+
+  const payload: { featured: boolean; sort_order?: number } = { featured };
+  if (featured && asset.sort_order === 0) payload.sort_order = await getNextFeaturedSortOrder(supabase);
+
+  const { error } = await supabase.from("media_assets").update(payload).eq("id", id);
   if (error) throw error;
+}
+
+export async function moveFeaturedMedia(id: string, direction: "up" | "down") {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data, error } = await supabase
+    .from("media_assets")
+    .select("id, sort_order, created_at")
+    .eq("featured", true)
+    .ilike("mime_type", "image/%")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+
+  const assets = data ?? [];
+  const currentIndex = assets.findIndex((asset) => asset.id === id);
+  if (currentIndex < 0) throw new Error("没有找到精选图片");
+  const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+  if (targetIndex < 0 || targetIndex >= assets.length) return;
+
+  await normalizeMediaSortOrders(assets);
+  const current = assets[currentIndex];
+  const target = assets[targetIndex];
+  const currentOrder = (currentIndex + 1) * 10;
+  const targetOrder = (targetIndex + 1) * 10;
+
+  const { error: currentError } = await supabase.from("media_assets").update({ sort_order: targetOrder }).eq("id", current.id);
+  if (currentError) throw currentError;
+  const { error: targetError } = await supabase.from("media_assets").update({ sort_order: currentOrder }).eq("id", target.id);
+  if (targetError) throw targetError;
 }
 
 export async function updateMediaMeta(id: string, input: { alt?: string; caption?: string }) {
@@ -761,10 +813,29 @@ function stripExtension(name: string) {
   return dotIndex > 0 ? name.slice(0, dotIndex) : name;
 }
 
-function validateUploadImage(file: File) {
-  const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-  if (!allowedTypes.has(file.type)) throw new Error("只支持上传 JPG、PNG、WebP 或 GIF 图片");
-  if (file.size > 10 * 1024 * 1024) throw new Error("图片不能超过 10MB");
+type UploadMediaKind = "image" | "audio" | "video";
+
+const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const allowedAudioTypes = new Set(["audio/mpeg", "audio/mp4", "audio/wav"]);
+const allowedVideoTypes = new Set(["video/mp4", "video/quicktime", "video/webm"]);
+
+function validateUploadMedia(file: File): UploadMediaKind {
+  if (allowedImageTypes.has(file.type)) {
+    if (file.size > 10 * 1024 * 1024) throw new Error("图片不能超过 10MB");
+    return "image";
+  }
+
+  if (allowedAudioTypes.has(file.type)) {
+    if (file.size > 50 * 1024 * 1024) throw new Error("音频不能超过 50MB");
+    return "audio";
+  }
+
+  if (allowedVideoTypes.has(file.type)) {
+    if (file.size > 50 * 1024 * 1024) throw new Error("视频不能超过 50MB");
+    return "video";
+  }
+
+  throw new Error("只支持上传 JPG、PNG、WebP、GIF 图片，以及 MP3、M4A、WAV、MP4、MOV、WebM 音视频");
 }
 
 function clampInteger(value: number, min: number, max: number) {
@@ -780,6 +851,27 @@ async function createPrivateMediaSignedUrl(storagePath: string, supabase: Return
   const { data, error } = await supabase.storage.from(supabaseEnv.privateBucket).createSignedUrl(storagePath, 60 * 60);
   if (error) throw error;
   return data.signedUrl;
+}
+
+async function getNextFeaturedSortOrder(supabase: ReturnType<typeof createServiceRoleSupabaseClient>) {
+  const { data, error } = await supabase
+    .from("media_assets")
+    .select("sort_order")
+    .eq("featured", true)
+    .ilike("mime_type", "image/%")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return (data?.sort_order ?? 0) + 10;
+}
+
+async function normalizeMediaSortOrders(assets: { id: string }[]) {
+  const supabase = createServiceRoleSupabaseClient();
+  for (const [index, asset] of assets.entries()) {
+    const { error } = await supabase.from("media_assets").update({ sort_order: (index + 1) * 10 }).eq("id", asset.id);
+    if (error) throw error;
+  }
 }
 
 type RawAdminPost = Omit<AdminPost, "category" | "tags"> & {

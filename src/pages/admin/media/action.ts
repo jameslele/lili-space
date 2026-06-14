@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 
 import {
   deleteAdminMediaAssets,
+  moveFeaturedMedia,
   toggleMediaFeatured,
   updateMediaMeta,
   uploadAdminMedia,
@@ -19,7 +20,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     if (intent === "upload") {
       const file = formData.get("file");
-      if (!(file instanceof File) || file.size === 0) throw new Error("请选择要上传的图片");
+      if (!(file instanceof File) || file.size === 0) throw new Error("请选择要上传的文件");
 
       const asset = await uploadAdminMedia({
         file,
@@ -37,6 +38,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (intent === "featured") {
       await toggleMediaFeatured(String(formData.get("id") ?? ""), formData.get("featured") === "true");
       return respond(request, { ok: true }, next || "/admin/media?success=featured");
+    }
+
+    if (intent === "gallery_order") {
+      await moveFeaturedMedia(
+        String(formData.get("id") ?? ""),
+        formData.get("direction") === "down" ? "down" : "up",
+      );
+      return respond(request, { ok: true }, next || "/admin/gallery?success=sorted");
     }
 
     if (intent === "meta") {

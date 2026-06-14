@@ -1,15 +1,20 @@
 ---
 import AdminActionButton from "../../components/admin/AdminActionButton.astro";
-import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
 import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
-import AdminStatCard from "../../components/admin/AdminStatCard.astro";
-import AdminStatusBadge from "../../components/admin/AdminStatusBadge.astro";
 import AdminTable from "../../components/admin/AdminTable.astro";
 import AdminLayout from "../../layouts/AdminLayout.astro";
-import { formatAdminDate, getAdminDashboardStats } from "../../lib/admin";
 
 const currentUser = Astro.locals.currentUser;
-const { counts, recentPosts } = await getAdminDashboardStats();
+const statCards = [
+  ["posts", "文章总数"],
+  ["published", "已发布"],
+  ["drafts", "草稿"],
+  ["privatePosts", "仅自己可见"],
+  ["categories", "分类"],
+  ["tags", "标签"],
+  ["media", "媒体"],
+  ["users", "用户"],
+];
 ---
 
 <AdminLayout title="后台 - 理哩的个人空间">
@@ -18,21 +23,27 @@ const { counts, recentPosts } = await getAdminDashboardStats();
     <AdminActionButton href="/">前往前台</AdminActionButton>
   </AdminPageHeader>
 
-  <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-    <AdminStatCard label="文章总数" value={counts.posts} />
-    <AdminStatCard label="已发布" value={counts.published} />
-    <AdminStatCard label="草稿" value={counts.drafts} />
-    <AdminStatCard label="仅自己可见" value={counts.privatePosts} />
-    <AdminStatCard label="分类" value={counts.categories} />
-    <AdminStatCard label="标签" value={counts.tags} />
-    <AdminStatCard label="媒体" value={counts.media} />
-    <AdminStatCard label="用户" value={counts.users} />
+  <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-live="polite">
+    {statCards.map(([key, label]) => (
+      <article class="border border-[var(--color-line)] bg-white p-5">
+        <p class="text-sm text-[var(--color-muted)]">{label}</p>
+        <p class="mt-3 flex min-h-10 items-center font-serif-title text-3xl font-semibold text-[var(--color-ink)]" data-stat-value={key}>
+          <span class="h-7 w-7 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]" aria-label="加载中"></span>
+        </p>
+      </article>
+    ))}
   </section>
 
   <section class="mt-8 grid gap-6 xl:grid-cols-[1fr_300px]">
     <div>
       <h2 class="mb-3 font-serif-title text-2xl font-semibold">最近编辑</h2>
-      {recentPosts.length > 0 ? (
+      <div class="border border-[var(--color-line)] bg-white p-6" data-recent-loading>
+        <div class="flex items-center gap-3 text-sm text-[var(--color-muted)]">
+          <span class="h-5 w-5 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span>
+          <span>正在加载最近编辑...</span>
+        </div>
+      </div>
+      <div class="hidden" data-recent-table>
         <AdminTable>
           <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
             <tr>
@@ -43,23 +54,13 @@ const { counts, recentPosts } = await getAdminDashboardStats();
               <th class="px-4 py-3 font-medium">操作</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-[var(--color-line)]">
-            {recentPosts.map((post) => (
-              <tr>
-                <td class="min-w-64 px-4 py-3 font-medium">{post.title}</td>
-                <td class="px-4 py-3"><AdminStatusBadge value={post.status} tone={post.status === "published" ? "green" : post.status === "draft" ? "amber" : "neutral"} /></td>
-                <td class="px-4 py-3"><AdminStatusBadge value={post.visibility} tone={post.visibility === "private" ? "blue" : "neutral"} /></td>
-                <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.updated_at)}</td>
-                <td class="px-4 py-3"><a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>查看</a></td>
-              </tr>
-            ))}
-          </tbody>
+          <tbody class="divide-y divide-[var(--color-line)]" data-recent-body></tbody>
         </AdminTable>
-      ) : (
-        <AdminEmptyState title="还没有文章" description="下一阶段接入编辑器后，可以从这里回到写作。">
-          <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
-        </AdminEmptyState>
-      )}
+      </div>
+      <div class="hidden border border-dashed border-[var(--color-line)] bg-white p-6 text-sm leading-7 text-[var(--color-muted)]" data-recent-empty>
+        还没有文章。可以从右侧快捷入口新建第一篇文章。
+      </div>
+      <div class="hidden border border-red-200 bg-red-50 p-4 text-sm text-red-800" data-dashboard-error></div>
     </div>
 
     <aside class="border border-[var(--color-line)] bg-white p-5">
@@ -75,3 +76,139 @@ const { counts, recentPosts } = await getAdminDashboardStats();
     </aside>
   </section>
 </AdminLayout>
+
+<script>
+  type DashboardPost = {
+    id: string;
+    title: string;
+    status: "draft" | "published" | "archived";
+    visibility: "public" | "private";
+    updated_at: string;
+  };
+
+  type DashboardPayload = {
+    counts: Record<string, number>;
+    recentPosts: DashboardPost[];
+  };
+
+  const statusCopy = {
+    draft: "草稿",
+    published: "已发布",
+    archived: "已归档",
+    public: "公开",
+    private: "仅自己可见",
+  };
+
+  loadDashboard();
+
+  async function loadDashboard() {
+    try {
+      const response = await fetch("/admin/dashboard/data", { headers: { accept: "application/json" } });
+      const payload = await response.json() as DashboardPayload | { error?: string };
+      if (!response.ok || isErrorPayload(payload)) throw new Error(isErrorPayload(payload) ? payload.error || "总览数据加载失败" : "总览数据加载失败");
+      renderCounts(payload.counts);
+      renderRecentPosts(payload.recentPosts);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "总览数据加载失败";
+      document.querySelectorAll("[data-stat-value]").forEach((item) => {
+        item.textContent = "-";
+      });
+      const loading = document.querySelector("[data-recent-loading]");
+      const errorBox = document.querySelector("[data-dashboard-error]");
+      loading?.classList.add("hidden");
+      if (errorBox instanceof HTMLElement) {
+        errorBox.textContent = message;
+        errorBox.classList.remove("hidden");
+      }
+    }
+  }
+
+  function renderCounts(counts: Record<string, number>) {
+    for (const [key, value] of Object.entries(counts)) {
+      const target = document.querySelector(`[data-stat-value="${key}"]`);
+      if (target) target.textContent = String(value);
+    }
+  }
+
+  function isErrorPayload(payload: DashboardPayload | { error?: string }): payload is { error?: string } {
+    return "error" in payload;
+  }
+
+  function renderRecentPosts(posts: DashboardPost[]) {
+    const loading = document.querySelector("[data-recent-loading]");
+    const table = document.querySelector("[data-recent-table]");
+    const body = document.querySelector("[data-recent-body]");
+    const empty = document.querySelector("[data-recent-empty]");
+    loading?.classList.add("hidden");
+
+    if (!body) return;
+    body.textContent = "";
+    if (posts.length === 0) {
+      empty?.classList.remove("hidden");
+      return;
+    }
+
+    for (const post of posts) {
+      body.appendChild(createRecentRow(post));
+    }
+    table?.classList.remove("hidden");
+  }
+
+  function createRecentRow(post: DashboardPost) {
+    const row = document.createElement("tr");
+    row.appendChild(createCell(post.title, "min-w-64 px-4 py-3 font-medium"));
+
+    const statusCell = document.createElement("td");
+    statusCell.className = "px-4 py-3";
+    statusCell.appendChild(createBadge(statusCopy[post.status], post.status));
+    row.appendChild(statusCell);
+
+    const visibilityCell = document.createElement("td");
+    visibilityCell.className = "px-4 py-3";
+    visibilityCell.appendChild(createBadge(statusCopy[post.visibility], post.visibility));
+    row.appendChild(visibilityCell);
+
+    row.appendChild(createCell(formatDate(post.updated_at), "whitespace-nowrap px-4 py-3 text-[var(--color-muted)]"));
+
+    const actionCell = document.createElement("td");
+    actionCell.className = "px-4 py-3";
+    const link = document.createElement("a");
+    link.className = "font-medium hover:underline";
+    link.href = `/admin/posts/${post.id}`;
+    link.textContent = "查看";
+    actionCell.appendChild(link);
+    row.appendChild(actionCell);
+    return row;
+  }
+
+  function createCell(text: string, className: string) {
+    const cell = document.createElement("td");
+    cell.className = className;
+    cell.textContent = text;
+    return cell;
+  }
+
+  function createBadge(text: string, tone: DashboardPost["status"] | DashboardPost["visibility"]) {
+    const badge = document.createElement("span");
+    const toneClass = tone === "published"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+      : tone === "draft"
+        ? "border-amber-200 bg-amber-50 text-amber-800"
+        : tone === "private"
+          ? "border-sky-200 bg-sky-50 text-sky-800"
+          : "border-[var(--color-line)] bg-white text-[var(--color-muted)]";
+    badge.className = `inline-flex items-center border px-2 py-1 text-xs font-medium ${toneClass}`;
+    badge.textContent = text;
+    return badge;
+  }
+
+  function formatDate(value: string) {
+    return new Intl.DateTimeFormat("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(value));
+  }
+</script>

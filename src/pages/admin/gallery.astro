@@ -1,12 +1,19 @@
 ---
 import AdminActionButton from "../../components/admin/AdminActionButton.astro";
 import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
+import AdminNotice from "../../components/admin/AdminNotice.astro";
 import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
 import AdminTable from "../../components/admin/AdminTable.astro";
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import { formatAdminDate, listAdminMedia } from "../../lib/admin";
 
 const assets = await listAdminMedia({ featuredOnly: true });
+const success = Astro.url.searchParams.get("success");
+const successMessage = {
+  sorted: "照片顺序已更新。",
+  featured: "精选状态已更新。",
+  updated: "照片信息已更新。",
+}[success ?? ""];
 ---
 
 <AdminLayout title="Gallery - 理哩后台">
@@ -14,8 +21,20 @@ const assets = await listAdminMedia({ featuredOnly: true });
     <AdminActionButton href="/admin/media">查看媒体</AdminActionButton>
   </AdminPageHeader>
 
+  <AdminNotice message={successMessage} tone="success" />
+
   {assets.length > 0 ? (
     <AdminTable>
+      <colgroup>
+        <col class="w-24" />
+        <col class="w-60" />
+        <col class="w-20" />
+        <col class="w-[360px]" />
+        <col class="w-40" />
+        <col class="w-44" />
+        <col class="w-36" />
+        <col class="w-28" />
+      </colgroup>
       <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
         <tr>
           <th class="px-4 py-3 font-medium">预览</th>
@@ -24,21 +43,22 @@ const assets = await listAdminMedia({ featuredOnly: true });
           <th class="px-4 py-3 font-medium">说明</th>
           <th class="px-4 py-3 font-medium">关联文章</th>
           <th class="px-4 py-3 font-medium">创建时间</th>
+          <th class="px-4 py-3 font-medium">顺序</th>
           <th class="px-4 py-3 font-medium">操作</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-[var(--color-line)]">
-        {assets.map((asset) => {
+        {assets.map((asset, index) => {
           const post = Array.isArray(asset.posts) ? asset.posts[0] : asset.posts;
           return (
             <tr>
-              <td class="px-4 py-3"><img class="h-20 w-28 border border-[var(--color-line)] object-cover" src={asset.display_url || asset.public_url} alt={asset.alt || asset.file_name} loading="lazy" /></td>
-              <td class="min-w-72 px-4 py-3">
-                <p class="font-medium">{asset.file_name}</p>
-                <p class="mt-1 max-w-md break-all text-xs text-[var(--color-muted)]">{asset.storage_path}</p>
+              <td class="px-4 py-3"><img class="h-20 w-20 border border-[var(--color-line)] object-cover" src={asset.display_url || asset.public_url} alt={asset.alt || asset.file_name} loading="lazy" /></td>
+              <td class="w-60 max-w-60 px-4 py-3">
+                <p class="break-words font-medium">{asset.file_name}</p>
+                <p class="mt-1 break-all text-xs text-[var(--color-muted)]">{asset.storage_path}</p>
               </td>
               <td class="whitespace-nowrap px-4 py-3">{asset.bucket === "private-media" ? "仅自己可见" : "公开"}</td>
-              <td class="min-w-[300px] px-4 py-3">
+              <td class="w-[360px] px-4 py-3">
                 <form class="grid gap-2" method="post" action="/admin/media/action">
                   <input type="hidden" name="intent" value="meta" />
                   <input type="hidden" name="id" value={asset.id} />
@@ -54,8 +74,26 @@ const assets = await listAdminMedia({ featuredOnly: true });
                   <AdminActionButton type="submit">保存</AdminActionButton>
                 </form>
               </td>
-              <td class="min-w-56 px-4 py-3">{post ? <a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a> : <span class="text-[var(--color-muted)]">未关联</span>}</td>
+              <td class="w-40 max-w-40 px-4 py-3">{post ? <a class="break-words font-medium hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a> : <span class="text-[var(--color-muted)]">未关联</span>}</td>
               <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(asset.created_at)}</td>
+              <td class="px-4 py-3">
+                <div class="flex gap-2">
+                  <form method="post" action="/admin/media/action">
+                    <input type="hidden" name="intent" value="gallery_order" />
+                    <input type="hidden" name="id" value={asset.id} />
+                    <input type="hidden" name="direction" value="up" />
+                    <input type="hidden" name="next" value="/admin/gallery?success=sorted" />
+                    <button class="inline-flex min-h-9 w-14 items-center justify-center border border-[var(--color-line)] bg-white px-2 text-xs font-medium text-[var(--color-ink)] transition hover:bg-[#f8f4ec] disabled:cursor-not-allowed disabled:opacity-40" type="submit" disabled={index === 0}>上移</button>
+                  </form>
+                  <form method="post" action="/admin/media/action">
+                    <input type="hidden" name="intent" value="gallery_order" />
+                    <input type="hidden" name="id" value={asset.id} />
+                    <input type="hidden" name="direction" value="down" />
+                    <input type="hidden" name="next" value="/admin/gallery?success=sorted" />
+                    <button class="inline-flex min-h-9 w-14 items-center justify-center border border-[var(--color-line)] bg-white px-2 text-xs font-medium text-[var(--color-ink)] transition hover:bg-[#f8f4ec] disabled:cursor-not-allowed disabled:opacity-40" type="submit" disabled={index === assets.length - 1}>下移</button>
+                  </form>
+                </div>
+              </td>
               <td class="px-4 py-3">
                 <form method="post" action="/admin/media/action">
                   <input type="hidden" name="intent" value="featured" />
@@ -74,3 +112,16 @@ const assets = await listAdminMedia({ featuredOnly: true });
     <AdminEmptyState title="还没有精选照片" description="可以在媒体页把图片设为精选，精选图片会显示在前台照片页。" />
   )}
 </AdminLayout>
+
+<script>
+  const loadingOverlay = document.createElement("div");
+  loadingOverlay.className = "fixed inset-0 z-50 hidden items-center justify-center bg-[#f7f5f1]/70 backdrop-blur-sm";
+  loadingOverlay.innerHTML = '<div class="flex min-w-48 flex-col items-center gap-4 border border-[var(--color-line)] bg-white px-8 py-7 text-center shadow-sm"><span class="h-9 w-9 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span><span class="text-sm font-medium text-[var(--color-ink)]">正在处理...</span></div>';
+  document.body.appendChild(loadingOverlay);
+
+  document.addEventListener("submit", (event) => {
+    if (!(event.target instanceof HTMLFormElement)) return;
+    loadingOverlay.classList.remove("hidden");
+    loadingOverlay.classList.add("flex");
+  });
+</script>
