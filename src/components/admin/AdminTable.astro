@@ -1,0 +1,13 @@
+---
+interface Props {
+  labelledBy?: string;
+}
+
+const { labelledBy } = Astro.props;
+---
+
+<div class="overflow-x-auto border border-[var(--color-line)] bg-white">
+  <table class="min-w-full divide-y divide-[var(--color-line)] text-left text-sm" aria-labelledby={labelledBy}>
+    <slot />
+  </table>
+</div>

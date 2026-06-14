@@ -1,0 +1,36 @@
+---
+import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
+import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
+import AdminTable from "../../components/admin/AdminTable.astro";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { formatAdminDate, listAdminSiteSettings } from "../../lib/admin";
+
+const settings = await listAdminSiteSettings();
+---
+
+<AdminLayout title="设置 - 理哩后台">
+  <AdminPageHeader eyebrow="Settings" title="站点设置" description="本阶段先读取 site_settings；复杂保存和表单拆分放到后续设置阶段。" />
+
+  {settings.length > 0 ? (
+    <AdminTable>
+      <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+        <tr>
+          <th class="px-4 py-3 font-medium">Key</th>
+          <th class="px-4 py-3 font-medium">Value</th>
+          <th class="px-4 py-3 font-medium">更新时间</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[var(--color-line)]">
+        {settings.map((setting) => (
+          <tr>
+            <td class="min-w-48 px-4 py-3 font-medium">{setting.key}</td>
+            <td class="min-w-[420px] px-4 py-3"><pre class="whitespace-pre-wrap break-all text-xs leading-6 text-[var(--color-muted)]">{JSON.stringify(setting.value, null, 2)}</pre></td>
+            <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(setting.updated_at)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </AdminTable>
+  ) : (
+    <AdminEmptyState title="还没有站点设置" description="site_settings 当前为空。后续可以在这里管理站点标题、描述、头像、社交链接等配置。" />
+  )}
+</AdminLayout>

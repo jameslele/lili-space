@@ -1,0 +1,26 @@
+---
+interface Props {
+  href?: string;
+  type?: "button" | "submit";
+  variant?: "primary" | "secondary" | "quiet" | "danger";
+}
+
+const { href, type = "button", variant = "secondary" } = Astro.props;
+const className = [
+  "inline-flex min-h-10 items-center justify-center border px-3 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)] focus:ring-offset-2",
+  variant === "primary" && "border-[var(--color-ink)] bg-[var(--color-ink)] text-white hover:bg-black",
+  variant === "secondary" && "border-[var(--color-line)] bg-white text-[var(--color-ink)] hover:bg-[#f2eee6]",
+  variant === "quiet" && "border-transparent text-[var(--color-muted)] hover:border-[var(--color-line)] hover:bg-white hover:text-[var(--color-ink)]",
+  variant === "danger" && "border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
+].filter(Boolean).join(" ");
+---
+
+{href ? (
+  <a class={className} href={href}>
+    <slot />
+  </a>
+) : (
+  <button class={className} type={type}>
+    <slot />
+  </button>
+)}

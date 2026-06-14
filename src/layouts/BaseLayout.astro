@@ -17,6 +17,8 @@ const navItems: Array<{ href: string; label: string }> = [
 ];
 const leftNavItems = navItems;
 const isAdmin = currentUser?.role === "admin";
+const currentPath = Astro.url.pathname;
+const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : currentPath === href || currentPath.startsWith(`${href}/`);
 ---
 
 <!doctype html>
@@ -32,7 +34,25 @@ const isAdmin = currentUser?.role === "admin";
       <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-[var(--color-panel)] focus:px-4 focus:py-2" href="#main">跳到正文</a>
       <header class="grid gap-4 border-b border-[var(--color-line)] py-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:py-6">
         <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-[var(--color-muted)] lg:justify-start">
-          {leftNavItems.map((item) => <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href={item.href}>{item.label}</a>)}
+          {
+            leftNavItems.map((item) => {
+              const active = isActiveNavItem(item.href);
+              return (
+                <a
+                  aria-current={active ? "page" : undefined}
+                  class:list={[
+                    "min-h-11 border-b py-3 transition hover:text-[var(--color-ink)]",
+                    active
+                      ? "border-[var(--color-ink)] font-medium text-[var(--color-ink)]"
+                      : "border-transparent",
+                  ]}
+                  href={item.href}
+                >
+                  {item.label}
+                </a>
+              );
+            })
+          }
         </nav>
         <a class="font-serif-title text-center text-2xl font-bold tracking-normal sm:text-3xl" href="/">理哩的个人空间</a>
         <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-[var(--color-muted)] lg:justify-end">

@@ -1,0 +1,51 @@
+---
+import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
+import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
+import AdminStatusBadge from "../../components/admin/AdminStatusBadge.astro";
+import AdminTable from "../../components/admin/AdminTable.astro";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { formatAdminDate, formatFileSize, listAdminMedia } from "../../lib/admin";
+
+const assets = await listAdminMedia();
+---
+
+<AdminLayout title="媒体 - 理哩后台">
+  <AdminPageHeader eyebrow="Media" title="媒体" description="这里先展示已迁移和已上传的媒体元信息。上传、替换和批量管理留到后续媒体管理阶段。" />
+
+  {assets.length > 0 ? (
+    <AdminTable>
+      <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+        <tr>
+          <th class="px-4 py-3 font-medium">文件</th>
+          <th class="px-4 py-3 font-medium">类型</th>
+          <th class="px-4 py-3 font-medium">Bucket</th>
+          <th class="px-4 py-3 font-medium">精选</th>
+          <th class="px-4 py-3 font-medium">关联文章</th>
+          <th class="px-4 py-3 font-medium">大小</th>
+          <th class="px-4 py-3 font-medium">创建时间</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[var(--color-line)]">
+        {assets.map((asset) => {
+          const post = Array.isArray(asset.posts) ? asset.posts[0] : asset.posts;
+          return (
+            <tr>
+              <td class="min-w-72 px-4 py-3">
+                <p class="font-medium">{asset.file_name}</p>
+                <p class="mt-1 max-w-md break-all text-xs text-[var(--color-muted)]">{asset.storage_path}</p>
+              </td>
+              <td class="whitespace-nowrap px-4 py-3">{asset.mime_type}</td>
+              <td class="whitespace-nowrap px-4 py-3">{asset.bucket}</td>
+              <td class="px-4 py-3">{asset.featured ? <AdminStatusBadge value="featured" tone="green" /> : <span class="text-[var(--color-muted)]">否</span>}</td>
+              <td class="min-w-56 px-4 py-3">{post ? <a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a> : <span class="text-[var(--color-muted)]">未关联</span>}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatFileSize(asset.size_bytes)}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(asset.created_at)}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </AdminTable>
+  ) : (
+    <AdminEmptyState title="还没有媒体" description="后续媒体管理阶段会加入上传入口；当前页面只展示已有媒体。" />
+  )}
+</AdminLayout>

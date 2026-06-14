@@ -1,0 +1,31 @@
+---
+interface Props {
+  value: string | boolean;
+  tone?: "neutral" | "green" | "amber" | "red" | "blue";
+}
+
+const { value, tone = "neutral" } = Astro.props;
+
+const labels: Record<string, string> = {
+  draft: "草稿",
+  published: "已发布",
+  archived: "已归档",
+  public: "公开",
+  private: "仅自己可见",
+  true: "显示",
+  false: "隐藏",
+  featured: "精选",
+};
+
+const key = String(value);
+const label = labels[key] ?? key;
+const classes = {
+  neutral: "border-[var(--color-line)] bg-white text-[var(--color-muted)]",
+  green: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  amber: "border-amber-200 bg-amber-50 text-amber-700",
+  red: "border-red-200 bg-red-50 text-red-700",
+  blue: "border-sky-200 bg-sky-50 text-sky-700",
+}[tone];
+---
+
+<span class={`inline-flex items-center border px-2 py-1 text-xs font-medium ${classes}`}>{label}</span>

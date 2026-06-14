@@ -1,0 +1,15 @@
+---
+interface Props {
+  message?: string | null;
+  tone?: "success" | "error" | "info";
+}
+
+const { message, tone = "info" } = Astro.props;
+const classes = {
+  success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  error: "border-red-200 bg-red-50 text-red-800",
+  info: "border-[var(--color-line)] bg-white text-[var(--color-muted)]",
+}[tone];
+---
+
+{message && <p class={`mb-4 border px-4 py-3 text-sm ${classes}`}>{message}</p>}

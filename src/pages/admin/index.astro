@@ -1,16 +1,77 @@
 ---
+import AdminActionButton from "../../components/admin/AdminActionButton.astro";
+import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
+import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
+import AdminStatCard from "../../components/admin/AdminStatCard.astro";
+import AdminStatusBadge from "../../components/admin/AdminStatusBadge.astro";
+import AdminTable from "../../components/admin/AdminTable.astro";
 import AdminLayout from "../../layouts/AdminLayout.astro";
+import { formatAdminDate, getAdminDashboardStats } from "../../lib/admin";
 
 const currentUser = Astro.locals.currentUser;
+const { counts, recentPosts } = await getAdminDashboardStats();
 ---
 
 <AdminLayout title="后台 - 理哩的个人空间">
-  <section class="max-w-4xl">
-    <p class="mb-3 text-sm text-[var(--color-muted)]">Admin Shell</p>
-    <h1 class="text-3xl font-semibold tracking-normal">后台基础布局</h1>
-    <p class="mt-4 max-w-2xl leading-7 text-[var(--color-muted)]">
-      当前仅保留后台路由与布局空壳。登录、权限、文章管理、媒体管理和编辑器将在后续阶段实现。
-    </p>
-    {currentUser && <p class="mt-6 text-sm text-[var(--color-muted)]">当前登录：{currentUser.username}</p>}
+  <AdminPageHeader eyebrow="Dashboard" title={`欢迎回来，${currentUser?.display_name || "理哩"}`} description="这里先放最必要的内容线索：写作入口、内容数量和最近更新。">
+    <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
+    <AdminActionButton href="/">前往前台</AdminActionButton>
+  </AdminPageHeader>
+
+  <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <AdminStatCard label="文章总数" value={counts.posts} />
+    <AdminStatCard label="已发布" value={counts.published} />
+    <AdminStatCard label="草稿" value={counts.drafts} />
+    <AdminStatCard label="仅自己可见" value={counts.privatePosts} />
+    <AdminStatCard label="分类" value={counts.categories} />
+    <AdminStatCard label="标签" value={counts.tags} />
+    <AdminStatCard label="媒体" value={counts.media} />
+    <AdminStatCard label="用户" value={counts.users} />
+  </section>
+
+  <section class="mt-8 grid gap-6 xl:grid-cols-[1fr_300px]">
+    <div>
+      <h2 class="mb-3 font-serif-title text-2xl font-semibold">最近编辑</h2>
+      {recentPosts.length > 0 ? (
+        <AdminTable>
+          <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+            <tr>
+              <th class="px-4 py-3 font-medium">标题</th>
+              <th class="px-4 py-3 font-medium">状态</th>
+              <th class="px-4 py-3 font-medium">可见性</th>
+              <th class="px-4 py-3 font-medium">更新时间</th>
+              <th class="px-4 py-3 font-medium">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--color-line)]">
+            {recentPosts.map((post) => (
+              <tr>
+                <td class="min-w-64 px-4 py-3 font-medium">{post.title}</td>
+                <td class="px-4 py-3"><AdminStatusBadge value={post.status} tone={post.status === "published" ? "green" : post.status === "draft" ? "amber" : "neutral"} /></td>
+                <td class="px-4 py-3"><AdminStatusBadge value={post.visibility} tone={post.visibility === "private" ? "blue" : "neutral"} /></td>
+                <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.updated_at)}</td>
+                <td class="px-4 py-3"><a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>查看</a></td>
+              </tr>
+            ))}
+          </tbody>
+        </AdminTable>
+      ) : (
+        <AdminEmptyState title="还没有文章" description="下一阶段接入编辑器后，可以从这里回到写作。">
+          <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
+        </AdminEmptyState>
+      )}
+    </div>
+
+    <aside class="border border-[var(--color-line)] bg-white p-5">
+      <h2 class="font-serif-title text-xl font-semibold">快捷入口</h2>
+      <div class="mt-4 grid gap-2">
+        <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
+        <AdminActionButton href="/admin/posts">查看文章</AdminActionButton>
+        <AdminActionButton href="/admin/categories">分类管理</AdminActionButton>
+        <AdminActionButton href="/admin/tags">标签管理</AdminActionButton>
+        <AdminActionButton href="/admin/media">媒体管理</AdminActionButton>
+        <AdminActionButton href="/">前往前台</AdminActionButton>
+      </div>
+    </aside>
   </section>
 </AdminLayout>

@@ -1,0 +1,70 @@
+---
+import AdminActionButton from "../../../components/admin/AdminActionButton.astro";
+import AdminEmptyState from "../../../components/admin/AdminEmptyState.astro";
+import AdminFilterTabs from "../../../components/admin/AdminFilterTabs.astro";
+import AdminPageHeader from "../../../components/admin/AdminPageHeader.astro";
+import AdminStatusBadge from "../../../components/admin/AdminStatusBadge.astro";
+import AdminTable from "../../../components/admin/AdminTable.astro";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { formatAdminDate, listAdminPosts, type AdminPostFilter } from "../../../lib/admin";
+
+const filters: { key: AdminPostFilter; label: string }[] = [
+  { key: "all", label: "全部" },
+  { key: "draft", label: "草稿" },
+  { key: "published", label: "已发布" },
+  { key: "archived", label: "已归档" },
+  { key: "public", label: "公开" },
+  { key: "private", label: "仅自己可见" },
+];
+const requestedFilter = Astro.url.searchParams.get("filter") as AdminPostFilter | null;
+const activeFilter = filters.some((item) => item.key === requestedFilter) ? requestedFilter! : "all";
+const posts = await listAdminPosts(activeFilter);
+---
+
+<AdminLayout title="文章 - 理哩后台">
+  <AdminPageHeader eyebrow="Posts" title="文章" description="这里先负责查看、筛选和进入编辑占位页；发布、保存和正文编辑留到下一阶段。">
+    <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
+  </AdminPageHeader>
+
+  <AdminFilterTabs items={filters.map((item) => ({ href: item.key === "all" ? "/admin/posts" : `/admin/posts?filter=${item.key}`, label: item.label, active: item.key === activeFilter }))} />
+
+  <div class="mt-4">
+    {posts.length > 0 ? (
+      <AdminTable>
+        <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+          <tr>
+            <th class="px-4 py-3 font-medium">标题</th>
+            <th class="px-4 py-3 font-medium">分类</th>
+            <th class="px-4 py-3 font-medium">标签</th>
+            <th class="px-4 py-3 font-medium">状态</th>
+            <th class="px-4 py-3 font-medium">可见性</th>
+            <th class="px-4 py-3 font-medium">发布时间</th>
+            <th class="px-4 py-3 font-medium">更新时间</th>
+            <th class="px-4 py-3 font-medium">操作</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--color-line)]">
+          {posts.map((post) => (
+            <tr>
+              <td class="min-w-72 px-4 py-3">
+                <p class="font-medium">{post.title}</p>
+                <p class="mt-1 text-xs text-[var(--color-muted)]">/{post.slug}</p>
+              </td>
+              <td class="whitespace-nowrap px-4 py-3">{post.category?.name ?? "未分类"}</td>
+              <td class="min-w-48 px-4 py-3 text-[var(--color-muted)]">{post.tags.length > 0 ? post.tags.map((tag) => tag.name).join("、") : "无"}</td>
+              <td class="px-4 py-3"><AdminStatusBadge value={post.status} tone={post.status === "published" ? "green" : post.status === "draft" ? "amber" : "neutral"} /></td>
+              <td class="px-4 py-3"><AdminStatusBadge value={post.visibility} tone={post.visibility === "private" ? "blue" : "neutral"} /></td>
+              <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.published_at)}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.updated_at)}</td>
+              <td class="px-4 py-3"><a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>查看</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </AdminTable>
+    ) : (
+      <AdminEmptyState title="没有匹配的文章" description="可以切换筛选条件，或等下一阶段编辑器完成后新建文章。">
+        <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
+      </AdminEmptyState>
+    )}
+  </div>
+</AdminLayout>

@@ -1,0 +1,25 @@
+---
+interface Item {
+  href: string;
+  label: string;
+  active?: boolean;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="flex flex-wrap gap-2" aria-label="筛选">
+  {items.map((item) => (
+    <a
+      class={`border px-3 py-2 text-sm transition ${item.active ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-white" : "border-[var(--color-line)] bg-white text-[var(--color-muted)] hover:text-[var(--color-ink)]"}`}
+      href={item.href}
+      aria-current={item.active ? "page" : undefined}
+    >
+      {item.label}
+    </a>
+  ))}
+</nav>

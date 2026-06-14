@@ -169,8 +169,9 @@ export async function getCategoriesWithCounts(viewer: Viewer) {
 
   const posts = await getPostsForViewer(viewer, { includeNoindex: true });
   const counts = countBy(posts.map((post) => post.category?.id).filter(Boolean) as string[]);
+  const categories = canViewAllPosts(viewer) ? data ?? [] : (data ?? []).filter((category) => category.visible);
 
-  return ((data ?? []) as CategorySummary[]).map((category) => ({
+  return (categories as CategorySummary[]).map((category) => ({
     ...category,
     postCount: counts.get(category.id) ?? 0,
   }));

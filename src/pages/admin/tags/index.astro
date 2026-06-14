@@ -1,0 +1,64 @@
+---
+import AdminActionButton from "../../../components/admin/AdminActionButton.astro";
+import AdminNotice from "../../../components/admin/AdminNotice.astro";
+import AdminPageHeader from "../../../components/admin/AdminPageHeader.astro";
+import AdminTable from "../../../components/admin/AdminTable.astro";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { listAdminTags } from "../../../lib/admin";
+
+const tags = await listAdminTags();
+const success = Astro.url.searchParams.get("success");
+const error = Astro.url.searchParams.get("error");
+const successMessage = {
+  created: "标签已新建。",
+  updated: "标签已更新。",
+}[success ?? ""];
+---
+
+<AdminLayout title="标签 - 理哩后台">
+  <AdminPageHeader eyebrow="Tags" title="标签" description="标签是更灵活的关键词；第 7 阶段文章编辑页会复用这里的标签，并支持即时创建新标签。">
+    <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
+  </AdminPageHeader>
+
+  <AdminNotice message={successMessage} tone="success" />
+  <AdminNotice message={error} tone="error" />
+
+  <section class="mb-6 border border-[var(--color-line)] bg-white p-5">
+    <h2 class="font-serif-title text-xl font-semibold">新建标签</h2>
+    <form class="mt-4 grid gap-3 md:grid-cols-[minmax(0,320px)_auto]" method="post" action="/admin/tags/action">
+      <input type="hidden" name="intent" value="create" />
+      <label class="grid gap-1 text-sm">
+        <span class="font-medium">名称 <span class="text-red-700">*</span></span>
+        <input class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="name" required />
+      </label>
+      <div class="flex items-end"><AdminActionButton type="submit" variant="primary">新建</AdminActionButton></div>
+    </form>
+  </section>
+
+  <AdminTable>
+    <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+      <tr>
+        <th class="px-4 py-3 font-medium">名称</th>
+        <th class="px-4 py-3 font-medium">文章数</th>
+        <th class="px-4 py-3 font-medium">编辑</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-[var(--color-line)]">
+      {tags.map((tag) => (
+        <tr>
+          <td class="min-w-44 px-4 py-3 font-medium">{tag.name}</td>
+          <td class="px-4 py-3">{tag.postCount ?? 0}</td>
+          <td class="min-w-[360px] px-4 py-3">
+            <form class="grid gap-2 md:grid-cols-[1fr_auto]" method="post" action="/admin/tags/action">
+              <input type="hidden" name="intent" value="update" />
+              <input type="hidden" name="id" value={tag.id} />
+              <input type="hidden" name="slug" value={tag.slug} />
+              <input class="min-h-10 border border-[var(--color-line)] px-3" name="name" value={tag.name} required />
+              <AdminActionButton type="submit">保存</AdminActionButton>
+            </form>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </AdminTable>
+</AdminLayout>

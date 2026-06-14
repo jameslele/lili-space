@@ -1,0 +1,49 @@
+---
+import AdminActionButton from "../../components/admin/AdminActionButton.astro";
+import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
+import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
+import AdminTable from "../../components/admin/AdminTable.astro";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { formatAdminDate, listAdminMedia } from "../../lib/admin";
+
+const assets = await listAdminMedia({ featuredOnly: true });
+---
+
+<AdminLayout title="Gallery - 理哩后台">
+  <AdminPageHeader eyebrow="Gallery" title="照片精选" description="这里展示进入前台照片页的精选媒体。排序先按创建时间倒序，后续再做精细排序。">
+    <AdminActionButton href="/admin/media">查看媒体</AdminActionButton>
+  </AdminPageHeader>
+
+  {assets.length > 0 ? (
+    <AdminTable>
+      <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+        <tr>
+          <th class="px-4 py-3 font-medium">预览</th>
+          <th class="px-4 py-3 font-medium">文件</th>
+          <th class="px-4 py-3 font-medium">Bucket</th>
+          <th class="px-4 py-3 font-medium">关联文章</th>
+          <th class="px-4 py-3 font-medium">创建时间</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[var(--color-line)]">
+        {assets.map((asset) => {
+          const post = Array.isArray(asset.posts) ? asset.posts[0] : asset.posts;
+          return (
+            <tr>
+              <td class="px-4 py-3"><img class="h-20 w-28 object-cover" src={asset.public_url} alt={asset.file_name} loading="lazy" /></td>
+              <td class="min-w-72 px-4 py-3">
+                <p class="font-medium">{asset.file_name}</p>
+                <p class="mt-1 max-w-md break-all text-xs text-[var(--color-muted)]">{asset.storage_path}</p>
+              </td>
+              <td class="whitespace-nowrap px-4 py-3">{asset.bucket}</td>
+              <td class="min-w-56 px-4 py-3">{post ? <a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a> : <span class="text-[var(--color-muted)]">未关联</span>}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(asset.created_at)}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </AdminTable>
+  ) : (
+    <AdminEmptyState title="还没有精选照片" description="可以先用 gallery:feature 脚本标记精选；后续媒体管理阶段再加入后台操作入口。" />
+  )}
+</AdminLayout>

@@ -1,0 +1,122 @@
+---
+import AdminActionButton from "../../../components/admin/AdminActionButton.astro";
+import AdminNotice from "../../../components/admin/AdminNotice.astro";
+import AdminPageHeader from "../../../components/admin/AdminPageHeader.astro";
+import AdminStatusBadge from "../../../components/admin/AdminStatusBadge.astro";
+import AdminTable from "../../../components/admin/AdminTable.astro";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { listAdminCategories } from "../../../lib/admin";
+
+const categories = await listAdminCategories();
+const success = Astro.url.searchParams.get("success");
+const error = Astro.url.searchParams.get("error");
+const successMessage = {
+  created: "分类已新建。",
+  updated: "分类已更新。",
+  visibility: "分类显示状态已更新。",
+}[success ?? ""];
+---
+
+<AdminLayout title="分类 - 理哩后台">
+  <AdminPageHeader eyebrow="Categories" title="分类" description="分类是文章的主栏目，一篇文章只选择一个主分类；「未分类」作为兜底栏目保留。后续可以通过拖动分类行调整前台顺序。">
+    <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
+  </AdminPageHeader>
+
+  <AdminNotice message={successMessage} tone="success" />
+  <AdminNotice message={error} tone="error" />
+
+  <section class="mb-6 border border-[var(--color-line)] bg-white p-5">
+    <h2 class="font-serif-title text-xl font-semibold">新建分类</h2>
+    <p class="mt-2 text-sm leading-6 text-[var(--color-muted)]">只需要填写名称；URL 标识会自动生成。描述可以稍后补。</p>
+    <form class="mt-4 grid max-w-xl gap-4" method="post" action="/admin/categories/action">
+      <input type="hidden" name="intent" value="create" />
+      <label class="grid gap-1 text-sm">
+        <span class="font-medium">名称 <span class="text-red-700">*</span></span>
+        <input class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="name" required />
+      </label>
+      <label class="grid gap-1 text-sm">
+        <span class="font-medium">描述 <span class="font-normal text-[var(--color-muted)]">可选</span></span>
+        <textarea class="min-h-20 border border-[var(--color-line)] bg-white px-3 py-2" name="description" rows="2"></textarea>
+      </label>
+      <div class="flex flex-wrap items-center gap-3">
+        <label class="inline-flex min-h-11 items-center gap-2 border border-[var(--color-line)] bg-[#fdfbf7] px-3 text-sm">
+          <input name="visible" type="checkbox" checked />
+          <span>前台显示</span>
+        </label>
+        <AdminActionButton type="submit" variant="primary">新建</AdminActionButton>
+      </div>
+    </form>
+  </section>
+
+  <AdminTable>
+    <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+      <tr>
+        <th class="px-4 py-3 font-medium">名称</th>
+        <th class="px-4 py-3 font-medium">URL 标识</th>
+        <th class="px-4 py-3 font-medium">描述</th>
+        <th class="px-4 py-3 font-medium">状态</th>
+        <th class="px-4 py-3 font-medium">文章数</th>
+        <th class="px-4 py-3 font-medium">基础信息</th>
+        <th class="px-4 py-3 font-medium">前台显示</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-[var(--color-line)]">
+      {categories.map((category) => {
+        const description = category.description?.trim();
+        const shouldCollapseDescription = Boolean(description && description.length > 28);
+        return (
+        <tr>
+          <td class="min-w-44 px-4 py-3 font-medium">{category.name}</td>
+          <td class="min-w-44 px-4 py-3 text-[var(--color-muted)]">{category.slug}</td>
+          <td class="w-48 max-w-48 px-4 py-3 text-[var(--color-muted)]">
+            {description ? (
+              shouldCollapseDescription ? (
+              <details class="group">
+                <summary class="cursor-pointer list-none text-sm leading-6">
+                  <span class="line-clamp-2 group-open:hidden">{description}</span>
+                  <span class="mt-1 inline-block text-xs font-medium text-[var(--color-ink)] group-open:hidden">查看全部</span>
+                  <span class="hidden break-words leading-6 group-open:block">{description}</span>
+                  <span class="mt-1 hidden text-xs font-medium text-[var(--color-ink)] group-open:inline-block">收起</span>
+                </summary>
+              </details>
+              ) : (
+                <span class="text-sm leading-6">{description}</span>
+              )
+            ) : (
+              "没有描述"
+            )}
+          </td>
+          <td class="px-4 py-3"><AdminStatusBadge value={category.visible} tone={category.visible ? "green" : "neutral"} /></td>
+          <td class="px-4 py-3">{category.postCount ?? 0}</td>
+          <td class="min-w-[360px] px-4 py-3">
+            <form class="grid gap-2 md:grid-cols-[140px_1fr_auto]" method="post" action="/admin/categories/action">
+              <input type="hidden" name="intent" value="update" />
+              <input type="hidden" name="id" value={category.id} />
+              <input type="hidden" name="slug" value={category.slug} />
+              <input type="hidden" name="sort_order" value={category.sort_order} />
+              <input type="hidden" name="visible" value={String(category.visible)} />
+              <label class="grid gap-1 text-xs text-[var(--color-muted)]">
+                <span>名称</span>
+                <input class="min-h-10 border border-[var(--color-line)] px-3 text-sm text-[var(--color-ink)]" name="name" value={category.name} required />
+              </label>
+              <label class="grid gap-1 text-xs text-[var(--color-muted)]">
+                <span>新描述，可选</span>
+                <input class="min-h-10 border border-[var(--color-line)] px-3 text-sm text-[var(--color-ink)]" name="description" placeholder="留空则不修改" />
+              </label>
+              <AdminActionButton type="submit">保存</AdminActionButton>
+            </form>
+          </td>
+          <td class="px-4 py-3">
+            <form method="post" action="/admin/categories/action">
+              <input type="hidden" name="intent" value="visibility" />
+              <input type="hidden" name="id" value={category.id} />
+              <input type="hidden" name="visible" value={category.visible ? "false" : "true"} />
+              <AdminActionButton type="submit" variant="quiet">{category.visible ? "隐藏" : "显示"}</AdminActionButton>
+            </form>
+          </td>
+        </tr>
+      );
+      })}
+    </tbody>
+  </AdminTable>
+</AdminLayout>
