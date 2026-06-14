@@ -8,6 +8,10 @@ export interface AdminPost {
   id: string;
   title: string;
   slug: string;
+  excerpt?: string | null;
+  markdown?: string;
+  cover_url?: string | null;
+  cover_asset_id?: string | null;
   status: AdminPostStatus;
   visibility: AdminPostVisibility;
   noindex: boolean;
@@ -63,6 +67,22 @@ export interface AdminSiteSetting {
   key: string;
   value: unknown;
   updated_at: string;
+}
+
+export interface SaveAdminPostInput {
+  id?: string;
+  title: string;
+  slug?: string;
+  excerpt?: string;
+  markdown?: string;
+  categoryId?: string;
+  newCategoryName?: string;
+  tagNames?: string[];
+  coverUrl?: string;
+  visibility: AdminPostVisibility;
+  noindex: boolean;
+  publishedAt?: string;
+  intent: "draft" | "publish" | "archive";
 }
 
 const postSelect = `
@@ -150,7 +170,7 @@ export async function listAdminPosts(filter: AdminPostFilter = "all") {
 
 export async function getAdminPostById(id: string) {
   const supabase = createServiceRoleSupabaseClient();
-  const { data, error } = await supabase.from("posts").select(`${postSelect}, excerpt, cover_url, markdown`).eq("id", id).maybeSingle();
+  const { data, error } = await supabase.from("posts").select(`${postSelect}, excerpt, cover_url, cover_asset_id, markdown`).eq("id", id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
 
@@ -159,6 +179,7 @@ export async function getAdminPostById(id: string) {
     ...post,
     excerpt: (data as { excerpt: string | null }).excerpt,
     cover_url: (data as { cover_url: string | null }).cover_url,
+    cover_asset_id: (data as { cover_asset_id: string | null }).cover_asset_id,
     markdown: (data as { markdown: string }).markdown,
   };
 }
@@ -297,6 +318,88 @@ export async function updateTag(id: string, input: { name: string; slug?: string
   if (error) throw error;
 }
 
+export async function saveAdminPost(input: SaveAdminPostInput, authorId: string) {
+  const supabase = createServiceRoleSupabaseClient();
+  const existing = input.id ? await getAdminPostById(input.id) : null;
+  if (input.intent === "publish" && !input.title.trim()) throw new Error("发布前需要填写标题");
+  const title = input.title.trim() || "未命名草稿";
+  const requestedSlug = input.slug?.trim() || title;
+  const slug = await ensureUniquePostSlug(requestedSlug, existing?.id);
+  const categoryId = await resolveCategoryId(input.categoryId, input.newCategoryName);
+  const status = resolvePostStatus(input.intent);
+  const publishedAt = resolvePublishedAt(status, input.publishedAt, existing?.published_at);
+  const payload = {
+    title,
+    slug,
+    excerpt: input.excerpt?.trim() || null,
+    markdown: input.markdown ?? "",
+    cover_url: input.coverUrl?.trim() || null,
+    category_id: categoryId,
+    status,
+    visibility: input.visibility,
+    noindex: input.noindex,
+    published_at: publishedAt,
+    html: null,
+  };
+
+  let postId = existing?.id;
+
+  if (postId) {
+    const { error } = await supabase.from("posts").update(payload).eq("id", postId);
+    if (error) throw error;
+  } else {
+    const { data, error } = await supabase
+      .from("posts")
+      .insert({ ...payload, author_id: authorId })
+      .select("id")
+      .single();
+    if (error) throw error;
+    postId = data.id;
+  }
+
+  if (!postId) throw new Error("文章保存失败");
+  const tagIds = await ensureTags(input.tagNames ?? []);
+  await syncPostTags(postId, tagIds);
+  return postId;
+}
+
+export async function ensureTags(names: string[]) {
+  const uniqueNames = Array.from(new Set(names.map((name) => name.trim()).filter(Boolean)));
+  if (uniqueNames.length === 0) return [];
+
+  const supabase = createServiceRoleSupabaseClient();
+  const { data: existingTags, error } = await supabase.from("tags").select("id, name, slug").in("name", uniqueNames);
+  if (error) throw error;
+
+  const tagsByName = new Map((existingTags ?? []).map((tag) => [tag.name, tag.id]));
+  const missingNames = uniqueNames.filter((name) => !tagsByName.has(name));
+
+  for (const name of missingNames) {
+    const { data, error: insertError } = await supabase
+      .from("tags")
+      .insert({ name, slug: await ensureUniqueTagSlug(name) })
+      .select("id")
+      .single();
+
+    if (insertError) throw insertError;
+    tagsByName.set(name, data.id);
+  }
+
+  return uniqueNames.map((name) => tagsByName.get(name)).filter(Boolean) as string[];
+}
+
+export async function syncPostTags(postId: string, tagIds: string[]) {
+  const supabase = createServiceRoleSupabaseClient();
+  const { error: deleteError } = await supabase.from("post_tags").delete().eq("post_id", postId);
+  if (deleteError) throw deleteError;
+  if (tagIds.length === 0) return;
+
+  const { error } = await supabase
+    .from("post_tags")
+    .insert(tagIds.map((tagId) => ({ post_id: postId, tag_id: tagId })));
+  if (error) throw error;
+}
+
 export function normalizeSlug(value: string) {
   const slug = value
     .trim()
@@ -309,6 +412,80 @@ export function normalizeSlug(value: string) {
 
   if (!slug) throw new Error("Slug 不能为空");
   return slug;
+}
+
+async function resolveCategoryId(categoryId?: string, newCategoryName?: string) {
+  const categoryName = newCategoryName?.trim();
+  if (categoryName) {
+    const slug = await ensureUniqueCategorySlug(categoryName);
+    const { data, error } = await createServiceRoleSupabaseClient()
+      .from("categories")
+      .insert({ name: categoryName, slug, sort_order: 0, visible: true })
+      .select("id")
+      .single();
+
+    if (error) throw error;
+    return data.id as string;
+  }
+
+  if (categoryId) return categoryId;
+
+  const { data, error } = await createServiceRoleSupabaseClient()
+    .from("categories")
+    .select("id")
+    .eq("name", "未分类")
+    .maybeSingle();
+
+  if (error) throw error;
+  return data?.id ?? null;
+}
+
+async function ensureUniquePostSlug(value: string, postId?: string) {
+  return ensureUniqueSlug("posts", value, postId);
+}
+
+async function ensureUniqueTagSlug(value: string) {
+  return ensureUniqueSlug("tags", value);
+}
+
+async function ensureUniqueCategorySlug(value: string) {
+  return ensureUniqueSlug("categories", value);
+}
+
+async function ensureUniqueSlug(table: "posts" | "tags" | "categories", value: string, excludeId?: string) {
+  const baseSlug = safeSlug(value);
+  const supabase = createServiceRoleSupabaseClient();
+
+  for (let index = 0; index < 100; index += 1) {
+    const slug = index === 0 ? baseSlug : `${baseSlug}-${index + 1}`;
+    let query = supabase.from(table).select("id").eq("slug", slug).limit(1);
+    if (excludeId) query = query.neq("id", excludeId);
+    const { data, error } = await query;
+    if (error) throw error;
+    if (!data || data.length === 0) return slug;
+  }
+
+  return `${baseSlug}-${Date.now().toString(36)}`;
+}
+
+function safeSlug(value: string) {
+  try {
+    return normalizeSlug(value);
+  } catch {
+    return `post-${Date.now().toString(36)}`;
+  }
+}
+
+function resolvePostStatus(intent: SaveAdminPostInput["intent"]) {
+  if (intent === "publish") return "published";
+  if (intent === "archive") return "archived";
+  return "draft";
+}
+
+function resolvePublishedAt(status: AdminPostStatus, value: string | undefined, currentValue: string | null | undefined) {
+  if (status !== "published") return currentValue ?? null;
+  if (value) return new Date(value).toISOString();
+  return currentValue ?? new Date().toISOString();
 }
 
 export function formatAdminDate(value: string | null | undefined) {

@@ -20,6 +20,9 @@
   "dependencies": {
     "@astrojs/node": "^10.1.4",
     "@astrojs/react": "^5.0.7",
+    "@milkdown/crepe": "^7.21.2",
+    "@milkdown/kit": "^7.21.2",
+    "@milkdown/react": "^7.21.2",
     "@supabase/supabase-js": "^2.86.0",
     "astro": "^6.4.6",
     "bcrypt": "^6.0.0",

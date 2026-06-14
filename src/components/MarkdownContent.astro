@@ -9,6 +9,11 @@ const { html } = Astro.props;
 <article class="markdown-content font-serif-title max-w-none text-lg leading-9 text-[#38302a]" set:html={html} />
 
 <style>
+  .markdown-content {
+    --color-markdown-accent: #71afdd;
+    --color-markdown-muted: #767676;
+  }
+
   .markdown-content :global(h1),
   .markdown-content :global(h2),
   .markdown-content :global(h3) {
@@ -34,21 +39,46 @@ const { html } = Astro.props;
   }
 
   .markdown-content :global(a) {
-    color: var(--color-accent);
+    color: var(--color-ink);
     text-decoration: underline;
+    text-decoration-color: var(--color-markdown-accent);
     text-underline-offset: 4px;
   }
 
+  .markdown-content :global(strong),
+  .markdown-content :global(b),
+  .markdown-content :global(em),
+  .markdown-content :global(i) {
+    color: var(--color-markdown-accent);
+  }
+
   .markdown-content :global(blockquote) {
-    border-bottom: 1px solid var(--color-line);
-    border-top: 1px solid var(--color-line);
-    color: var(--color-accent);
-    font-size: 1.35rem;
-    padding: 1rem 0;
+    border-left: 3px solid var(--color-markdown-accent);
+    color: var(--color-markdown-muted);
+    font-size: 1rem;
+    line-height: 1.85;
+    padding: 0.1rem 0 0.1rem 1rem;
+    position: relative;
+  }
+
+  .markdown-content :global(blockquote::before) {
+    color: var(--color-markdown-accent);
+    content: "\201C";
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+
+  .markdown-content :global(blockquote p) {
+    color: var(--color-markdown-muted);
+    margin-top: 0;
   }
 
   .markdown-content :global(img) {
     margin: 2rem 0;
+    border-radius: 4px;
     width: 100%;
   }
 

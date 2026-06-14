@@ -34,7 +34,8 @@ a {
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
-textarea:focus-visible {
+textarea:focus-visible,
+select:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
@@ -51,4 +52,29 @@ img {
 .font-serif-title {
   font-family:
     "Noto Serif SC", "Songti SC", "STSong", "Times New Roman", serif;
+}
+
+.lili-crepe {
+  --crepe-color-background: #fffdf7;
+  --crepe-color-on-background: #171514;
+  --crepe-color-surface: #fffdf7;
+  --crepe-color-surface-low: #f8f4ec;
+  --crepe-color-on-surface: #171514;
+  --crepe-color-on-surface-variant: #6f6a63;
+  --crepe-color-outline: #d8cec0;
+  --crepe-color-primary: #496477;
+  --crepe-color-secondary: #b14d32;
+  font-family:
+    "Noto Serif SC", "Songti SC", "STSong", "Times New Roman", serif;
+}
+
+.lili-crepe .milkdown {
+  min-height: 620px;
+}
+
+.lili-crepe .ProseMirror {
+  min-height: 580px;
+  padding: 42px clamp(20px, 4vw, 56px);
+  font-size: 18px;
+  line-height: 1.9;
 }
