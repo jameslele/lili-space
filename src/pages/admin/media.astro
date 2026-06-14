@@ -1,51 +1,290 @@
 ---
+import AdminActionButton from "../../components/admin/AdminActionButton.astro";
 import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
+import AdminNotice from "../../components/admin/AdminNotice.astro";
 import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
 import AdminStatusBadge from "../../components/admin/AdminStatusBadge.astro";
 import AdminTable from "../../components/admin/AdminTable.astro";
 import AdminLayout from "../../layouts/AdminLayout.astro";
-import { formatAdminDate, formatFileSize, listAdminMedia } from "../../lib/admin";
+import { formatAdminDate, formatFileSize, listAdminMediaPage } from "../../lib/admin";
 
-const assets = await listAdminMedia();
+const success = Astro.url.searchParams.get("success");
+const error = Astro.url.searchParams.get("error");
+const page = parsePositiveInt(Astro.url.searchParams.get("page"), 1);
+const pageSize = parsePositiveInt(Astro.url.searchParams.get("pageSize"), 24);
+const search = Astro.url.searchParams.get("q")?.trim() ?? "";
+const type = parseOption(Astro.url.searchParams.get("type"), ["all", "image", "audio", "video", "other"] as const);
+const visibility = parseOption(Astro.url.searchParams.get("visibility"), ["all", "public", "private"] as const);
+const featured = parseOption(Astro.url.searchParams.get("featured"), ["all", "featured", "normal"] as const);
+const relation = parseOption(Astro.url.searchParams.get("relation"), ["all", "linked", "unlinked"] as const);
+const result = await listAdminMediaPage({
+  page,
+  pageSize,
+  query: search,
+  type,
+  visibility,
+  featured,
+  relation,
+});
+const { assets, total, totalPages } = result;
+const currentPage = Math.min(result.page, totalPages);
+const hasFilters = Boolean(search) || type !== "all" || visibility !== "all" || featured !== "all" || relation !== "all";
+const successMessage = {
+  uploaded: "图片已上传。",
+  featured: "精选状态已更新。",
+  updated: "媒体信息已更新。",
+  deleted: "媒体已删除。",
+}[success ?? ""];
+
+const paginationBase = new URLSearchParams(Astro.url.searchParams);
+paginationBase.delete("success");
+paginationBase.delete("error");
+const prevHref = currentPage > 1 ? buildMediaHref(paginationBase, currentPage - 1) : "";
+const nextHref = currentPage < totalPages ? buildMediaHref(paginationBase, currentPage + 1) : "";
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function parseOption<const T extends readonly string[]>(value: string | null, allowed: T): T[number] {
+  return allowed.includes(value ?? "") ? value as T[number] : allowed[0];
+}
+
+function buildMediaHref(params: URLSearchParams, pageNumber: number) {
+  const next = new URLSearchParams(params);
+  next.set("page", String(pageNumber));
+  const query = next.toString();
+  return query ? `/admin/media?${query}` : "/admin/media";
+}
 ---
 
 <AdminLayout title="媒体 - 理哩后台">
-  <AdminPageHeader eyebrow="Media" title="媒体" description="这里先展示已迁移和已上传的媒体元信息。上传、替换和批量管理留到后续媒体管理阶段。" />
+  <AdminPageHeader eyebrow="Media" title="媒体" description="上传图片，选择哪些图片进入照片页。">
+    <AdminActionButton href="/admin/gallery">照片精选</AdminActionButton>
+  </AdminPageHeader>
+
+  <AdminNotice message={successMessage} tone="success" />
+  <AdminNotice message={error} tone="error" />
+
+  <section class="mb-6 border border-[var(--color-line)] bg-white p-5">
+    <h2 class="font-serif-title text-xl font-semibold">上传图片</h2>
+    <form class="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_180px_160px_auto]" method="post" action="/admin/media/action" enctype="multipart/form-data">
+      <input type="hidden" name="intent" value="upload" />
+      <label class="grid gap-1 text-sm">
+        <span class="font-medium">图片文件</span>
+        <input class="min-h-11 border border-[var(--color-line)] bg-white px-3 py-2" name="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
+      </label>
+      <label class="grid gap-1 text-sm">
+        <span class="font-medium">可见性</span>
+        <select class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="visibility">
+          <option value="public">公开媒体</option>
+          <option value="private">仅自己可见</option>
+        </select>
+      </label>
+      <label class="grid gap-1 text-sm">
+        <span class="font-medium">替代文字</span>
+        <input class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="alt" placeholder="留空用文件名" />
+      </label>
+      <div class="flex items-end"><AdminActionButton type="submit" variant="primary">上传</AdminActionButton></div>
+      <label class="inline-flex min-h-11 items-center gap-2 text-sm lg:col-span-4">
+        <input name="featured" type="checkbox" />
+        <span>加入照片页精选</span>
+      </label>
+    </form>
+  </section>
+
+  <section class="mb-5 border border-[var(--color-line)] bg-white p-5">
+    <form class="grid gap-4 md:grid-cols-2 xl:grid-cols-12" method="get" action="/admin/media">
+      <label class="grid gap-1 text-sm xl:col-span-3">
+        <span class="font-medium">搜索</span>
+        <input class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="q" value={search} placeholder="文件名、路径或替代文字" />
+      </label>
+      <label class="grid gap-1 text-sm xl:col-span-2">
+        <span class="font-medium">类型</span>
+        <select class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="type">
+          <option value="all" selected={type === "all"}>全部</option>
+          <option value="image" selected={type === "image"}>图片</option>
+          <option value="audio" selected={type === "audio"}>音频</option>
+          <option value="video" selected={type === "video"}>视频</option>
+          <option value="other" selected={type === "other"}>其他</option>
+        </select>
+      </label>
+      <label class="grid gap-1 text-sm xl:col-span-2">
+        <span class="font-medium">可见性</span>
+        <select class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="visibility">
+          <option value="all" selected={visibility === "all"}>全部</option>
+          <option value="public" selected={visibility === "public"}>公开</option>
+          <option value="private" selected={visibility === "private"}>仅自己可见</option>
+        </select>
+      </label>
+      <label class="grid gap-1 text-sm xl:col-span-2">
+        <span class="font-medium">精选</span>
+        <select class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="featured">
+          <option value="all" selected={featured === "all"}>全部</option>
+          <option value="featured" selected={featured === "featured"}>精选</option>
+          <option value="normal" selected={featured === "normal"}>未精选</option>
+        </select>
+      </label>
+      <label class="grid gap-1 text-sm xl:col-span-2">
+        <span class="font-medium">关联</span>
+        <select class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="relation">
+          <option value="all" selected={relation === "all"}>全部</option>
+          <option value="linked" selected={relation === "linked"}>已关联</option>
+          <option value="unlinked" selected={relation === "unlinked"}>未关联</option>
+        </select>
+      </label>
+      <label class="grid gap-1 text-sm xl:col-span-1">
+        <span class="font-medium">每页</span>
+        <select class="min-h-11 border border-[var(--color-line)] bg-white px-3" name="pageSize">
+          <option value="12" selected={result.pageSize === 12}>12</option>
+          <option value="24" selected={result.pageSize === 24}>24</option>
+          <option value="48" selected={result.pageSize === 48}>48</option>
+          <option value="60" selected={result.pageSize === 60}>60</option>
+        </select>
+      </label>
+      <div class="flex flex-wrap items-end gap-2 md:col-span-2 xl:col-span-12 xl:justify-end">
+        <button class="inline-flex min-h-11 items-center justify-center border border-[var(--color-ink)] bg-[var(--color-ink)] px-5 text-sm font-medium text-white transition hover:bg-black" type="submit">筛选</button>
+        <a class="inline-flex min-h-11 items-center justify-center border border-[var(--color-line)] bg-white px-5 text-sm font-medium text-[var(--color-muted)] transition hover:text-[var(--color-ink)]" href="/admin/media">重置</a>
+      </div>
+    </form>
+  </section>
 
   {assets.length > 0 ? (
+    <>
+    <form id="media-bulk-delete-form" method="post" action="/admin/media/action" data-confirm-delete="确定删除选中的媒体吗？这会同时删除 Storage 文件；如果文章正文仍引用它，图片会失效。">
+      <input type="hidden" name="intent" value="delete" />
+      <input type="hidden" name="ids" value="" data-bulk-media-ids />
+    </form>
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+      <p class="text-sm text-[var(--color-muted)]">
+        共 {total} 个媒体文件，当前第 {currentPage} / {totalPages} 页，本页 {assets.length} 个。
+      </p>
+      <button class="inline-flex min-h-10 items-center justify-center border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50" type="submit" form="media-bulk-delete-form" data-bulk-delete-button disabled>
+        删除选中
+      </button>
+    </div>
     <AdminTable>
       <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
         <tr>
+          <th class="px-4 py-3 font-medium">
+            <span class="sr-only">选择</span>
+          </th>
           <th class="px-4 py-3 font-medium">文件</th>
-          <th class="px-4 py-3 font-medium">类型</th>
-          <th class="px-4 py-3 font-medium">Bucket</th>
+          <th class="px-4 py-3 font-medium">预览</th>
+          <th class="px-4 py-3 font-medium">可见性</th>
           <th class="px-4 py-3 font-medium">精选</th>
           <th class="px-4 py-3 font-medium">关联文章</th>
           <th class="px-4 py-3 font-medium">大小</th>
-          <th class="px-4 py-3 font-medium">创建时间</th>
+          <th class="px-4 py-3 font-medium">操作</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-[var(--color-line)]">
         {assets.map((asset) => {
           const post = Array.isArray(asset.posts) ? asset.posts[0] : asset.posts;
+          const isImage = asset.mime_type.startsWith("image/");
+          const nextFeatured = asset.featured ? "false" : "true";
           return (
             <tr>
+              <td class="px-4 py-3 align-top">
+                <input class="mt-1 h-4 w-4" type="checkbox" value={asset.id} data-media-checkbox aria-label={`选择 ${asset.file_name}`} />
+              </td>
               <td class="min-w-72 px-4 py-3">
                 <p class="font-medium">{asset.file_name}</p>
                 <p class="mt-1 max-w-md break-all text-xs text-[var(--color-muted)]">{asset.storage_path}</p>
+                <p class="mt-1 text-xs text-[var(--color-muted)]">{asset.mime_type} · {formatAdminDate(asset.created_at)}</p>
               </td>
-              <td class="whitespace-nowrap px-4 py-3">{asset.mime_type}</td>
-              <td class="whitespace-nowrap px-4 py-3">{asset.bucket}</td>
-              <td class="px-4 py-3">{asset.featured ? <AdminStatusBadge value="featured" tone="green" /> : <span class="text-[var(--color-muted)]">否</span>}</td>
+              <td class="px-4 py-3">{isImage ? <img class="h-20 w-28 border border-[var(--color-line)] object-cover" src={asset.display_url || asset.public_url} alt={asset.alt || asset.file_name} loading="lazy" /> : <span class="text-[var(--color-muted)]">无预览</span>}</td>
+              <td class="whitespace-nowrap px-4 py-3">
+                <AdminStatusBadge value={asset.bucket === "private-media" ? "仅自己可见" : "公开"} tone={asset.bucket === "private-media" ? "blue" : "green"} />
+              </td>
+              <td class="px-4 py-3">{asset.featured ? <AdminStatusBadge value="精选" tone="green" /> : <span class="text-[var(--color-muted)]">否</span>}</td>
               <td class="min-w-56 px-4 py-3">{post ? <a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a> : <span class="text-[var(--color-muted)]">未关联</span>}</td>
               <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatFileSize(asset.size_bytes)}</td>
-              <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(asset.created_at)}</td>
+              <td class="min-w-40 px-4 py-3">
+                <div class="flex flex-col items-start gap-2">
+                  <form method="post" action="/admin/media/action">
+                    <input type="hidden" name="intent" value="featured" />
+                    <input type="hidden" name="id" value={asset.id} />
+                    <input type="hidden" name="featured" value={nextFeatured} />
+                    <button class="inline-flex min-h-9 w-24 items-center justify-center border border-[var(--color-line)] bg-white px-3 text-xs font-medium text-[var(--color-ink)] transition hover:border-[var(--color-ink)] hover:bg-[#f8f4ec]" type="submit">{asset.featured ? "取消精选" : "设为精选"}</button>
+                  </form>
+                  <button class="inline-flex min-h-9 w-24 items-center justify-center border border-[var(--color-line)] bg-white px-3 text-xs font-medium text-[var(--color-muted)] transition hover:border-[var(--color-ink)] hover:text-[var(--color-ink)]" type="button" data-copy-url={asset.public_url}>复制链接</button>
+                  <form method="post" action="/admin/media/action" data-confirm-delete="确定删除这个媒体吗？这会同时删除 Storage 文件；如果文章正文仍引用它，图片会失效。">
+                    <input type="hidden" name="intent" value="delete" />
+                    <input type="hidden" name="id" value={asset.id} />
+                    <button class="inline-flex min-h-9 w-24 items-center justify-center border border-red-200 bg-white px-3 text-xs font-medium text-red-700 transition hover:bg-red-50" type="submit">删除</button>
+                  </form>
+                </div>
+              </td>
             </tr>
           );
         })}
       </tbody>
     </AdminTable>
+    <nav class="mt-4 flex flex-wrap items-center justify-between gap-3 border border-[var(--color-line)] bg-white px-4 py-3 text-sm">
+      <span class="text-[var(--color-muted)]">第 {currentPage} 页，共 {totalPages} 页</span>
+      <div class="flex gap-2">
+        {prevHref ? (
+          <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-white px-4 font-medium hover:bg-[#f8f4ec]" href={prevHref}>上一页</a>
+        ) : (
+          <span class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-[#f8f4ec] px-4 text-[var(--color-muted)]">上一页</span>
+        )}
+        {nextHref ? (
+          <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-white px-4 font-medium hover:bg-[#f8f4ec]" href={nextHref}>下一页</a>
+        ) : (
+          <span class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-[#f8f4ec] px-4 text-[var(--color-muted)]">下一页</span>
+        )}
+      </div>
+    </nav>
+    </>
   ) : (
-    <AdminEmptyState title="还没有媒体" description="后续媒体管理阶段会加入上传入口；当前页面只展示已有媒体。" />
+    <AdminEmptyState title={hasFilters ? "没有匹配的媒体" : "还没有媒体"} description={hasFilters ? "可以换一个关键词，或放宽类型、可见性、精选状态等筛选。" : "先上传一张图片，之后可以在文章里用它做封面或插入正文。"} />
   )}
 </AdminLayout>
+
+<script>
+  const loadingOverlay = document.createElement("div");
+  loadingOverlay.className = "fixed inset-0 z-50 hidden items-center justify-center bg-[#f7f5f1]/70 backdrop-blur-sm";
+  loadingOverlay.innerHTML = '<div class="flex min-w-48 flex-col items-center gap-4 border border-[var(--color-line)] bg-white px-8 py-7 text-center shadow-sm"><span class="h-9 w-9 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span><span class="text-sm font-medium text-[var(--color-ink)]">正在处理...</span></div>';
+  document.body.appendChild(loadingOverlay);
+
+  function showLoading() {
+    loadingOverlay.classList.remove("hidden");
+    loadingOverlay.classList.add("flex");
+  }
+
+  function refreshBulkDeleteState() {
+    const checked = [...document.querySelectorAll("[data-media-checkbox]:checked")];
+    const button = document.querySelector("[data-bulk-delete-button]");
+    const input = document.querySelector("[data-bulk-media-ids]");
+    if (button instanceof HTMLButtonElement) button.disabled = checked.length === 0;
+    if (input instanceof HTMLInputElement) input.value = checked.map((item) => item instanceof HTMLInputElement ? item.value : "").filter(Boolean).join(",");
+  }
+
+  document.addEventListener("change", (event) => {
+    if (!(event.target instanceof HTMLInputElement) || !event.target.matches("[data-media-checkbox]")) return;
+    refreshBulkDeleteState();
+  });
+
+  document.addEventListener("submit", (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    const confirmMessage = form.dataset.confirmDelete;
+    if (confirmMessage && !window.confirm(confirmMessage)) {
+      event.preventDefault();
+      return;
+    }
+    showLoading();
+  });
+
+  document.addEventListener("click", async (event) => {
+    const button = event.target instanceof HTMLElement ? event.target.closest("[data-copy-url]") : null;
+    if (!(button instanceof HTMLButtonElement)) return;
+    await navigator.clipboard.writeText(button.dataset.copyUrl || "");
+    button.textContent = "已复制";
+    setTimeout(() => {
+      button.textContent = "复制链接";
+    }, 1600);
+  });
+</script>

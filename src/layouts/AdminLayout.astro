@@ -44,6 +44,7 @@ function isActive(href: string) {
               class={`flex min-h-10 items-center justify-between border px-3 py-2 transition ${isActive(item.href) ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-white" : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-line)] hover:bg-white hover:text-[var(--color-ink)]"}`}
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
+              data-admin-nav-link
             >
               <span>{item.text}</span>
               <span class="text-xs opacity-70">{item.label}</span>
@@ -69,3 +70,44 @@ function isActive(href: string) {
     </div>
   </body>
 </html>
+
+<script>
+  const adminLoadingOverlay = document.createElement("div");
+  adminLoadingOverlay.className = "fixed inset-0 z-50 hidden items-center justify-center bg-[#f7f5f1]/70 backdrop-blur-sm";
+  adminLoadingOverlay.innerHTML = '<div class="flex min-w-48 flex-col items-center gap-4 border border-[var(--color-line)] bg-white px-8 py-7 text-center shadow-sm"><span class="h-9 w-9 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span><span class="text-sm font-medium text-[var(--color-ink)]">正在打开...</span></div>';
+  document.body.appendChild(adminLoadingOverlay);
+
+  const prefetched = new Set();
+
+  function showAdminLoading() {
+    adminLoadingOverlay.classList.remove("hidden");
+    adminLoadingOverlay.classList.add("flex");
+  }
+
+  function prefetchAdminPage(link: Element | null) {
+    if (!(link instanceof HTMLAnchorElement)) return;
+    const url = new URL(link.href);
+    if (url.origin !== window.location.origin || prefetched.has(url.href)) return;
+    prefetched.add(url.href);
+    void fetch(url.href, { credentials: "same-origin", priority: "low" }).catch(() => {
+      prefetched.delete(url.href);
+    });
+  }
+
+  document.addEventListener("pointerenter", (event) => {
+    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link]") : null;
+    prefetchAdminPage(link);
+  }, { capture: true });
+
+  document.addEventListener("focusin", (event) => {
+    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link]") : null;
+    prefetchAdminPage(link);
+  });
+
+  document.addEventListener("click", (event) => {
+    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link]") : null;
+    if (!(link instanceof HTMLAnchorElement)) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target) return;
+    showAdminLoading();
+  });
+</script>

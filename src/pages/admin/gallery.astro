@@ -10,7 +10,7 @@ const assets = await listAdminMedia({ featuredOnly: true });
 ---
 
 <AdminLayout title="Gallery - 理哩后台">
-  <AdminPageHeader eyebrow="Gallery" title="照片精选" description="这里展示进入前台照片页的精选媒体。排序先按创建时间倒序，后续再做精细排序。">
+  <AdminPageHeader eyebrow="Gallery" title="照片精选" description="这里展示进入前台照片页的精选图片。">
     <AdminActionButton href="/admin/media">查看媒体</AdminActionButton>
   </AdminPageHeader>
 
@@ -20,9 +20,11 @@ const assets = await listAdminMedia({ featuredOnly: true });
         <tr>
           <th class="px-4 py-3 font-medium">预览</th>
           <th class="px-4 py-3 font-medium">文件</th>
-          <th class="px-4 py-3 font-medium">Bucket</th>
+          <th class="px-4 py-3 font-medium">可见性</th>
+          <th class="px-4 py-3 font-medium">说明</th>
           <th class="px-4 py-3 font-medium">关联文章</th>
           <th class="px-4 py-3 font-medium">创建时间</th>
+          <th class="px-4 py-3 font-medium">操作</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-[var(--color-line)]">
@@ -30,20 +32,45 @@ const assets = await listAdminMedia({ featuredOnly: true });
           const post = Array.isArray(asset.posts) ? asset.posts[0] : asset.posts;
           return (
             <tr>
-              <td class="px-4 py-3"><img class="h-20 w-28 object-cover" src={asset.public_url} alt={asset.file_name} loading="lazy" /></td>
+              <td class="px-4 py-3"><img class="h-20 w-28 border border-[var(--color-line)] object-cover" src={asset.display_url || asset.public_url} alt={asset.alt || asset.file_name} loading="lazy" /></td>
               <td class="min-w-72 px-4 py-3">
                 <p class="font-medium">{asset.file_name}</p>
                 <p class="mt-1 max-w-md break-all text-xs text-[var(--color-muted)]">{asset.storage_path}</p>
               </td>
-              <td class="whitespace-nowrap px-4 py-3">{asset.bucket}</td>
+              <td class="whitespace-nowrap px-4 py-3">{asset.bucket === "private-media" ? "仅自己可见" : "公开"}</td>
+              <td class="min-w-[300px] px-4 py-3">
+                <form class="grid gap-2" method="post" action="/admin/media/action">
+                  <input type="hidden" name="intent" value="meta" />
+                  <input type="hidden" name="id" value={asset.id} />
+                  <input type="hidden" name="next" value="/admin/gallery" />
+                  <label class="grid gap-1">
+                    <span class="text-xs text-[var(--color-muted)]">替代文字</span>
+                    <input class="min-h-9 border border-[var(--color-line)] px-3 text-sm" name="alt" value={asset.alt ?? ""} placeholder="给读屏或加载失败时使用" />
+                  </label>
+                  <label class="grid gap-1">
+                    <span class="text-xs text-[var(--color-muted)]">照片页说明</span>
+                    <input class="min-h-9 border border-[var(--color-line)] px-3 text-sm" name="caption" value={asset.caption ?? ""} placeholder="可选，用于照片页展示" />
+                  </label>
+                  <AdminActionButton type="submit">保存</AdminActionButton>
+                </form>
+              </td>
               <td class="min-w-56 px-4 py-3">{post ? <a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a> : <span class="text-[var(--color-muted)]">未关联</span>}</td>
               <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(asset.created_at)}</td>
+              <td class="px-4 py-3">
+                <form method="post" action="/admin/media/action">
+                  <input type="hidden" name="intent" value="featured" />
+                  <input type="hidden" name="id" value={asset.id} />
+                  <input type="hidden" name="featured" value="false" />
+                  <input type="hidden" name="next" value="/admin/gallery" />
+                  <AdminActionButton type="submit" variant="quiet">取消精选</AdminActionButton>
+                </form>
+              </td>
             </tr>
           );
         })}
       </tbody>
     </AdminTable>
   ) : (
-    <AdminEmptyState title="还没有精选照片" description="可以先用 gallery:feature 脚本标记精选；后续媒体管理阶段再加入后台操作入口。" />
+    <AdminEmptyState title="还没有精选照片" description="可以在媒体页把图片设为精选，精选图片会显示在前台照片页。" />
   )}
 </AdminLayout>

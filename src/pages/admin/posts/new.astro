@@ -2,9 +2,9 @@
 import AdminPageHeader from "../../../components/admin/AdminPageHeader.astro";
 import PostEditor from "../../../components/admin/PostEditor";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
-import { listAdminCategories, listAdminTags } from "../../../lib/admin";
+import { listAdminCategories, listAdminImageMedia, listAdminTags } from "../../../lib/admin";
 
-const [categories, tags] = await Promise.all([listAdminCategories(), listAdminTags()]);
+const [categories, tags, mediaAssets] = await Promise.all([listAdminCategories(), listAdminTags(), listAdminImageMedia({ limit: 40 })]);
 const uncategorized = categories.find((category) => category.name === "未分类");
 const error = Astro.url.searchParams.get("error");
 ---
@@ -16,6 +16,7 @@ const error = Astro.url.searchParams.get("error");
     client:only="react"
     categories={categories}
     tags={tags}
+    mediaAssets={mediaAssets}
     defaultCategoryId={uncategorized?.id ?? null}
     error={error}
   />

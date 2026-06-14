@@ -6,6 +6,7 @@ import { createServiceRoleSupabaseClient } from "./supabase/server";
 export const SESSION_COOKIE_NAME = "lili_session";
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
 const PASSWORD_SALT_ROUNDS = 12;
+const SESSION_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
 
 export type UserRole = "admin" | "reader";
 
@@ -135,7 +136,7 @@ export async function getCurrentUserFromToken(token: string | undefined) {
   const tokenHash = hashSessionToken(token);
   const { data, error } = await supabase
     .from("sessions")
-    .select("id, expires_at, users(id, username, display_name, role)")
+    .select("id, expires_at, last_seen_at, users(id, username, display_name, role)")
     .eq("token_hash", tokenHash)
     .maybeSingle();
 
@@ -146,15 +147,24 @@ export async function getCurrentUserFromToken(token: string | undefined) {
     return null;
   }
 
-  await supabase
-    .from("sessions")
-    .update({ last_seen_at: new Date().toISOString() })
-    .eq("token_hash", tokenHash);
+  if (shouldTouchSession(data.last_seen_at)) {
+    await supabase
+      .from("sessions")
+      .update({ last_seen_at: new Date().toISOString() })
+      .eq("token_hash", tokenHash);
+  }
 
   const user = Array.isArray(data.users) ? data.users[0] : data.users;
   if (!user) return null;
 
   return user as CurrentUser;
+}
+
+function shouldTouchSession(lastSeenAt: string | null | undefined) {
+  if (!lastSeenAt) return true;
+  const lastSeenTime = new Date(lastSeenAt).getTime();
+  if (Number.isNaN(lastSeenTime)) return true;
+  return Date.now() - lastSeenTime > SESSION_TOUCH_INTERVAL_MS;
 }
 
 export function isAdmin(user: CurrentUser | null | undefined) {

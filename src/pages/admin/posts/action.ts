@@ -21,6 +21,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
       newCategoryName: String(formData.get("new_category_name") ?? ""),
       tagNames: parseTagNames(String(formData.get("tag_names") ?? "[]")),
       coverUrl: String(formData.get("cover_url") ?? ""),
+      coverAssetId: String(formData.get("cover_asset_id") ?? "") || undefined,
       visibility: parseVisibility(String(formData.get("visibility") ?? "public")),
       noindex: formData.get("show_on_home") !== "on",
       publishedAt: String(formData.get("published_at") ?? "") || undefined,

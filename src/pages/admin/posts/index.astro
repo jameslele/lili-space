@@ -6,7 +6,7 @@ import AdminPageHeader from "../../../components/admin/AdminPageHeader.astro";
 import AdminStatusBadge from "../../../components/admin/AdminStatusBadge.astro";
 import AdminTable from "../../../components/admin/AdminTable.astro";
 import AdminLayout from "../../../layouts/AdminLayout.astro";
-import { formatAdminDate, listAdminPosts, type AdminPostFilter } from "../../../lib/admin";
+import { formatAdminDate, listAdminPostsPage, type AdminPostFilter } from "../../../lib/admin";
 
 const filters: { key: AdminPostFilter; label: string }[] = [
   { key: "all", label: "全部" },
@@ -18,18 +18,66 @@ const filters: { key: AdminPostFilter; label: string }[] = [
 ];
 const requestedFilter = Astro.url.searchParams.get("filter") as AdminPostFilter | null;
 const activeFilter = filters.some((item) => item.key === requestedFilter) ? requestedFilter! : "all";
-const posts = await listAdminPosts(activeFilter);
+const page = parsePositiveInt(Astro.url.searchParams.get("page"), 1);
+const pageSize = parsePositiveInt(Astro.url.searchParams.get("pageSize"), 20);
+const result = await listAdminPostsPage({ filter: activeFilter, page, pageSize });
+const { posts, total, totalPages } = result;
+const currentPage = Math.min(result.page, totalPages);
+const paginationBase = new URLSearchParams(Astro.url.searchParams);
+paginationBase.delete("success");
+paginationBase.delete("error");
+const prevHref = currentPage > 1 ? buildPostsHref(paginationBase, currentPage - 1) : "";
+const nextHref = currentPage < totalPages ? buildPostsHref(paginationBase, currentPage + 1) : "";
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function buildPostsHref(params: URLSearchParams, pageNumber: number) {
+  const next = new URLSearchParams(params);
+  next.set("page", String(pageNumber));
+  const query = next.toString();
+  return query ? `/admin/posts?${query}` : "/admin/posts";
+}
+
+function buildFilterHref(filter: AdminPostFilter) {
+  const params = new URLSearchParams(Astro.url.searchParams);
+  params.delete("page");
+  params.delete("success");
+  params.delete("error");
+  if (filter === "all") params.delete("filter");
+  else params.set("filter", filter);
+  const query = params.toString();
+  return query ? `/admin/posts?${query}` : "/admin/posts";
+}
 ---
 
 <AdminLayout title="文章 - 理哩后台">
-  <AdminPageHeader eyebrow="Posts" title="文章" description="这里先负责查看、筛选和进入编辑占位页；发布、保存和正文编辑留到下一阶段。">
+  <AdminPageHeader eyebrow="Posts" title="文章" description="查看、筛选和编辑文章。">
     <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
   </AdminPageHeader>
 
-  <AdminFilterTabs items={filters.map((item) => ({ href: item.key === "all" ? "/admin/posts" : `/admin/posts?filter=${item.key}`, label: item.label, active: item.key === activeFilter }))} />
+  <AdminFilterTabs items={filters.map((item) => ({ href: buildFilterHref(item.key), label: item.label, active: item.key === activeFilter }))} />
 
   <div class="mt-4">
     {posts.length > 0 ? (
+      <>
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <p class="text-sm text-[var(--color-muted)]">共 {total} 篇文章，当前第 {currentPage} / {totalPages} 页，本页 {posts.length} 篇。</p>
+        <form class="flex items-center gap-2 text-sm" method="get" action="/admin/posts">
+          {activeFilter !== "all" && <input type="hidden" name="filter" value={activeFilter} />}
+          <label class="flex items-center gap-2">
+            <span class="text-[var(--color-muted)]">每页</span>
+            <select class="min-h-10 border border-[var(--color-line)] bg-white px-3" name="pageSize" onchange="this.form?.submit()">
+              <option value="10" selected={result.pageSize === 10}>10</option>
+              <option value="20" selected={result.pageSize === 20}>20</option>
+              <option value="40" selected={result.pageSize === 40}>40</option>
+              <option value="60" selected={result.pageSize === 60}>60</option>
+            </select>
+          </label>
+        </form>
+      </div>
       <AdminTable>
         <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
           <tr>
@@ -47,7 +95,7 @@ const posts = await listAdminPosts(activeFilter);
           {posts.map((post) => (
             <tr>
               <td class="min-w-72 px-4 py-3">
-                <p class="font-medium">{post.title}</p>
+                <a class="font-medium underline-offset-4 hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a>
                 <p class="mt-1 text-xs text-[var(--color-muted)]">/{post.slug}</p>
               </td>
               <td class="whitespace-nowrap px-4 py-3">{post.category?.name ?? "未分类"}</td>
@@ -56,11 +104,27 @@ const posts = await listAdminPosts(activeFilter);
               <td class="px-4 py-3"><AdminStatusBadge value={post.visibility} tone={post.visibility === "private" ? "blue" : "neutral"} /></td>
               <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.published_at)}</td>
               <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.updated_at)}</td>
-              <td class="px-4 py-3"><a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>查看</a></td>
+              <td class="px-4 py-3"><a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>编辑</a></td>
             </tr>
           ))}
         </tbody>
       </AdminTable>
+      <nav class="mt-4 flex flex-wrap items-center justify-between gap-3 border border-[var(--color-line)] bg-white px-4 py-3 text-sm">
+        <span class="text-[var(--color-muted)]">第 {currentPage} 页，共 {totalPages} 页</span>
+        <div class="flex gap-2">
+          {prevHref ? (
+            <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-white px-4 font-medium hover:bg-[#f8f4ec]" href={prevHref}>上一页</a>
+          ) : (
+            <span class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-[#f8f4ec] px-4 text-[var(--color-muted)]">上一页</span>
+          )}
+          {nextHref ? (
+            <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-white px-4 font-medium hover:bg-[#f8f4ec]" href={nextHref}>下一页</a>
+          ) : (
+            <span class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-[#f8f4ec] px-4 text-[var(--color-muted)]">下一页</span>
+          )}
+        </div>
+      </nav>
+      </>
     ) : (
       <AdminEmptyState title="没有匹配的文章" description="可以切换筛选条件，或等下一阶段编辑器完成后新建文章。">
         <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
