@@ -2,6 +2,7 @@
 import AdminActionButton from "../../../components/admin/AdminActionButton.astro";
 import AdminEmptyState from "../../../components/admin/AdminEmptyState.astro";
 import AdminFilterTabs from "../../../components/admin/AdminFilterTabs.astro";
+import AdminNotice from "../../../components/admin/AdminNotice.astro";
 import AdminPageHeader from "../../../components/admin/AdminPageHeader.astro";
 import AdminStatusBadge from "../../../components/admin/AdminStatusBadge.astro";
 import AdminTable from "../../../components/admin/AdminTable.astro";
@@ -18,6 +19,7 @@ const filters: { key: AdminPostFilter; label: string }[] = [
 ];
 const requestedFilter = Astro.url.searchParams.get("filter") as AdminPostFilter | null;
 const activeFilter = filters.some((item) => item.key === requestedFilter) ? requestedFilter! : "all";
+const success = Astro.url.searchParams.get("success");
 const page = parsePositiveInt(Astro.url.searchParams.get("page"), 1);
 const pageSize = parsePositiveInt(Astro.url.searchParams.get("pageSize"), 20);
 const result = await listAdminPostsPage({ filter: activeFilter, page, pageSize });
@@ -28,6 +30,9 @@ paginationBase.delete("success");
 paginationBase.delete("error");
 const prevHref = currentPage > 1 ? buildPostsHref(paginationBase, currentPage - 1) : "";
 const nextHref = currentPage < totalPages ? buildPostsHref(paginationBase, currentPage + 1) : "";
+const successMessage = {
+  deleted: "文章已删除。",
+}[success ?? ""];
 
 function parsePositiveInt(value: string | null, fallback: number) {
   const parsed = Number.parseInt(value ?? "", 10);
@@ -58,6 +63,8 @@ function buildFilterHref(filter: AdminPostFilter) {
     <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
   </AdminPageHeader>
 
+  <AdminNotice message={successMessage} tone="success" />
+
   <AdminFilterTabs items={filters.map((item) => ({ href: buildFilterHref(item.key), label: item.label, active: item.key === activeFilter }))} />
 
   <div class="mt-4">
@@ -65,22 +72,34 @@ function buildFilterHref(filter: AdminPostFilter) {
       <>
       <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
         <p class="text-sm text-[var(--color-muted)]">共 {total} 篇文章，当前第 {currentPage} / {totalPages} 页，本页 {posts.length} 篇。</p>
-        <form class="flex items-center gap-2 text-sm" method="get" action="/admin/posts">
-          {activeFilter !== "all" && <input type="hidden" name="filter" value={activeFilter} />}
-          <label class="flex items-center gap-2">
-            <span class="text-[var(--color-muted)]">每页</span>
-            <select class="min-h-10 border border-[var(--color-line)] bg-white px-3" name="pageSize" onchange="this.form?.submit()">
-              <option value="10" selected={result.pageSize === 10}>10</option>
-              <option value="20" selected={result.pageSize === 20}>20</option>
-              <option value="40" selected={result.pageSize === 40}>40</option>
-              <option value="60" selected={result.pageSize === 60}>60</option>
-            </select>
-          </label>
-        </form>
+        <div class="flex flex-wrap items-center gap-2">
+          <form id="post-bulk-delete-form" method="post" action="/admin/posts/action" data-confirm-delete="确定删除选中的文章吗？文章删除后不可恢复；关联媒体文件不会被删除。">
+            <input type="hidden" name="intent" value="delete" />
+            <input type="hidden" name="ids" value="" data-bulk-post-ids />
+          </form>
+          <button class="inline-flex min-h-10 items-center justify-center border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50" type="submit" form="post-bulk-delete-form" data-bulk-delete-button disabled>
+            删除选中
+          </button>
+          <form class="flex items-center gap-2 text-sm" method="get" action="/admin/posts">
+            {activeFilter !== "all" && <input type="hidden" name="filter" value={activeFilter} />}
+            <label class="flex items-center gap-2">
+              <span class="text-[var(--color-muted)]">每页</span>
+              <select class="min-h-10 border border-[var(--color-line)] bg-white px-3" name="pageSize" onchange="this.form?.submit()">
+                <option value="10" selected={result.pageSize === 10}>10</option>
+                <option value="20" selected={result.pageSize === 20}>20</option>
+                <option value="40" selected={result.pageSize === 40}>40</option>
+                <option value="60" selected={result.pageSize === 60}>60</option>
+              </select>
+            </label>
+          </form>
+        </div>
       </div>
       <AdminTable>
         <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
           <tr>
+            <th class="px-4 py-3 font-medium">
+              <span class="sr-only">选择</span>
+            </th>
             <th class="px-4 py-3 font-medium">标题</th>
             <th class="px-4 py-3 font-medium">分类</th>
             <th class="px-4 py-3 font-medium">标签</th>
@@ -94,6 +113,9 @@ function buildFilterHref(filter: AdminPostFilter) {
         <tbody class="divide-y divide-[var(--color-line)]">
           {posts.map((post) => (
             <tr>
+              <td class="px-4 py-3 align-top">
+                <input class="mt-1 h-4 w-4" type="checkbox" value={post.id} data-post-checkbox aria-label={`选择 ${post.title}`} />
+              </td>
               <td class="min-w-72 px-4 py-3">
                 <a class="font-medium underline-offset-4 hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a>
                 <p class="mt-1 text-xs text-[var(--color-muted)]">/{post.slug}</p>
@@ -104,7 +126,16 @@ function buildFilterHref(filter: AdminPostFilter) {
               <td class="px-4 py-3"><AdminStatusBadge value={post.visibility} tone={post.visibility === "private" ? "blue" : "neutral"} /></td>
               <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.published_at)}</td>
               <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(post.updated_at)}</td>
-              <td class="px-4 py-3"><a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>编辑</a></td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <a class="font-medium hover:underline" href={`/admin/posts/${post.id}`}>编辑</a>
+                  <form method="post" action="/admin/posts/action" data-confirm-delete={`确定删除《${post.title}》吗？文章删除后不可恢复；关联媒体文件不会被删除。`}>
+                    <input type="hidden" name="intent" value="delete" />
+                    <input type="hidden" name="id" value={post.id} />
+                    <button class="font-medium text-red-700 hover:underline" type="submit">删除</button>
+                  </form>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -132,3 +163,39 @@ function buildFilterHref(filter: AdminPostFilter) {
     )}
   </div>
 </AdminLayout>
+
+<script>
+  const loadingOverlay = document.createElement("div");
+  loadingOverlay.className = "fixed inset-0 z-50 hidden items-center justify-center bg-[#f7f5f1]/70 backdrop-blur-sm";
+  loadingOverlay.innerHTML = '<div class="flex min-w-48 flex-col items-center gap-4 border border-[var(--color-line)] bg-white px-8 py-7 text-center shadow-sm"><span class="h-9 w-9 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span><span class="text-sm font-medium text-[var(--color-ink)]">正在处理...</span></div>';
+  document.body.appendChild(loadingOverlay);
+
+  function showLoading() {
+    loadingOverlay.classList.remove("hidden");
+    loadingOverlay.classList.add("flex");
+  }
+
+  function refreshBulkDeleteState() {
+    const checked = [...document.querySelectorAll("[data-post-checkbox]:checked")];
+    const button = document.querySelector("[data-bulk-delete-button]");
+    const input = document.querySelector("[data-bulk-post-ids]");
+    if (button instanceof HTMLButtonElement) button.disabled = checked.length === 0;
+    if (input instanceof HTMLInputElement) input.value = checked.map((item) => item instanceof HTMLInputElement ? item.value : "").filter(Boolean).join(",");
+  }
+
+  document.addEventListener("change", (event) => {
+    if (!(event.target instanceof HTMLInputElement) || !event.target.matches("[data-post-checkbox]")) return;
+    refreshBulkDeleteState();
+  });
+
+  document.addEventListener("submit", (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    const confirmMessage = form.dataset.confirmDelete;
+    if (confirmMessage && !window.confirm(confirmMessage)) {
+      event.preventDefault();
+      return;
+    }
+    showLoading();
+  });
+</script>

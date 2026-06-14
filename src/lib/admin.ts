@@ -246,6 +246,17 @@ export async function getAdminPostById(id: string) {
   };
 }
 
+export async function deleteAdminPosts(ids: string[]) {
+  const uniqueIds = [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
+  if (uniqueIds.length === 0) throw new Error("请选择要删除的文章");
+
+  const { error } = await createServiceRoleSupabaseClient()
+    .from("posts")
+    .delete()
+    .in("id", uniqueIds);
+  if (error) throw error;
+}
+
 export async function listAdminCategories() {
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("categories").select("*").order("sort_order", { ascending: true });

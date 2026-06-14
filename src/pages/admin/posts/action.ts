@@ -1,16 +1,25 @@
 import type { APIRoute } from "astro";
 
-import { saveAdminPost, type AdminPostVisibility, type SaveAdminPostInput } from "../../../lib/admin";
+import { deleteAdminPosts, saveAdminPost, type AdminPostVisibility, type SaveAdminPostInput } from "../../../lib/admin";
 
 export const POST: APIRoute = async ({ request, redirect, locals }) => {
   const currentUser = locals.currentUser;
   if (!currentUser || currentUser.role !== "admin") return redirect("/forbidden", 303);
 
   const formData = await request.formData();
-  const intent = String(formData.get("intent") ?? "draft") as SaveAdminPostInput["intent"];
+  const intent = String(formData.get("intent") ?? "draft");
   const id = String(formData.get("id") ?? "").trim();
 
   try {
+    if (intent === "delete") {
+      const ids = [
+        ...formData.getAll("ids").map(String),
+        id,
+      ].flatMap((value) => value.split(","));
+      await deleteAdminPosts(ids);
+      return redirect("/admin/posts?success=deleted", 303);
+    }
+
     const postId = await saveAdminPost({
       id: id || undefined,
       title: String(formData.get("title") ?? ""),
@@ -25,7 +34,7 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
       visibility: parseVisibility(String(formData.get("visibility") ?? "public")),
       noindex: formData.get("show_on_home") !== "on",
       publishedAt: String(formData.get("published_at") ?? "") || undefined,
-      intent,
+      intent: parsePostIntent(intent),
     }, currentUser.id);
 
     const success = intent === "publish" ? "published" : intent === "archive" ? "archived" : "saved";
@@ -39,6 +48,11 @@ export const POST: APIRoute = async ({ request, redirect, locals }) => {
 
 function parseVisibility(value: string): AdminPostVisibility {
   return value === "private" ? "private" : "public";
+}
+
+function parsePostIntent(value: string): SaveAdminPostInput["intent"] {
+  if (value === "publish" || value === "archive") return value;
+  return "draft";
 }
 
 function parseTagNames(value: string) {
