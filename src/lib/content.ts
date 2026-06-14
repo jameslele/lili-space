@@ -65,6 +65,14 @@ export interface GalleryAsset {
   created_at: string;
 }
 
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 type RawPost = {
   id: string;
   title: string;
@@ -143,6 +151,51 @@ export async function getPostsForViewer(viewer: Viewer, options: { limit?: numbe
   return attachTags((data ?? []) as RawPost[]);
 }
 
+export async function getPostsPageForViewer(
+  viewer: Viewer,
+  options: { page?: number; pageSize?: number; includeNoindex?: boolean } = {},
+): Promise<PaginatedResult<PostSummary>> {
+  const pageSize = clampInteger(options.pageSize ?? 12, 6, 30);
+  const page = Math.max(1, Math.floor(options.page ?? 1));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+  const supabase = createServiceRoleSupabaseClient();
+  let query = supabase
+    .from("posts")
+    .select(postSelect, { count: "exact" })
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .range(from, to);
+
+  if (!canViewAllPosts(viewer)) {
+    query = query.eq("status", "published").eq("visibility", "public");
+    if (!options.includeNoindex) query = query.eq("noindex", false);
+  }
+
+  const { data, error, count } = await query;
+  if (error) {
+    if (isRangeNotSatisfiableError(error)) {
+      const total = await countPostsForViewer(viewer, options);
+      return {
+        items: [],
+        total,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(total / pageSize)),
+      };
+    }
+    throw error;
+  }
+
+  const total = count ?? 0;
+  return {
+    items: await attachTags((data ?? []) as RawPost[]),
+    total,
+    page,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+  };
+}
+
 export async function getPostBySlugForViewer(slug: string, viewer: Viewer) {
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("posts").select(postDetailSelect).eq("slug", slug).maybeSingle();
@@ -169,7 +222,7 @@ export async function getCategoriesWithCounts(viewer: Viewer) {
 
   const posts = await getPostsForViewer(viewer, { includeNoindex: true });
   const counts = countBy(posts.map((post) => post.category?.id).filter(Boolean) as string[]);
-  const categories = canViewAllPosts(viewer) ? data ?? [] : (data ?? []).filter((category) => category.visible);
+  const categories = (data ?? []).filter((category) => category.visible);
 
   return (categories as CategorySummary[]).map((category) => ({
     ...category,
@@ -235,6 +288,57 @@ export async function getFeaturedGalleryAssets(viewer: Viewer) {
     ...asset,
     public_url: asset.bucket === "private-media" ? await createPrivateMediaSignedUrl(asset.storage_path, supabase) : asset.public_url,
   }))) as Promise<GalleryAsset[]>;
+}
+
+export async function getFeaturedGalleryAssetsPage(
+  viewer: Viewer,
+  options: { page?: number; pageSize?: number } = {},
+): Promise<PaginatedResult<GalleryAsset>> {
+  const pageSize = clampInteger(options.pageSize ?? 24, 12, 48);
+  const page = Math.max(1, Math.floor(options.page ?? 1));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+  const supabase = createServiceRoleSupabaseClient();
+  let query = supabase
+    .from("media_assets")
+    .select("id, file_name, public_url, alt, caption, width, height, created_at, bucket, storage_path, featured", { count: "exact" })
+    .eq("featured", true)
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (!canViewAllPosts(viewer)) query = query.eq("bucket", "public-media");
+
+  const { data, error, count } = await query;
+  if (error) {
+    if (isRangeNotSatisfiableError(error)) {
+      const total = await countFeaturedGalleryAssets(viewer);
+      return {
+        items: [],
+        total,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(total / pageSize)),
+      };
+    }
+    throw error;
+  }
+
+  const assets = data ?? [];
+  const items = canViewAllPosts(viewer)
+    ? await Promise.all(assets.map(async (asset) => ({
+      ...asset,
+      public_url: asset.bucket === "private-media" ? await createPrivateMediaSignedUrl(asset.storage_path, supabase) : asset.public_url,
+    }))) as GalleryAsset[]
+    : assets as GalleryAsset[];
+
+  const total = count ?? 0;
+  return {
+    items,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+  };
 }
 
 export function groupPostsByYear(posts: PostSummary[]): ArchiveGroup[] {
@@ -308,6 +412,43 @@ function countBy(values: string[]) {
   return counts;
 }
 
+function clampInteger(value: number, min: number, max: number) {
+  if (!Number.isFinite(value)) return min;
+  return Math.min(max, Math.max(min, Math.floor(value)));
+}
+
+function isRangeNotSatisfiableError(error: { code?: string }) {
+  return error.code === "PGRST103";
+}
+
+async function countPostsForViewer(viewer: Viewer, options: { includeNoindex?: boolean }) {
+  const supabase = createServiceRoleSupabaseClient();
+  let query = supabase.from("posts").select("id", { count: "exact", head: true });
+
+  if (!canViewAllPosts(viewer)) {
+    query = query.eq("status", "published").eq("visibility", "public");
+    if (!options.includeNoindex) query = query.eq("noindex", false);
+  }
+
+  const { error, count } = await query;
+  if (error) throw error;
+  return count ?? 0;
+}
+
+async function countFeaturedGalleryAssets(viewer: Viewer) {
+  const supabase = createServiceRoleSupabaseClient();
+  let query = supabase
+    .from("media_assets")
+    .select("id", { count: "exact", head: true })
+    .eq("featured", true);
+
+  if (!canViewAllPosts(viewer)) query = query.eq("bucket", "public-media");
+
+  const { error, count } = await query;
+  if (error) throw error;
+  return count ?? 0;
+}
+
 function sanitizeRenderedHtml(html: string) {
   return sanitizeHtml(html, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "h3", "video", "audio", "source", "iframe"]),
@@ -341,8 +482,12 @@ async function signPrivateMediaUrls(html: string, viewer: Viewer) {
   for (const match of matches) {
     const originalUrl = match[0];
     const storagePath = decodeURIComponent(match[1]);
-    const signedUrl = await createPrivateMediaSignedUrl(storagePath, supabase);
-    signedHtml = signedHtml.split(originalUrl).join(signedUrl);
+    try {
+      const signedUrl = await createPrivateMediaSignedUrl(storagePath, supabase);
+      signedHtml = signedHtml.split(originalUrl).join(signedUrl);
+    } catch {
+      // Keep the original private URL if the object no longer exists or signing fails.
+    }
   }
   return signedHtml;
 }

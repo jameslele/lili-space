@@ -1,15 +1,33 @@
 ---
 import EmptyState from "../components/EmptyState.astro";
 import GalleryGrid from "../components/GalleryGrid.astro";
+import Pagination from "../components/Pagination.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getFeaturedGalleryAssets } from "../lib/content";
+import { getFeaturedGalleryAssetsPage } from "../lib/content";
 
 const currentUser = Astro.locals.currentUser;
-const assets = await getFeaturedGalleryAssets(currentUser);
+const page = parsePositiveInt(Astro.url.searchParams.get("page"), 1);
+const galleryPage = await getFeaturedGalleryAssetsPage(currentUser, { page, pageSize: 24 });
+if (galleryPage.total > 0 && page > galleryPage.totalPages) {
+  return Astro.redirect(galleryPage.totalPages > 1 ? `/gallery?page=${galleryPage.totalPages}` : "/gallery", 303);
+}
+const assets = galleryPage.items;
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
 ---
 
 <BaseLayout title="照片 - 理哩的个人空间" currentUser={currentUser}>
-  <SectionHeader title="照片" note="精选图片会在这里形成另一条目录" />
-  {assets.length > 0 ? <GalleryGrid assets={assets} /> : <EmptyState title="还没有精选照片" description="等我慢慢挑一些适合长期回看的照片放到这里，它会像另一条安静的目录。" />}
+  <SectionHeader title="照片" />
+  {assets.length > 0 ? (
+    <>
+      <GalleryGrid assets={assets} />
+      <Pagination page={galleryPage.page} totalPages={galleryPage.totalPages} total={galleryPage.total} pageSize={galleryPage.pageSize} />
+    </>
+  ) : (
+    <EmptyState title="还没有精选照片" description="等我慢慢挑一些适合长期回看的照片放到这里，它会像另一条安静的目录。" />
+  )}
 </BaseLayout>

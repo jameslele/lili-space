@@ -1,20 +1,37 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
+import Pagination from "../components/Pagination.astro";
 import PostCard from "../components/PostCard.astro";
 import SectionHeader from "../components/SectionHeader.astro";
-import { canViewAllPosts, getPostsForViewer } from "../lib/content";
+import { canViewAllPosts, getPostsPageForViewer } from "../lib/content";
+import { getSiteSettingsWithDefaults } from "../lib/site-settings";
 
 const currentUser = Astro.locals.currentUser;
+const settings = await getSiteSettingsWithDefaults();
+const page = parsePositiveInt(Astro.url.searchParams.get("page"), 1);
 const showStatus = canViewAllPosts(currentUser);
-const posts = await getPostsForViewer(currentUser);
+const postsPage = await getPostsPageForViewer(currentUser, { page, pageSize: 12 });
+if (postsPage.total > 0 && page > postsPage.totalPages) {
+  return Astro.redirect(postsPage.totalPages > 1 ? `/?page=${postsPage.totalPages}` : "/", 303);
+}
+const posts = postsPage.items;
 const [heroPost, ...restPosts] = posts;
 const stackPosts = restPosts.slice(0, 2);
 const featurePosts = restPosts.slice(2);
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
 ---
 
-<BaseLayout currentUser={currentUser}>
-  <h1 class="sr-only">理哩的个人空间</h1>
+<BaseLayout currentUser={currentUser} settings={settings}>
+  <section class="mb-4 grid gap-3 border-b border-[var(--color-line)] pb-4 sm:mb-5 sm:grid-cols-[0.8fr_1.2fr] sm:items-end">
+    <h1 class="sr-only">{settings.home_title}</h1>
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">{settings.home_eyebrow}</p>
+    <p class="max-w-2xl text-sm leading-7 text-[var(--color-muted)] sm:justify-self-end sm:text-right sm:text-base">{settings.home_description}</p>
+  </section>
   {posts.length > 0 ? (
     <>
       <section class="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
@@ -46,8 +63,9 @@ const featurePosts = restPosts.slice(2);
           {featurePosts.map((post) => <PostCard post={post} variant="feature" showStatus={showStatus} />)}
         </section>
       ) : (
-        <EmptyState title="目录还在变厚" description="当前文章数量还不多，后续内容导入后，这里会铺开成更完整的杂志目录。" />
+          <EmptyState title="目录还在变厚" description="当前文章数量还不多，后续内容导入后，这里会铺开成更完整的杂志目录。" />
       )}
+      <Pagination page={postsPage.page} totalPages={postsPage.totalPages} total={postsPage.total} pageSize={postsPage.pageSize} />
     </>
   ) : (
     <EmptyState title="还没有可公开阅读的文章" description="访客和普通用户只会看到公开且已发布的文章。管理员登录后可以在前台看到草稿、私密与归档内容。" />

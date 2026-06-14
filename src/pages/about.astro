@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeader from "../components/SectionHeader.astro";
+import { getSiteSettingsWithDefaults } from "../lib/site-settings";
 
 const currentUser = Astro.locals.currentUser;
+const settings = await getSiteSettingsWithDefaults();
 ---
 
-<BaseLayout title="关于 - 理哩的个人空间" currentUser={currentUser}>
+<BaseLayout title={`关于 - ${settings.site_title}`} currentUser={currentUser} settings={settings}>
   <SectionHeader title="关于" note="给这个私人空间留一张扉页" />
   <section class="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
     <aside class="border border-[var(--color-line)] bg-[var(--color-panel)] p-8">
@@ -16,13 +18,13 @@ const currentUser = Astro.locals.currentUser;
       <article class="border border-[var(--color-line)] bg-[var(--color-panel)] p-8">
         <h2 class="font-serif-title text-2xl font-semibold">关于理哩</h2>
         <p class="mt-4 leading-8 text-[var(--color-muted)]">
-          这里先放一段安静的占位文字。它应该像博客扉页，不急着介绍所有事情，只留下写作者、生活、阅读和照片之间的关系。
+          {settings.about_intro}
         </p>
       </article>
       <article class="border border-[var(--color-line)] bg-[#efe7db] p-8">
         <h2 class="font-serif-title text-2xl font-semibold">关于这个网站</h2>
         <p class="mt-4 leading-8 text-[var(--color-muted)]">
-          这个空间会长期保存统一文章、分类、标签、归档和照片。它不是产品官网，更像一本会慢慢增厚的私人杂志。
+          {settings.about_site_note}
         </p>
       </article>
     </div>

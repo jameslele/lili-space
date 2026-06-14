@@ -1,36 +1,51 @@
 ---
-import AdminEmptyState from "../../components/admin/AdminEmptyState.astro";
+import AdminActionButton from "../../components/admin/AdminActionButton.astro";
+import AdminNotice from "../../components/admin/AdminNotice.astro";
 import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
-import AdminTable from "../../components/admin/AdminTable.astro";
 import AdminLayout from "../../layouts/AdminLayout.astro";
-import { formatAdminDate, listAdminSiteSettings } from "../../lib/admin";
+import { getSiteSettingsWithDefaults, siteSettingGroups } from "../../lib/site-settings";
 
-const settings = await listAdminSiteSettings();
+const settings = await getSiteSettingsWithDefaults();
+const success = Astro.url.searchParams.get("success");
+const error = Astro.url.searchParams.get("error");
+const successMessage = success === "saved" ? "站点设置已保存。" : undefined;
 ---
 
 <AdminLayout title="设置 - 理哩后台">
-  <AdminPageHeader eyebrow="Settings" title="站点设置" description="本阶段先读取 site_settings；复杂保存和表单拆分放到后续设置阶段。" />
+  <AdminPageHeader eyebrow="Settings" title="站点设置" description="管理前台标题、首页短文案、顶部信息条、页脚和关于页面文字。">
+    <AdminActionButton href="/">前往前台</AdminActionButton>
+  </AdminPageHeader>
 
-  {settings.length > 0 ? (
-    <AdminTable>
-      <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
-        <tr>
-          <th class="px-4 py-3 font-medium">Key</th>
-          <th class="px-4 py-3 font-medium">Value</th>
-          <th class="px-4 py-3 font-medium">更新时间</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-[var(--color-line)]">
-        {settings.map((setting) => (
-          <tr>
-            <td class="min-w-48 px-4 py-3 font-medium">{setting.key}</td>
-            <td class="min-w-[420px] px-4 py-3"><pre class="whitespace-pre-wrap break-all text-xs leading-6 text-[var(--color-muted)]">{JSON.stringify(setting.value, null, 2)}</pre></td>
-            <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(setting.updated_at)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </AdminTable>
-  ) : (
-    <AdminEmptyState title="还没有站点设置" description="site_settings 当前为空。后续可以在这里管理站点标题、描述、头像、社交链接等配置。" />
-  )}
+  <AdminNotice message={successMessage} tone="success" />
+  <AdminNotice message={error} tone="error" />
+
+  <form class="space-y-5" method="post" action="/admin/settings/action">
+    {siteSettingGroups.map((group) => (
+      <section class="border border-[var(--color-line)] bg-white p-5">
+        <div class="mb-5 border-b border-[var(--color-line)] pb-4">
+          <h2 class="font-serif-title text-2xl font-semibold">{group.title}</h2>
+          <p class="mt-2 text-sm leading-6 text-[var(--color-muted)]">{group.description}</p>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          {group.fields.map((field) => (
+            <label class:list={["grid gap-1 text-sm", field.multiline && "md:col-span-2"]}>
+              <span class="font-medium">{field.label}</span>
+              {field.multiline ? (
+                <textarea class="min-h-24 border border-[var(--color-line)] bg-white px-3 py-2 leading-7 outline-none focus:border-[var(--color-ink)]" name={field.key}>{settings[field.key]}</textarea>
+              ) : (
+                <input class="min-h-11 border border-[var(--color-line)] bg-white px-3 outline-none focus:border-[var(--color-ink)]" name={field.key} value={settings[field.key]} />
+              )}
+            </label>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <div class="sticky bottom-0 z-10 -mx-5 border-t border-[var(--color-line)] bg-[#f7f5f1]/95 px-5 py-4 backdrop-blur md:-mx-8 md:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="text-sm text-[var(--color-muted)]">保存后刷新前台页面即可看到新文案。</p>
+        <AdminActionButton type="submit" variant="primary">保存设置</AdminActionButton>
+      </div>
+    </div>
+  </form>
 </AdminLayout>

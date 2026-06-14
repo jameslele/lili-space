@@ -1,6 +1,8 @@
 import { Crepe } from "@milkdown/crepe";
+import { editorViewCtx } from "@milkdown/core";
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
+import { TextSelection } from "@milkdown/prose/state";
 import { insert } from "@milkdown/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -41,6 +43,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
   const coverInputRef = useRef<HTMLInputElement>(null);
   const coverAssetInputRef = useRef<HTMLInputElement>(null);
   const categoryCreateButtonRef = useRef<HTMLButtonElement>(null);
+  const lastSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const [markdown, setMarkdown] = useState(post?.markdown ?? "");
   const [title, setTitle] = useState(post?.title ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
@@ -76,6 +79,19 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
     });
 
     crepe.on((listener) => {
+      listener.mounted((ctx) => {
+        const view = ctx.get(editorViewCtx);
+        lastSelectionRef.current = {
+          from: view.state.selection.from,
+          to: view.state.selection.to,
+        };
+      });
+      listener.selectionUpdated((_, selection) => {
+        lastSelectionRef.current = {
+          from: selection.from,
+          to: selection.to,
+        };
+      });
       listener.markdownUpdated((_, nextMarkdown) => {
         setMarkdown(nextMarkdown);
         if (markdownInputRef.current) markdownInputRef.current.value = nextMarkdown;
@@ -99,15 +115,27 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
     setSaveState("submitting");
   }
 
-  function appendMarkdownImage(asset: AdminMediaAsset) {
+  function insertMarkdownImage(asset: AdminMediaAsset) {
     const imageMarkdown = `![${escapeMarkdownAlt(asset.alt || asset.file_name)}](${asset.public_url})`;
 
     if (crepeRef.current) {
-      crepeRef.current.editor.action(insert(imageMarkdown));
+      let usedSavedCursor = false;
+      crepeRef.current.editor.action((ctx) => {
+        const view = ctx.get(editorViewCtx);
+        if (!view.hasFocus()) {
+          usedSavedCursor = restoreLastEditorSelection(ctx, lastSelectionRef.current);
+        }
+        insert(imageMarkdown, true)(ctx);
+        lastSelectionRef.current = {
+          from: view.state.selection.from,
+          to: view.state.selection.to,
+        };
+        view.focus();
+      });
       const nextMarkdown = crepeRef.current.getMarkdown();
       setMarkdown(nextMarkdown);
       if (markdownInputRef.current) markdownInputRef.current.value = nextMarkdown;
-      setInsertState("图片已插入编辑区，保存后会进入文章内容。");
+      setInsertState(usedSavedCursor ? "图片已插入到刚才的光标位置，保存后会进入文章内容。" : "图片已插入编辑区，保存后会进入文章内容。");
       setSaveState("dirty");
       return;
     }
@@ -156,7 +184,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
 
       setAvailableMedia((items) => [result.asset!, ...items]);
       if (purpose === "cover") selectCover(result.asset);
-      if (purpose === "body") appendMarkdownImage(result.asset);
+      if (purpose === "body") insertMarkdownImage(result.asset);
       setUploadState("上传成功。");
     } finally {
       setLoadingMessage("");
@@ -344,8 +372,8 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
                     <p className="truncate text-sm font-medium">{asset.file_name}</p>
                     <p className="text-xs text-[var(--color-muted)]">{asset.bucket === "private-media" ? "仅自己可见" : "公开"}</p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onClick={() => selectCover(asset)}>设为封面</button>
-                      <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onClick={() => appendMarkdownImage(asset)}>插入正文</button>
+                      <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onPointerDown={(event) => event.preventDefault()} onMouseDown={(event) => event.preventDefault()} onClick={() => selectCover(asset)}>设为封面</button>
+                      <button className="min-h-8 border border-[var(--color-line)] bg-white px-2 text-xs transition hover:-translate-y-0.5 hover:border-[var(--color-ink)] active:translate-y-0" type="button" onPointerDown={(event) => event.preventDefault()} onMouseDown={(event) => event.preventDefault()} onClick={() => insertMarkdownImage(asset)}>插入正文</button>
                     </div>
                   </div>
                 </article>
@@ -396,6 +424,21 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
 
 function escapeMarkdownAlt(value: string) {
   return value.replace(/[[\]]/g, "");
+}
+
+function restoreLastEditorSelection(ctx: Parameters<Parameters<Crepe["editor"]["action"]>[0]>[0], selection: { from: number; to: number } | null) {
+  if (!selection) return false;
+  const view = ctx.get(editorViewCtx);
+  const max = view.state.doc.content.size;
+  const from = Math.min(Math.max(selection.from, 1), max);
+  const to = Math.min(Math.max(selection.to, from), max);
+
+  try {
+    view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, from, to)));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function toDateTimeLocal(value?: string | null) {

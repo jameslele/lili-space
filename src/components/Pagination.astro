@@ -1,0 +1,45 @@
+---
+interface Props {
+  page: number;
+  totalPages: number;
+  total: number;
+  pageSize: number;
+  basePath?: string;
+}
+
+const { page, totalPages, total, pageSize, basePath = Astro.url.pathname } = Astro.props;
+const currentPage = Math.min(page, totalPages);
+const start = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+const end = Math.min(total, currentPage * pageSize);
+
+function buildHref(targetPage: number) {
+  const params = new URLSearchParams(Astro.url.searchParams);
+  if (targetPage <= 1) params.delete("page");
+  else params.set("page", String(targetPage));
+  const query = params.toString();
+  return query ? `${basePath}?${query}` : basePath;
+}
+
+const prevHref = currentPage > 1 ? buildHref(currentPage - 1) : "";
+const nextHref = currentPage < totalPages ? buildHref(currentPage + 1) : "";
+---
+
+{totalPages > 1 && (
+  <nav class="mt-8 flex flex-wrap items-center justify-between gap-3 border-y border-[var(--color-line)] py-4 text-sm" aria-label="分页">
+    <p class="text-[var(--color-muted)]">
+      第 {currentPage} / {totalPages} 页 · {start}-{end} / {total}
+    </p>
+    <div class="flex gap-2">
+      {prevHref ? (
+        <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-[var(--color-panel)] px-4 font-medium transition hover:border-[var(--color-ink)]" href={prevHref}>上一页</a>
+      ) : (
+        <span class="inline-flex min-h-10 items-center border border-[var(--color-line)] px-4 text-[var(--color-muted)] opacity-50">上一页</span>
+      )}
+      {nextHref ? (
+        <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-[var(--color-panel)] px-4 font-medium transition hover:border-[var(--color-ink)]" href={nextHref}>下一页</a>
+      ) : (
+        <span class="inline-flex min-h-10 items-center border border-[var(--color-line)] px-4 text-[var(--color-muted)] opacity-50">下一页</span>
+      )}
+    </div>
+  </nav>
+)}

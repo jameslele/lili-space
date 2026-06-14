@@ -1,13 +1,17 @@
 ---
 import "../styles/global.css";
 import type { CurrentUser } from "../lib/auth";
+import { getSiteSettingsWithDefaults, type SiteSettings } from "../lib/site-settings";
 
 interface Props {
   title?: string;
   currentUser?: CurrentUser | null;
+  settings?: SiteSettings;
 }
 
-const { title = "理哩的个人空间", currentUser = null } = Astro.props;
+const { currentUser = null } = Astro.props;
+const settings = Astro.props.settings ?? await getSiteSettingsWithDefaults();
+const title = Astro.props.title ?? settings.site_title;
 const navItems: Array<{ href: string; label: string }> = [
   { href: "/", label: "首页" },
   { href: "/categories", label: "分类" },
@@ -18,6 +22,7 @@ const navItems: Array<{ href: string; label: string }> = [
 const leftNavItems = navItems;
 const isAdmin = currentUser?.role === "admin";
 const currentPath = Astro.url.pathname;
+const showInfoBar = currentPath !== "/";
 const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : currentPath === href || currentPath.startsWith(`${href}/`);
 ---
 
@@ -27,6 +32,7 @@ const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : c
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={settings.site_description} />
     <title>{title}</title>
   </head>
   <body class="bg-[var(--color-paper)]">
@@ -47,6 +53,7 @@ const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : c
                       : "border-transparent",
                   ]}
                   href={item.href}
+                  data-site-nav-link
                 >
                   {item.label}
                 </a>
@@ -54,42 +61,72 @@ const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : c
             })
           }
         </nav>
-        <a class="font-serif-title text-center text-2xl font-bold tracking-normal sm:text-3xl" href="/">理哩的个人空间</a>
+        <a class="font-serif-title text-center text-2xl font-bold tracking-normal sm:text-3xl" href="/" aria-label={`${settings.site_title}，${settings.site_subtitle}`} title={settings.site_subtitle} data-site-nav-link>{settings.site_title}</a>
         <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-[var(--color-muted)] lg:justify-end">
           {
             currentUser ? (
               <>
-                {isAdmin && <a class="min-h-11 py-3 font-semibold text-[var(--color-accent)] hover:text-[var(--color-ink)]" href="/admin">后台</a>}
+                {isAdmin && <a class="min-h-11 py-3 font-semibold text-[var(--color-accent)] hover:text-[var(--color-ink)]" href="/admin" data-site-nav-link>后台</a>}
                 <span class="min-h-11 py-3">{currentUser.display_name || currentUser.username}</span>
-                <form method="post" action="/api/logout">
+                <form method="post" action="/api/logout" data-site-nav-form>
                   <button class="min-h-11 cursor-pointer py-3 hover:text-[var(--color-ink)]" type="submit">退出</button>
                 </form>
               </>
             ) : (
               <>
-                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/login">登录</a>
-                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/register">注册</a>
+                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/login" data-site-nav-link>登录</a>
+                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/register" data-site-nav-link>注册</a>
               </>
             )
           }
         </nav>
       </header>
 
-      <div class="grid grid-cols-1 gap-2 border-b border-[var(--color-line)] py-3 text-xs tracking-normal text-[var(--color-muted)] sm:grid-cols-3">
-        <span>私人博客目录</span>
-        <span class="sm:text-center">文字 / 照片 / 归档</span>
-        <span class="sm:text-right">{isAdmin ? "管理员前台视图" : "公开阅读"}</span>
-      </div>
+      {showInfoBar && (
+        <div class="grid grid-cols-1 gap-2 border-b border-[var(--color-line)] py-3 text-xs tracking-normal text-[var(--color-muted)] sm:grid-cols-3">
+          <span>{settings.header_left_label}</span>
+          <span class="sm:text-center">{settings.header_center_label}</span>
+          <span class="sm:text-right">{isAdmin ? settings.header_right_label : "公开阅读"}</span>
+        </div>
+      )}
 
       <main id="main" class="flex-1 py-9 sm:py-12">
         <slot />
       </main>
       <footer class="border-t border-[var(--color-line)] py-10 text-sm leading-7 text-[var(--color-muted)]">
         <div class="grid gap-2 sm:grid-cols-[1fr_auto]">
-          <p>以文字、照片和时间整理个人空间。</p>
-          <p>长期回看，安静留存。</p>
+          <p>{settings.footer_left_text}</p>
+          <p>{settings.footer_right_text}</p>
         </div>
+        <p class="mt-3 text-xs">{settings.footer_copyright}</p>
       </footer>
     </div>
   </body>
 </html>
+
+<script>
+  const siteLoadingOverlay = document.createElement("div");
+  siteLoadingOverlay.className = "fixed inset-0 z-50 hidden items-center justify-center bg-[#f7f5f1]/70 backdrop-blur-sm";
+  siteLoadingOverlay.innerHTML = '<div class="flex min-w-44 flex-col items-center gap-4 border border-[var(--color-line)] bg-[var(--color-panel)] px-7 py-6 text-center shadow-sm"><span class="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span><span class="text-sm font-medium text-[var(--color-ink)]">正在打开...</span></div>';
+  document.body.appendChild(siteLoadingOverlay);
+
+  function showSiteLoading() {
+    siteLoadingOverlay.classList.remove("hidden");
+    siteLoadingOverlay.classList.add("flex");
+  }
+
+  document.addEventListener("click", (event) => {
+    const link = event.target instanceof HTMLElement ? event.target.closest("[data-site-nav-link]") : null;
+    if (!(link instanceof HTMLAnchorElement)) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target) return;
+    const url = new URL(link.href);
+    if (url.origin !== window.location.origin) return;
+    showSiteLoading();
+  });
+
+  document.addEventListener("submit", (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || !form.matches("[data-site-nav-form]")) return;
+    showSiteLoading();
+  });
+</script>
