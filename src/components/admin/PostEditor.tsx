@@ -330,8 +330,8 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
                   <option value="private">仅自己可见</option>
                 </select>
               </label>
-              <label className="inline-flex min-h-11 items-center gap-2">
-                <input name="show_on_home" type="checkbox" defaultChecked={!post?.noindex} />
+              <label className="inline-flex min-h-11 items-center gap-3">
+                <input className="h-5 w-5" name="show_on_home" type="checkbox" defaultChecked={!post?.noindex} />
                 <span>显示在首页</span>
               </label>
               <label className="grid gap-1">
@@ -347,7 +347,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
             <div className="mt-4 grid gap-3 text-sm">
               <label className="grid gap-1">
                 <span className="font-medium">上传为封面</span>
-                <input className="min-h-10 border border-[var(--color-line)] bg-white px-3 py-2" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => {
+                <input className="w-full min-w-0 border border-[var(--color-line)] bg-white px-3 py-2 text-sm file:mr-3 file:min-h-8 file:border file:border-[var(--color-line)] file:bg-[#f8f4ec] file:px-3 file:text-sm file:font-medium" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => {
                   const file = event.target.files?.[0];
                   if (file) void uploadMedia(file, "cover");
                   event.currentTarget.value = "";
@@ -355,7 +355,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
               </label>
               <label className="grid gap-1">
                 <span className="font-medium">上传并插入正文</span>
-                <input className="min-h-10 border border-[var(--color-line)] bg-white px-3 py-2" type="file" accept="image/jpeg,image/png,image/webp,image/gif,audio/mpeg,audio/mp4,audio/wav,video/mp4,video/quicktime,video/webm" onChange={(event) => {
+                <input className="w-full min-w-0 border border-[var(--color-line)] bg-white px-3 py-2 text-sm file:mr-3 file:min-h-8 file:border file:border-[var(--color-line)] file:bg-[#f8f4ec] file:px-3 file:text-sm file:font-medium" type="file" accept="image/jpeg,image/png,image/webp,image/gif,audio/mpeg,audio/mp4,audio/wav,video/mp4,video/quicktime,video/webm" onChange={(event) => {
                   const file = event.target.files?.[0];
                   if (file) void uploadMedia(file, "body");
                   event.currentTarget.value = "";

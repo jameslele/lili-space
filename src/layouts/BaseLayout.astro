@@ -47,7 +47,7 @@ const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : c
                 <a
                   aria-current={active ? "page" : undefined}
                   class:list={[
-                    "min-h-11 border-b py-3 transition hover:text-[var(--color-ink)]",
+                    "min-h-11 border-b px-2 py-3 transition hover:text-[var(--color-ink)]",
                     active
                       ? "border-[var(--color-ink)] font-medium text-[var(--color-ink)]"
                       : "border-transparent",
@@ -66,16 +66,16 @@ const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : c
           {
             currentUser ? (
               <>
-                {isAdmin && <a class="min-h-11 py-3 font-semibold text-[var(--color-accent)] hover:text-[var(--color-ink)]" href="/admin" data-site-nav-link>后台</a>}
-                <span class="min-h-11 py-3">{currentUser.display_name || currentUser.username}</span>
+                {isAdmin && <a class="min-h-11 px-2 py-3 font-semibold text-[var(--color-accent)] hover:text-[var(--color-ink)]" href="/admin" data-site-nav-link>后台</a>}
+                <span class="min-h-11 px-2 py-3">{currentUser.display_name || currentUser.username}</span>
                 <form method="post" action="/api/logout" data-site-nav-form>
-                  <button class="min-h-11 cursor-pointer py-3 hover:text-[var(--color-ink)]" type="submit">退出</button>
+                  <button class="min-h-11 cursor-pointer px-2 py-3 hover:text-[var(--color-ink)]" type="submit">退出</button>
                 </form>
               </>
             ) : (
               <>
-                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/login" data-site-nav-link>登录</a>
-                <a class="min-h-11 py-3 hover:text-[var(--color-ink)]" href="/register" data-site-nav-link>注册</a>
+                <a class="min-h-11 px-2 py-3 hover:text-[var(--color-ink)]" href="/login" data-site-nav-link>登录</a>
+                <a class="min-h-11 px-2 py-3 hover:text-[var(--color-ink)]" href="/register" data-site-nav-link>注册</a>
               </>
             )
           }

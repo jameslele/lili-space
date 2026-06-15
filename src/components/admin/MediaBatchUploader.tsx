@@ -106,10 +106,10 @@ export default function MediaBatchUploader() {
         )}
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_180px_auto]">
+      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_180px_140px]">
         <label className="grid gap-1 text-sm">
           <span className="font-medium">文件</span>
-          <input className="min-h-11 border border-[var(--color-line)] bg-white px-3 py-2" type="file" accept={acceptedTypes} multiple onChange={(event) => selectFiles(event.currentTarget.files)} />
+          <input className="w-full min-w-0 border border-[var(--color-line)] bg-white px-3 py-2 text-sm file:mr-3 file:min-h-8 file:border file:border-[var(--color-line)] file:bg-[#f8f4ec] file:px-3 file:text-sm file:font-medium" type="file" accept={acceptedTypes} multiple onChange={(event) => selectFiles(event.currentTarget.files)} />
         </label>
         <label className="grid gap-1 text-sm">
           <span className="font-medium">可见性</span>
@@ -119,14 +119,14 @@ export default function MediaBatchUploader() {
           </select>
         </label>
         <div className="flex items-end">
-          <button className="min-h-11 border border-[var(--color-ink)] bg-[var(--color-ink)] px-5 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-50" type="button" disabled={items.length === 0 || isUploading} onClick={uploadAll}>
+          <button className="min-h-11 w-full border border-[var(--color-ink)] bg-[var(--color-ink)] px-5 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-50" type="button" disabled={items.length === 0 || isUploading} onClick={uploadAll}>
             {isUploading ? "上传中..." : "开始上传"}
           </button>
         </div>
       </div>
 
-      <label className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm">
-        <input type="checkbox" checked={featured} onChange={(event) => setFeatured(event.target.checked)} />
+      <label className="mt-4 inline-flex min-h-11 items-center gap-3 border border-transparent pr-3 text-sm">
+        <input className="h-5 w-5" type="checkbox" checked={featured} onChange={(event) => setFeatured(event.target.checked)} />
         <span>图片上传后加入照片页精选</span>
       </label>
       {featured && imageOnlyFeatured && <p className="text-sm text-[var(--color-muted)]">音频和视频不会加入照片页精选。</p>}

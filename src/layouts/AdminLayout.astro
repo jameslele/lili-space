@@ -38,16 +38,16 @@ function isActive(href: string) {
       <aside class="border-b border-[var(--color-line)] bg-[#fdfbf7]/90 px-5 py-5 lg:border-b-0 lg:border-r">
         <a class="block font-serif-title text-xl font-semibold leading-tight" href="/admin">理哩后台</a>
         <p class="mt-2 text-xs leading-5 text-[var(--color-muted)]">写作、整理和回看。</p>
-        <nav class="mt-7 flex gap-2 overflow-x-auto text-sm lg:flex-col" aria-label="后台导航">
+        <nav class="scrollbar-none -mx-1 mt-7 flex gap-2 overflow-x-auto px-1 text-sm lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0" aria-label="后台导航">
           {adminNavItems.map((item) => (
             <a
-              class={`flex min-h-10 items-center justify-between border px-3 py-2 transition ${isActive(item.href) ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-white" : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-line)] hover:bg-white hover:text-[var(--color-ink)]"}`}
+              class={`flex min-h-10 shrink-0 items-center justify-between gap-3 border px-3 py-2 transition lg:w-full ${isActive(item.href) ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-white" : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-line)] hover:bg-white hover:text-[var(--color-ink)]"}`}
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
               data-admin-nav-link
             >
               <span>{item.text}</span>
-              <span class="text-xs opacity-70">{item.label}</span>
+              <span class="hidden text-xs opacity-70 sm:inline">{item.label}</span>
             </a>
           ))}
         </nav>

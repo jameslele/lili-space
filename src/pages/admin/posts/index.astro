@@ -115,7 +115,7 @@ function buildFilterHref(filter: AdminPostFilter) {
           {posts.map((post) => (
             <tr>
               <td class="px-4 py-3 align-top">
-                <input class="mt-1 h-4 w-4" type="checkbox" value={post.id} data-post-checkbox aria-label={`选择 ${post.title}`} />
+                <input class="mt-1 h-5 w-5" type="checkbox" value={post.id} data-post-checkbox aria-label={`选择 ${post.title}`} />
               </td>
               <td class="min-w-72 px-4 py-3">
                 <a class="font-medium underline-offset-4 hover:underline" href={`/admin/posts/${post.id}`}>{post.title}</a>

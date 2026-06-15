@@ -122,8 +122,8 @@ function buildMediaHref(params: URLSearchParams, pageNumber: number) {
         </select>
       </label>
       <div class="flex flex-wrap items-end gap-2 md:col-span-2 xl:col-span-12 xl:justify-end">
-        <button class="inline-flex min-h-11 items-center justify-center border border-[var(--color-ink)] bg-[var(--color-ink)] px-5 text-sm font-medium text-white transition hover:bg-black" type="submit">筛选</button>
-        <a class="inline-flex min-h-11 items-center justify-center border border-[var(--color-line)] bg-white px-5 text-sm font-medium text-[var(--color-muted)] transition hover:text-[var(--color-ink)]" href="/admin/media">重置</a>
+        <button class="inline-flex min-h-11 flex-1 items-center justify-center border border-[var(--color-ink)] bg-[var(--color-ink)] px-5 text-sm font-medium text-white transition hover:bg-black sm:flex-none" type="submit">筛选</button>
+        <a class="inline-flex min-h-11 flex-1 items-center justify-center border border-[var(--color-line)] bg-white px-5 text-sm font-medium text-[var(--color-muted)] transition hover:text-[var(--color-ink)] sm:flex-none" href="/admin/media">重置</a>
       </div>
     </form>
   </section>
@@ -170,7 +170,7 @@ function buildMediaHref(params: URLSearchParams, pageNumber: number) {
           return (
             <tr>
               <td class="px-4 py-3 align-top">
-                <input class="mt-1 h-4 w-4" type="checkbox" value={asset.id} data-media-checkbox aria-label={`选择 ${asset.file_name}`} />
+                <input class="mt-1 h-5 w-5" type="checkbox" value={asset.id} data-media-checkbox aria-label={`选择 ${asset.file_name}`} />
               </td>
               <td class="min-w-72 px-4 py-3">
                 <p class="font-medium">{asset.file_name}</p>
