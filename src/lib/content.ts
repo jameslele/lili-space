@@ -92,6 +92,9 @@ type RawPost = {
   created_at: string;
   updated_at: string;
   categories: CategorySummary | CategorySummary[] | null;
+  post_tags?: Array<{
+    tags: TagSummary | TagSummary[] | null;
+  }>;
 };
 
 const postSelect = `
@@ -113,6 +116,13 @@ const postSelect = `
     description,
     sort_order,
     visible
+  ),
+  post_tags (
+    tags (
+      id,
+      name,
+      slug
+    )
   )
 `;
 
@@ -220,34 +230,26 @@ export async function getPostBySlugForViewer(slug: string, viewer: Viewer) {
 }
 
 export async function getCategoriesWithCounts(viewer: Viewer) {
-  const supabase = createServiceRoleSupabaseClient();
-  const { data, error } = await supabase.from("categories").select("*").order("sort_order", { ascending: true });
-  if (error) throw error;
-
+  const categories = await listVisibleCategories();
   const posts = await getPostsForViewer(viewer, { includeNoindex: true });
   const counts = countBy(posts.map((post) => post.category?.id).filter(Boolean) as string[]);
-  const categories = (data ?? []).filter((category) => category.visible);
-
-  return (categories as CategorySummary[]).map((category) => ({
+  return categories.map((category) => ({
     ...category,
     postCount: counts.get(category.id) ?? 0,
   }));
 }
 
 export async function getCategoryPage(slug: string, viewer: Viewer) {
-  const categories = await getCategoriesWithCounts(viewer);
+  const [categories, posts] = await Promise.all([listVisibleCategories(), getPostsForViewer(viewer, { includeNoindex: true })]);
   const category = categories.find((item) => item.slug === slug);
   if (!category) return null;
 
-  const posts = (await getPostsForViewer(viewer, { includeNoindex: true })).filter((post) => post.category?.id === category.id);
-  return { category, posts, archive: groupPostsByYear(posts) };
+  const filteredPosts = posts.filter((post) => post.category?.id === category.id);
+  return { category, posts: filteredPosts, archive: groupPostsByYear(filteredPosts) };
 }
 
 export async function getTagsWithCounts(viewer: Viewer) {
-  const supabase = createServiceRoleSupabaseClient();
-  const { data, error } = await supabase.from("tags").select("*").order("name", { ascending: true });
-  if (error) throw error;
-
+  const tags = await listTags();
   const posts = await getPostsForViewer(viewer, { includeNoindex: true });
   const counts = new Map<string, number>();
   for (const post of posts) {
@@ -256,16 +258,16 @@ export async function getTagsWithCounts(viewer: Viewer) {
     }
   }
 
-  return ((data ?? []) as TagSummary[]).map((tag) => ({ ...tag, postCount: counts.get(tag.id) ?? 0 }));
+  return tags.map((tag) => ({ ...tag, postCount: counts.get(tag.id) ?? 0 }));
 }
 
 export async function getTagPage(slug: string, viewer: Viewer) {
-  const tags = await getTagsWithCounts(viewer);
+  const [tags, posts] = await Promise.all([listTags(), getPostsForViewer(viewer, { includeNoindex: true })]);
   const tag = tags.find((item) => item.slug === slug);
   if (!tag) return null;
 
-  const posts = (await getPostsForViewer(viewer, { includeNoindex: true })).filter((post) => post.tags.some((item) => item.id === tag.id));
-  return { tag, posts, archive: groupPostsByYear(posts) };
+  const filteredPosts = posts.filter((post) => post.tags.some((item) => item.id === tag.id));
+  return { tag, posts: filteredPosts, archive: groupPostsByYear(filteredPosts) };
 }
 
 export async function getArchiveGroups(viewer: Viewer) {
@@ -375,9 +377,45 @@ export function getPostExcerpt(post: Pick<PostSummary, "excerpt" | "title">) {
   return post.excerpt || `${post.title}。`;
 }
 
+async function listVisibleCategories() {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data, error } = await supabase.from("categories").select("*").order("sort_order", { ascending: true });
+  if (error) throw error;
+
+  return ((data ?? []) as CategorySummary[]).filter((category) => category.visible);
+}
+
+async function listTags() {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data, error } = await supabase.from("tags").select("*").order("name", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as TagSummary[];
+}
+
 async function attachTags(rawPosts: RawPost[]) {
   const ids = rawPosts.map((post) => post.id);
   if (ids.length === 0) return [];
+
+  if (rawPosts.every((post) => Array.isArray(post.post_tags))) {
+    return rawPosts.map((post) => ({
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      cover_url: post.cover_url,
+      status: post.status,
+      visibility: post.visibility,
+      noindex: post.noindex,
+      published_at: post.published_at,
+      created_at: post.created_at,
+      updated_at: post.updated_at,
+      category: normalizeCategory(post.categories),
+      tags: (post.post_tags ?? []).flatMap((row) => {
+        const tag = Array.isArray(row.tags) ? row.tags[0] : row.tags;
+        return tag ? [tag as TagSummary] : [];
+      }),
+    }));
+  }
 
   const supabase = createServiceRoleSupabaseClient();
   const { data, error } = await supabase.from("post_tags").select("post_id, tags(id, name, slug)").in("post_id", ids);

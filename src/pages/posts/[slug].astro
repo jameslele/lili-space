@@ -10,9 +10,11 @@ export const prerender = false;
 
 const currentUser = Astro.locals.currentUser;
 const slug = Astro.params.slug ?? "";
-const post = await getPostBySlugForViewer(slug, currentUser);
 const showStatus = canViewAllPosts(currentUser);
-const settings = await getSiteSettingsWithDefaults();
+const [post, settings] = await Promise.all([
+  getPostBySlugForViewer(slug, currentUser),
+  getSiteSettingsWithDefaults(),
+]);
 
 if (!post) {
   Astro.response.status = 404;

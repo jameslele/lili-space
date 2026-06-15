@@ -12,11 +12,14 @@ interface Props {
 const { post, variant = "feature", showStatus = false } = Astro.props;
 const cover = post.cover_url;
 const fallbackClass = "bg-[linear-gradient(135deg,#ddd0c1,#efe7db_46%,#c9b292)]";
+const isHeroCard = variant === "cover";
+const imageLoading = isHeroCard ? "eager" : "lazy";
+const imagePriority = isHeroCard ? "high" : undefined;
 ---
 
 {variant === "cover" && (
   <article class="group relative min-h-[430px] overflow-hidden bg-[#ddd0c1] md:min-h-[570px]">
-    {cover ? <img class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" src={cover} alt={post.title} /> : <div class={`absolute inset-0 ${fallbackClass}`} />}
+    {cover ? <img class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" src={cover} alt={post.title} loading={imageLoading} fetchpriority={imagePriority} decoding="async" /> : <div class={`absolute inset-0 ${fallbackClass}`} />}
     <div class="absolute inset-0 bg-gradient-to-b from-transparent from-35% to-black/65"></div>
     <a class="absolute inset-0 z-10" href={`/posts/${post.slug}`} aria-label={`阅读 ${post.title}`}></a>
     <div class="absolute bottom-0 left-0 right-0 z-20 p-7 text-[#fffdf7] sm:p-9">
@@ -30,7 +33,7 @@ const fallbackClass = "bg-[linear-gradient(135deg,#ddd0c1,#efe7db_46%,#c9b292)]"
 {variant === "stack" && (
   <article class="grid min-h-64 grid-cols-[42%_1fr] border border-[var(--color-line)] bg-[var(--color-panel)]">
     <a class="block overflow-hidden bg-[#ddd0c1]" href={`/posts/${post.slug}`} aria-label={`阅读 ${post.title}`}>
-      {cover ? <img class="h-full w-full object-cover transition duration-300 hover:scale-[1.03]" src={cover} alt={post.title} /> : <div class={`h-full min-h-64 ${fallbackClass}`} />}
+      {cover ? <img class="h-full w-full object-cover transition duration-300 hover:scale-[1.03]" src={cover} alt={post.title} loading={imageLoading} decoding="async" /> : <div class={`h-full min-h-64 ${fallbackClass}`} />}
     </a>
     <div class="p-5 sm:p-6">
       <PostMeta post={post} showStatus={showStatus} />
@@ -45,7 +48,7 @@ const fallbackClass = "bg-[linear-gradient(135deg,#ddd0c1,#efe7db_46%,#c9b292)]"
 {variant === "feature" && (
   <article class="border border-[var(--color-line)] bg-[var(--color-panel)]">
     <a class="block aspect-[4/3] overflow-hidden bg-[#d9c7b4]" href={`/posts/${post.slug}`} aria-label={`阅读 ${post.title}`}>
-      {cover ? <img class="h-full w-full object-cover transition duration-300 hover:scale-[1.03]" src={cover} alt={post.title} /> : <div class={`h-full ${fallbackClass}`} />}
+      {cover ? <img class="h-full w-full object-cover transition duration-300 hover:scale-[1.03]" src={cover} alt={post.title} loading={imageLoading} decoding="async" /> : <div class={`h-full ${fallbackClass}`} />}
     </a>
     <div class="p-5 sm:p-6">
       <PostMeta post={post} showStatus={showStatus} />

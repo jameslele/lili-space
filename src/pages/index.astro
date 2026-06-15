@@ -8,10 +8,12 @@ import { canViewAllPosts, getPostsPageForViewer } from "../lib/content";
 import { getSiteSettingsWithDefaults } from "../lib/site-settings";
 
 const currentUser = Astro.locals.currentUser;
-const settings = await getSiteSettingsWithDefaults();
 const page = parsePositiveInt(Astro.url.searchParams.get("page"), 1);
 const showStatus = canViewAllPosts(currentUser);
-const postsPage = await getPostsPageForViewer(currentUser, { page, pageSize: 12 });
+const [settings, postsPage] = await Promise.all([
+  getSiteSettingsWithDefaults(),
+  getPostsPageForViewer(currentUser, { page, pageSize: 12 }),
+]);
 if (postsPage.total > 0 && page > postsPage.totalPages) {
   return Astro.redirect(postsPage.totalPages > 1 ? `/?page=${postsPage.totalPages}` : "/", 303);
 }

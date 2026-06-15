@@ -80,8 +80,35 @@ export const siteSettingGroups: Array<{
 ];
 
 const siteSettingKeys = Object.keys(siteSettingDefaults) as SiteSettingKey[];
+const siteSettingsCacheTtlMs = 30_000;
+
+let cachedSiteSettings: { expiresAt: number; value: SiteSettings } | null = null;
+let pendingSiteSettingsLoad: Promise<SiteSettings> | null = null;
 
 export async function getSiteSettingsWithDefaults(): Promise<SiteSettings> {
+  const now = Date.now();
+  if (cachedSiteSettings && cachedSiteSettings.expiresAt > now) {
+    return { ...cachedSiteSettings.value };
+  }
+
+  if (pendingSiteSettingsLoad) {
+    return pendingSiteSettingsLoad.then((settings) => ({ ...settings }));
+  }
+
+  pendingSiteSettingsLoad = loadSiteSettingsWithDefaults();
+  try {
+    const settings = await pendingSiteSettingsLoad;
+    cachedSiteSettings = {
+      expiresAt: Date.now() + siteSettingsCacheTtlMs,
+      value: settings,
+    };
+    return { ...settings };
+  } finally {
+    pendingSiteSettingsLoad = null;
+  }
+}
+
+async function loadSiteSettingsWithDefaults(): Promise<SiteSettings> {
   try {
     const { data, error } = await createServiceRoleSupabaseClient()
       .from("site_settings")
@@ -111,6 +138,9 @@ export async function saveSiteSettings(input: Partial<Record<SiteSettingKey, str
     .from("site_settings")
     .upsert(rows, { onConflict: "key" });
   if (error) throw error;
+
+  cachedSiteSettings = null;
+  pendingSiteSettingsLoad = null;
 }
 
 export function readSiteSettingsFromFormData(formData: FormData): Partial<Record<SiteSettingKey, string>> {
