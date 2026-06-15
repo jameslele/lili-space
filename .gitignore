@@ -9,3 +9,5 @@ __MACOSX/
 .migration-cache/
 doc*
 lilisong
+.playwright*
+qa*

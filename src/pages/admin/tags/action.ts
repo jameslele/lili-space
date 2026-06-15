@@ -2,7 +2,11 @@ import type { APIRoute } from "astro";
 
 import { createTag, updateTag } from "../../../lib/admin";
 
-export const POST: APIRoute = async ({ request, redirect }) => {
+export const POST: APIRoute = async ({ request, redirect, locals }) => {
+  if (!locals.currentUser || locals.currentUser.role !== "admin") {
+    return redirect("/forbidden", 303);
+  }
+
   const formData = await request.formData();
   const intent = String(formData.get("intent") ?? "");
 
