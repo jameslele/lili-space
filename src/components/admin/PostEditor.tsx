@@ -231,7 +231,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
       <input ref={markdownInputRef} type="hidden" name="markdown" value={markdown} readOnly />
       <input type="hidden" name="tag_names" value={JSON.stringify(selectedTagNames)} readOnly />
 
-      <div className="sticky top-0 z-20 -mx-5 border-b border-[var(--color-line)] bg-[#f7f5f1]/95 px-5 py-3 backdrop-blur md:-mx-8 md:px-8">
+      <div className="sticky top-0 z-10 -mx-5 border-b border-[var(--color-line)] bg-[#f7f5f1]/95 px-5 py-3 backdrop-blur md:-mx-8 md:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
             <a className="min-h-10 border border-[var(--color-line)] bg-white px-3 py-2 transition hover:-translate-y-0.5 hover:text-[var(--color-ink)] active:translate-y-0" href="/admin/posts" onClick={() => setLoadingMessage("正在返回文章列表...")}>返回文章</a>
@@ -268,7 +268,7 @@ export default function PostEditor({ post, categories, tags, mediaAssets = [], d
               placeholder="写下标题"
             />
           </label>
-          <div className="min-h-[620px] border border-[var(--color-line)] bg-white">
+          <div className="relative z-30 min-h-[620px] border border-[var(--color-line)] bg-white">
             <div ref={editorRootRef} className="lili-crepe min-h-[620px]" />
           </div>
         </div>

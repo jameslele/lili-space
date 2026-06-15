@@ -74,10 +74,24 @@ img {
   --crepe-color-secondary: #b14d32;
   font-family:
     "Noto Serif SC", "Songti SC", "STSong", "Times New Roman", serif;
+  position: relative;
+  z-index: 30;
+  isolation: isolate;
 }
 
 .lili-crepe .milkdown {
   min-height: 620px;
+  position: relative;
+  z-index: 30;
+}
+
+.lili-crepe .milkdown-slash-menu {
+  z-index: 80;
+}
+
+.lili-crepe .milkdown-toolbar,
+.lili-crepe .milkdown-topbar {
+  z-index: 70;
 }
 
 .lili-crepe .ProseMirror {

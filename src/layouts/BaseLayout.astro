@@ -107,10 +107,12 @@ const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : c
 <script>
   const siteLoadingOverlay = document.createElement("div");
   siteLoadingOverlay.className = "fixed inset-0 z-50 hidden items-center justify-center bg-[#f7f5f1]/70 backdrop-blur-sm";
-  siteLoadingOverlay.innerHTML = '<div class="flex min-w-44 flex-col items-center gap-4 border border-[var(--color-line)] bg-[var(--color-panel)] px-7 py-6 text-center shadow-sm"><span class="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span><span class="text-sm font-medium text-[var(--color-ink)]">正在打开...</span></div>';
+  siteLoadingOverlay.innerHTML = '<div class="flex min-w-44 flex-col items-center gap-4 border border-[var(--color-line)] bg-[var(--color-panel)] px-7 py-6 text-center shadow-sm"><span class="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-line)] border-t-[var(--color-ink)]"></span><span class="text-sm font-medium text-[var(--color-ink)]" data-site-loading-text>正在打开...</span></div>';
   document.body.appendChild(siteLoadingOverlay);
 
-  function showSiteLoading() {
+  function showSiteLoading(message = "正在打开...") {
+    const loadingText = siteLoadingOverlay.querySelector("[data-site-loading-text]");
+    if (loadingText) loadingText.textContent = message;
     siteLoadingOverlay.classList.remove("hidden");
     siteLoadingOverlay.classList.add("flex");
   }
@@ -126,7 +128,13 @@ const isActiveNavItem = (href: string) => href === "/" ? currentPath === "/" : c
 
   document.addEventListener("submit", (event) => {
     const form = event.target;
-    if (!(form instanceof HTMLFormElement) || !form.matches("[data-site-nav-form]")) return;
-    showSiteLoading();
+    if (!(form instanceof HTMLFormElement) || !form.matches("[data-site-nav-form], [data-site-loading-form]")) return;
+    const submitter = event instanceof SubmitEvent && event.submitter instanceof HTMLButtonElement ? event.submitter : form.querySelector("button[type='submit']");
+    if (submitter instanceof HTMLButtonElement) {
+      submitter.disabled = true;
+      submitter.setAttribute("aria-busy", "true");
+      if (form.dataset.siteLoadingButtonText) submitter.textContent = form.dataset.siteLoadingButtonText;
+    }
+    showSiteLoading(form.dataset.siteLoadingMessage || "正在处理...");
   });
 </script>

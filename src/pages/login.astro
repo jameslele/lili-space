@@ -14,7 +14,7 @@ const next = Astro.url.searchParams.get("next") ?? "";
       <h1 class="font-serif-title mt-4 text-4xl font-bold tracking-normal">登录</h1>
       <p class="mt-5 leading-8 text-[var(--color-muted)]">登录后继续作为读者浏览；管理员会在前台看到后台入口和非公开文章状态。</p>
     </aside>
-    <form class="border border-[var(--color-line)] bg-[var(--color-panel)] p-8" method="post" action="/api/login">
+    <form class="border border-[var(--color-line)] bg-[var(--color-panel)] p-8" method="post" action="/api/login" data-site-loading-form data-site-loading-message="正在登录..." data-site-loading-button-text="登录中...">
       {error && <p class="mb-5 border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
       <input type="hidden" name="next" value={next} />
       <label class="block text-sm">

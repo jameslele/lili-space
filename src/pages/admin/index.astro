@@ -18,7 +18,7 @@ const statCards = [
 ---
 
 <AdminLayout title="后台 - 理哩的个人空间">
-  <AdminPageHeader eyebrow="Dashboard" title={`欢迎回来，${currentUser?.display_name || "理哩"}`} description="这里先放最必要的内容线索：写作入口、内容数量和最近更新。">
+  <AdminPageHeader eyebrow="Dashboard" title={`欢迎回来，${currentUser?.display_name || "理哩"}`}>
     <AdminActionButton href="/admin/posts/new" variant="primary">新建文章</AdminActionButton>
     <AdminActionButton href="/">前往前台</AdminActionButton>
   </AdminPageHeader>

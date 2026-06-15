@@ -13,7 +13,7 @@ const error = Astro.url.searchParams.get("error");
       <h1 class="font-serif-title mt-4 text-4xl font-bold tracking-normal">注册</h1>
       <p class="mt-5 leading-8 text-[var(--color-muted)]">普通用户默认是读者身份，只能阅读公开且已发布的内容。</p>
     </aside>
-    <form class="border border-[var(--color-line)] bg-[var(--color-panel)] p-8" method="post" action="/api/register">
+    <form class="border border-[var(--color-line)] bg-[var(--color-panel)] p-8" method="post" action="/api/register" data-site-loading-form data-site-loading-message="正在注册..." data-site-loading-button-text="注册中...">
       {error && <p class="mb-5 border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
       <label class="block text-sm">
         <span class="text-[var(--color-muted)]">用户名</span>

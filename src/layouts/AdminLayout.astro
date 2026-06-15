@@ -36,7 +36,7 @@ function isActive(href: string) {
   <body class="bg-[#f7f5f1] text-[var(--color-ink)]">
     <div class="min-h-screen lg:grid lg:grid-cols-[240px_1fr]">
       <aside class="border-b border-[var(--color-line)] bg-[#fdfbf7]/90 px-5 py-5 lg:border-b-0 lg:border-r">
-        <a class="block font-serif-title text-xl font-semibold leading-tight" href="/admin">理哩后台</a>
+        <a class="block font-serif-title text-xl font-semibold leading-tight" href="/admin" data-admin-loading-link>理哩后台</a>
         <p class="mt-2 text-xs leading-5 text-[var(--color-muted)]">写作、整理和回看。</p>
         <nav class="scrollbar-none -mx-1 mt-7 flex gap-2 overflow-x-auto px-1 text-sm lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0" aria-label="后台导航">
           {adminNavItems.map((item) => (
@@ -57,7 +57,7 @@ function isActive(href: string) {
           <span class="text-sm text-[var(--color-muted)]">后台基础框架</span>
           <div class="flex items-center gap-4 text-sm">
             {currentUser && <span class="text-[var(--color-muted)]">{currentUser.display_name || currentUser.username}</span>}
-            <a class="font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]" href="/">前往前台</a>
+            <a class="font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]" href="/" data-admin-loading-link>前往前台</a>
             <form method="post" action="/api/logout">
               <button class="font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)]" type="submit">退出</button>
             </form>
@@ -95,17 +95,17 @@ function isActive(href: string) {
   }
 
   document.addEventListener("pointerenter", (event) => {
-    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link]") : null;
+    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link], [data-admin-loading-link]") : null;
     prefetchAdminPage(link);
   }, { capture: true });
 
   document.addEventListener("focusin", (event) => {
-    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link]") : null;
+    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link], [data-admin-loading-link]") : null;
     prefetchAdminPage(link);
   });
 
   document.addEventListener("click", (event) => {
-    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link]") : null;
+    const link = event.target instanceof HTMLElement ? event.target.closest("[data-admin-nav-link], [data-admin-loading-link]") : null;
     if (!(link instanceof HTMLAnchorElement)) return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target) return;
     showAdminLoading();
