@@ -30,6 +30,7 @@ paginationBase.delete("success");
 paginationBase.delete("error");
 const prevHref = currentPage > 1 ? buildPostsHref(paginationBase, currentPage - 1) : "";
 const nextHref = currentPage < totalPages ? buildPostsHref(paginationBase, currentPage + 1) : "";
+const pageOptions = Array.from({ length: totalPages }, (_, index) => index + 1);
 const successMessage = {
   deleted: "文章已删除。",
 }[success ?? ""];
@@ -142,7 +143,19 @@ function buildFilterHref(filter: AdminPostFilter) {
       </AdminTable>
       <nav class="mt-4 flex flex-wrap items-center justify-between gap-3 border border-[var(--color-line)] bg-white px-4 py-3 text-sm">
         <span class="text-[var(--color-muted)]">第 {currentPage} 页，共 {totalPages} 页</span>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <form class="flex items-center gap-2" method="get" action="/admin/posts">
+            {activeFilter !== "all" && <input type="hidden" name="filter" value={activeFilter} />}
+            <input type="hidden" name="pageSize" value={result.pageSize} />
+            <label class="flex items-center gap-2 text-[var(--color-muted)]">
+              <span>跳到</span>
+              <select class="min-h-10 border border-[var(--color-line)] bg-white px-3 text-[var(--color-ink)]" name="page" aria-label="跳转页码">
+                {pageOptions.map((pageNumber) => <option value={pageNumber} selected={pageNumber === currentPage}>{pageNumber}</option>)}
+              </select>
+              <span>页</span>
+            </label>
+            <button class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-white px-4 font-medium hover:bg-[#f8f4ec]" type="submit">跳转</button>
+          </form>
           {prevHref ? (
             <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-white px-4 font-medium hover:bg-[#f8f4ec]" href={prevHref}>上一页</a>
           ) : (

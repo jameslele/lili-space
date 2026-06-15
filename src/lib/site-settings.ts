@@ -13,6 +13,7 @@ export const siteSettingDefaults = {
   footer_left_text: "以文字、照片和时间整理个人空间。",
   footer_right_text: "长期回看，安静留存。",
   footer_copyright: "© 2026 理哩的个人空间",
+  post_copyright_notice: "本文著作权归作者 songlili 所有，转载或引用请联系作者获得授权。",
   about_intro: "这里记录一些生活、阅读、旅行与慢慢长大的痕迹。",
   about_site_note: "这个空间不是为了被快速浏览，而是为了在多年后仍然可以回看。",
 } as const;
@@ -59,6 +60,13 @@ export const siteSettingGroups: Array<{
       { key: "footer_left_text", label: "左侧文字" },
       { key: "footer_right_text", label: "右侧文字" },
       { key: "footer_copyright", label: "版权文字" },
+    ],
+  },
+  {
+    title: "文章页文案",
+    description: "文章正文结束后的统一说明。",
+    fields: [
+      { key: "post_copyright_notice", label: "文章版权说明", multiline: true },
     ],
   },
   {

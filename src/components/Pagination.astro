@@ -5,12 +5,15 @@ interface Props {
   total: number;
   pageSize: number;
   basePath?: string;
+  showPageJump?: boolean;
 }
 
-const { page, totalPages, total, pageSize, basePath = Astro.url.pathname } = Astro.props;
+const { page, totalPages, total, pageSize, basePath = Astro.url.pathname, showPageJump = false } = Astro.props;
 const currentPage = Math.min(page, totalPages);
 const start = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
 const end = Math.min(total, currentPage * pageSize);
+const pageOptions = Array.from({ length: totalPages }, (_, index) => index + 1);
+const passthroughParams = Array.from(Astro.url.searchParams.entries()).filter(([key]) => key !== "page");
 
 function buildHref(targetPage: number) {
   const params = new URLSearchParams(Astro.url.searchParams);
@@ -22,14 +25,32 @@ function buildHref(targetPage: number) {
 
 const prevHref = currentPage > 1 ? buildHref(currentPage - 1) : "";
 const nextHref = currentPage < totalPages ? buildHref(currentPage + 1) : "";
+const navClass = showPageJump
+  ? "mt-8 flex flex-wrap items-center justify-between gap-3 border border-[var(--color-line)] bg-white px-4 py-3 text-sm"
+  : "mt-8 flex flex-wrap items-center justify-between gap-3 border-y border-[var(--color-line)] py-4 text-sm";
 ---
 
 {totalPages > 1 && (
-  <nav class="mt-8 flex flex-wrap items-center justify-between gap-3 border-y border-[var(--color-line)] py-4 text-sm" aria-label="分页">
+  <nav class={navClass} aria-label="分页">
     <p class="text-[var(--color-muted)]">
-      第 {currentPage} / {totalPages} 页 · {start}-{end} / {total}
+      {showPageJump ? `第 ${currentPage} 页，共 ${totalPages} 页` : `第 ${currentPage} / ${totalPages} 页 · ${start}-${end} / ${total}`}
     </p>
-    <div class="flex gap-2">
+    <div class="flex flex-wrap items-center gap-2">
+      {showPageJump && (
+        <form class="flex items-center gap-2" method="get" action={basePath}>
+          {passthroughParams.map(([key, value]) => <input type="hidden" name={key} value={value} />)}
+          <label class="flex items-center gap-2 text-[var(--color-muted)]" for="home-page-jump">
+            <span>跳到</span>
+            <select id="home-page-jump" class="min-h-10 border border-[var(--color-line)] bg-white px-3 text-[var(--color-ink)]" name="page" aria-label="跳转页码">
+              {pageOptions.map((pageNumber) => (
+                <option value={pageNumber} selected={pageNumber === currentPage}>{pageNumber}</option>
+              ))}
+            </select>
+            <span>页</span>
+          </label>
+          <button class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-white px-4 font-medium hover:bg-[#f8f4ec]" type="submit">跳转</button>
+        </form>
+      )}
       {prevHref ? (
         <a class="inline-flex min-h-10 items-center border border-[var(--color-line)] bg-[var(--color-panel)] px-4 font-medium transition hover:border-[var(--color-ink)]" href={prevHref}>上一页</a>
       ) : (

@@ -65,7 +65,7 @@ function parsePositiveInt(value: string | null, fallback: number) {
       ) : (
           <EmptyState title="目录还在变厚" description="当前文章数量还不多，后续内容导入后，这里会铺开成更完整的杂志目录。" />
       )}
-      <Pagination page={postsPage.page} totalPages={postsPage.totalPages} total={postsPage.total} pageSize={postsPage.pageSize} />
+      <Pagination page={postsPage.page} totalPages={postsPage.totalPages} total={postsPage.total} pageSize={postsPage.pageSize} showPageJump />
     </>
   ) : (
     <EmptyState title="还没有可公开阅读的文章" description="访客和普通用户只会看到公开且已发布的文章。管理员登录后可以在前台看到草稿、私密与归档内容。" />
