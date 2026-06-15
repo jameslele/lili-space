@@ -511,6 +511,28 @@ export async function listAdminUsers() {
   return (data ?? []) as AdminUser[];
 }
 
+export async function deleteAdminReaderUser(id: string, currentUserId: string) {
+  const userId = id.trim();
+  if (!userId) throw new Error("请选择要删除的用户");
+  if (userId === currentUserId) throw new Error("不能删除当前登录账号");
+
+  const supabase = createServiceRoleSupabaseClient();
+  const { data: user, error: userError } = await supabase
+    .from("users")
+    .select("id, role")
+    .eq("id", userId)
+    .maybeSingle();
+  if (userError) throw userError;
+  if (!user) throw new Error("用户不存在");
+  if (user.role !== "reader") throw new Error("只能删除普通用户");
+
+  const { error: sessionError } = await supabase.from("sessions").delete().eq("user_id", userId);
+  if (sessionError) throw sessionError;
+
+  const { error: deleteError } = await supabase.from("users").delete().eq("id", userId).eq("role", "reader");
+  if (deleteError) throw deleteError;
+}
+
 export async function listAdminSiteSettings() {
   const { data, error } = await createServiceRoleSupabaseClient()
     .from("site_settings")

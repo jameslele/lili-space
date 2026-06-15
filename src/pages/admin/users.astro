@@ -1,15 +1,24 @@
 ---
 import AdminPageHeader from "../../components/admin/AdminPageHeader.astro";
+import AdminNotice from "../../components/admin/AdminNotice.astro";
 import AdminStatusBadge from "../../components/admin/AdminStatusBadge.astro";
 import AdminTable from "../../components/admin/AdminTable.astro";
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import { formatAdminDate, listAdminUsers } from "../../lib/admin";
 
 const users = await listAdminUsers();
+const success = Astro.url.searchParams.get("success");
+const error = Astro.url.searchParams.get("error");
+const successMessage = {
+  deleted: "用户已删除。",
+}[success ?? ""];
 ---
 
 <AdminLayout title="用户 - 理哩后台">
-  <AdminPageHeader eyebrow="Users" title="用户" description="这里只查看业务用户账号；本阶段不提供新建管理员能力。" />
+  <AdminPageHeader eyebrow="Users" title="用户" description="这里可查看已注册用户账号。" />
+
+  <AdminNotice message={successMessage} tone="success" />
+  <AdminNotice message={error} tone="error" />
 
   <AdminTable>
     <thead class="bg-[#f8f4ec] text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
@@ -18,6 +27,7 @@ const users = await listAdminUsers();
         <th class="px-4 py-3 font-medium">显示名</th>
         <th class="px-4 py-3 font-medium">角色</th>
         <th class="px-4 py-3 font-medium">创建时间</th>
+        <th class="px-4 py-3 font-medium">操作</th>
       </tr>
     </thead>
     <tbody class="divide-y divide-[var(--color-line)]">
@@ -27,8 +37,30 @@ const users = await listAdminUsers();
           <td class="px-4 py-3">{user.display_name}</td>
           <td class="px-4 py-3"><AdminStatusBadge value={user.role} tone={user.role === "admin" ? "blue" : "neutral"} /></td>
           <td class="whitespace-nowrap px-4 py-3 text-[var(--color-muted)]">{formatAdminDate(user.created_at)}</td>
+          <td class="whitespace-nowrap px-4 py-3">
+            {user.role === "reader" ? (
+              <form method="post" action="/admin/users/action" data-confirm-delete={`确定删除用户 ${user.username} 吗？该用户的登录会话也会被清除。`}>
+                <input type="hidden" name="intent" value="delete" />
+                <input type="hidden" name="id" value={user.id} />
+                <button class="inline-flex min-h-10 items-center border border-red-200 px-3 text-sm font-medium text-red-700 transition hover:bg-red-50" type="submit">删除</button>
+              </form>
+            ) : (
+              <span class="text-sm text-[var(--color-muted)]">不可删除</span>
+            )}
+          </td>
         </tr>
       ))}
     </tbody>
   </AdminTable>
 </AdminLayout>
+
+<script>
+  document.addEventListener("submit", (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    const confirmMessage = form.dataset.confirmDelete;
+    if (confirmMessage && !window.confirm(confirmMessage)) {
+      event.preventDefault();
+    }
+  });
+</script>
