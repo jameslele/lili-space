@@ -7,8 +7,9 @@
 - [ ] `npm run check` 通过
 - [ ] `npm test` 通过
 - [ ] `npm run build` 通过
-- [ ] 已确认 `npm run preview` 在 Vercel adapter 下不可用
-- [ ] 如需本地 Vercel 预览，使用 `npx vercel dev`
+- [ ] 已确认当前使用 EdgeOne Pages adapter
+- [ ] 已确认 `npm run preview` 在 EdgeOne adapter 下不可用
+- [ ] 如需按 EdgeOne 运行时本地联调，使用 `edgeone makers dev`
 - [ ] `npm run verify:supabase` 通过
 
 ## 访客视角
@@ -99,11 +100,10 @@
 
 ## 部署
 
-- [ ] Vercel 环境变量已配置
+- [ ] EdgeOne Pages 环境变量已配置
 - [ ] Supabase 数据库迁移已确认
 - [ ] `public-media` bucket 已确认公开
 - [ ] `private-media` bucket 已确认非公开
 - [ ] 生产域名访问正常
 - [ ] 备份与恢复方案已记录
 - [ ] 上线后 smoke test 已完成
-

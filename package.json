@@ -20,9 +20,8 @@
     "yaml": "^2.9.0"
   },
   "dependencies": {
-    "@astrojs/node": "^10.1.4",
     "@astrojs/react": "^5.0.7",
-    "@astrojs/vercel": "^10.0.8",
+    "@edgeone/astro": "^1.1.2",
     "@milkdown/crepe": "^7.21.2",
     "@milkdown/kit": "^7.21.2",
     "@milkdown/react": "^7.21.2",

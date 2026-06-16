@@ -2,6 +2,7 @@ node_modules/
 dist/
 .astro/
 .vercel/
+.edgeone/
 .env
 .env.*
 !.env.example

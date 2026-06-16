@@ -14,7 +14,7 @@
 - custom `users` / `sessions` auth
 - Milkdown Crepe
 - Markdown 正文存储
-- Vercel adapter
+- EdgeOne Pages adapter
 
 项目不使用 Supabase Auth，也不依赖 `auth.users`。
 
@@ -78,10 +78,10 @@ npm run preview
 npm run verify:supabase
 ```
 
-说明：当前使用 `@astrojs/vercel`，`npm run preview` 会调用 `astro preview`，该 adapter 不支持 Astro preview。Vercel 本地预览请使用：
+说明：当前使用 `@edgeone/astro`，`npm run preview` 会调用 `astro preview`，该 adapter 不支持 Astro preview。正式部署前可以先用 Astro 本地开发服务验证功能；如需按 EdgeOne 运行时本地联调，请安装 EdgeOne CLI 后使用：
 
 ```bash
-npx vercel dev
+edgeone makers dev
 ```
 
 ## Supabase 准备
@@ -105,14 +105,15 @@ npm run verify:supabase
 
 ## 部署
 
-当前项目准备使用 Vercel 部署。
+当前项目准备使用腾讯云 EdgeOne Pages 部署。
 
-Vercel 设置：
+EdgeOne Pages 设置：
 
 - Framework Preset：Astro
 - Build Command：`npm run build`
 - Output Directory：保持默认
-- 环境变量：按 `.env.example` 在 Vercel Project Settings 中配置
+- 环境变量：按 `.env.example` 在 EdgeOne Pages 项目设置中配置
+- Node.js 版本：使用 Node.js 22.x（`@edgeone/astro` 当前声明要求 Node 22）
 
 部署后先验证：
 
@@ -139,4 +140,3 @@ Vercel 设置：
 - `docs_new/已知限制与后续建议.md`
 - `docs_new/备份与恢复建议.md`
 - `docs_new/上线前QA清单.md`
-
