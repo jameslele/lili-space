@@ -182,6 +182,47 @@ export function getCookieOptions(expiresAt?: string) {
   };
 }
 
+export function serializeSessionCookie(token: string, expiresAt: string) {
+  return serializeCookie(SESSION_COOKIE_NAME, token, getCookieOptions(expiresAt));
+}
+
+export function serializeDeletedSessionCookie() {
+  return serializeCookie(SESSION_COOKIE_NAME, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: import.meta.env.PROD,
+    path: "/",
+    expires: new Date(0),
+    maxAge: 0,
+  });
+}
+
+function serializeCookie(
+  name: string,
+  value: string,
+  options: {
+    httpOnly?: boolean;
+    sameSite?: "lax" | "strict" | "none";
+    secure?: boolean;
+    path?: string;
+    expires?: Date;
+    maxAge?: number;
+  },
+) {
+  const parts = [`${name}=${encodeURIComponent(value)}`];
+  if (options.maxAge !== undefined) parts.push(`Max-Age=${options.maxAge}`);
+  if (options.path) parts.push(`Path=${options.path}`);
+  if (options.expires) parts.push(`Expires=${options.expires.toUTCString()}`);
+  if (options.httpOnly) parts.push("HttpOnly");
+  if (options.secure) parts.push("Secure");
+  if (options.sameSite) parts.push(`SameSite=${capitalizeSameSite(options.sameSite)}`);
+  return parts.join("; ");
+}
+
+function capitalizeSameSite(value: "lax" | "strict" | "none") {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 function normalizeUsername(username: string) {
   return username.trim().toLowerCase();
 }
