@@ -6,6 +6,7 @@ export default defineConfig({
   output: "server",
   adapter: edgeone(),
   security: {
+    checkOrigin: false,
     allowedDomains: [
       {
         protocol: "https",
