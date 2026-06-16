@@ -101,6 +101,8 @@
 ## 部署
 
 - [ ] EdgeOne Pages 环境变量已配置
+- [ ] `SITE_ALLOWED_ORIGINS` 已配置为当前生产访问域名
+- [ ] 如同时保留 EdgeOne 裸链和自有域名，`SITE_ALLOWED_ORIGINS` 已用英文逗号列出两个完整 origin
 - [ ] Supabase 数据库迁移已确认
 - [ ] `public-media` bucket 已确认公开
 - [ ] `private-media` bucket 已确认非公开

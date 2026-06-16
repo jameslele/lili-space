@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly SUPABASE_SERVICE_ROLE_KEY?: string;
   readonly SUPABASE_STORAGE_PUBLIC_BUCKET?: string;
   readonly SUPABASE_STORAGE_PRIVATE_BUCKET?: string;
+  readonly SITE_ALLOWED_ORIGINS?: string;
 }
 
 interface ImportMeta {

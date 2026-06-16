@@ -51,6 +51,7 @@ npm run dev
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_STORAGE_PUBLIC_BUCKET`
 - `SUPABASE_STORAGE_PRIVATE_BUCKET`
+- `SITE_ALLOWED_ORIGINS`：允许提交登录 / 注册 / 后台表单的生产访问源，多个域名用英文逗号分隔，例如 `https://edgeone.example,https://www.example.com`
 
 浏览器端变量：
 
@@ -114,6 +115,13 @@ EdgeOne Pages 设置：
 - Output Directory：保持默认
 - 环境变量：按 `.env.example` 在 EdgeOne Pages 项目设置中配置
 - Node.js 版本：使用 Node.js 22.x（`@edgeone/astro` 当前声明要求 Node 22）
+
+绑定自有域名时：
+
+- 先在 EdgeOne Pages 完成域名绑定和 DNS 配置。
+- 将 `SITE_ALLOWED_ORIGINS` 更新为正式访问域名，例如 `https://www.example.com`。
+- 如果需要新旧域名过渡期同时可登录，可以临时填写多个完整 origin，例如 `https://lili-space-only-mainland-k5jdl5gj.zh-cn.edgeone.cool,https://www.example.com`。
+- 环境变量更新后重新部署；代码不需要再改部署链接。
 
 部署后先验证：
 
