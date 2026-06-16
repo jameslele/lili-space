@@ -10,7 +10,7 @@ export default defineConfig({
     allowedDomains: [
       {
         protocol: "https",
-        hostname: "*.edgeone.cool",
+        hostname: "lili-space-only-mainland-k5jdl5gj.zh-cn.edgeone.cool",
       },
     ],
   },

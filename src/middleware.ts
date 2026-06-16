@@ -3,6 +3,7 @@ import { defineMiddleware } from "astro:middleware";
 import { SESSION_COOKIE_NAME, getCurrentUserFromToken, isAdmin } from "./lib/auth";
 
 const FORM_CONTENT_TYPES = ["application/x-www-form-urlencoded", "multipart/form-data", "text/plain"];
+const PRODUCTION_HOSTNAME = "lili-space-only-mainland-k5jdl5gj.zh-cn.edgeone.cool";
 const SAFE_METHODS = ["GET", "HEAD", "OPTIONS"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -46,11 +47,7 @@ function isAllowedPostOrigin(origin: string, url: URL) {
 
   try {
     const originUrl = new URL(origin);
-    return (
-      originUrl.protocol === "https:" &&
-      originUrl.hostname.startsWith("lili-space-") &&
-      originUrl.hostname.endsWith(".edgeone.cool")
-    );
+    return originUrl.protocol === "https:" && originUrl.hostname === PRODUCTION_HOSTNAME;
   } catch {
     return false;
   }
