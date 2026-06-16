@@ -1,6 +1,8 @@
 # 理哩的个人空间
 
-一个私人博客 / 个人档案项目，使用 Astro + React Islands + Tailwind CSS + Supabase Postgres / Storage。
+「理哩的个人空间」是一个私人博客 / 个人档案项目，用来长期保存文章、照片、阅读、旅行、生活记录和旧博客内容。项目气质是安静、文艺、私人、可长期回看，不是 SaaS、营销站、技术博客模板或内容社区。
+
+当前前台视觉方向为杂志目录感，参考 `design-demos/frontend-direction-2.html`。
 
 ## 技术栈
 
@@ -9,139 +11,132 @@
 - Tailwind CSS
 - Supabase Postgres
 - Supabase Storage
-- 自建账号密码鉴权
-- `users + sessions`
+- custom `users` / `sessions` auth
 - Milkdown Crepe
-- Markdown 作为正文 source of truth
+- Markdown 正文存储
+- Vercel adapter
 
-## 部署方式
+项目不使用 Supabase Auth，也不依赖 `auth.users`。
 
-当前项目使用 `@astrojs/vercel`，`output: "server"`。
+## 目录结构
 
-- 推荐部署方式：Vercel
-- 适合：Git 集成、预览部署、自动生产部署
-- 不建议改成静态站点部署，因为项目依赖 SSR、session 和后台权限校验
+- `src/pages`：前台、后台和 API 路由
+- `src/components`：前台组件和后台 React islands
+- `src/layouts`：前台 / 后台布局
+- `src/lib`：auth、content、admin、settings、Supabase helper
+- `src/styles`：全局样式
+- `supabase`：Supabase 配置和数据库迁移
+- `docs_new`：V2 设计文档和上线收口文档
+- `migration-reports`：旧博客与媒体迁移报告
+- `design-demos`：视觉方向参考
+- `lilisong`：旧博客源项目，仅作迁移参考
 
-## 必需环境变量
-
-运行时：
-
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `SUPABASE_STORAGE_PUBLIC_BUCKET`，默认 `public-media`
-- `SUPABASE_STORAGE_PRIVATE_BUCKET`，默认 `private-media`
-
-前台浏览器代码读取：
-
-- `PUBLIC_SUPABASE_URL`
-- `PUBLIC_SUPABASE_ANON_KEY`
-
-仅迁移 / 校验脚本使用：
-
-- `SUPABASE_DB_PASSWORD`
-
-说明：
-
-- `service_role` 只允许服务端使用。
-- `private-media` 只应通过服务端生成 signed URL。
-- 不要把真实 `.env` 提交到仓库。
-
-## 本地启动
+## 本地开发
 
 ```bash
 npm install
 npm run dev
 ```
 
-## 构建与预览
+本地开发默认使用 `.env`。不要提交真实 `.env`。
+
+## 环境变量
+
+从 `.env.example` 复制一份本地 `.env`，再填入真实值。
+
+运行时服务端变量：
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_STORAGE_PUBLIC_BUCKET`
+- `SUPABASE_STORAGE_PRIVATE_BUCKET`
+
+浏览器端变量：
+
+- `PUBLIC_SUPABASE_URL`
+- `PUBLIC_SUPABASE_ANON_KEY`
+
+脚本 / CLI 变量：
+
+- `SUPABASE_DB_PASSWORD`
+
+安全边界：
+
+- `SUPABASE_SERVICE_ROLE_KEY` 只允许服务端使用。
+- 不要把真实 key 写入 README、文档或仓库。
+- `private-media` 不能改成公开 bucket。
+
+## 常用命令
 
 ```bash
+npm run dev
 npm run check
 npm test
 npm run build
+npm run preview
+npm run verify:supabase
 ```
 
-Vercel 本地预览请使用：
+说明：当前使用 `@astrojs/vercel`，`npm run preview` 会调用 `astro preview`，该 adapter 不支持 Astro preview。Vercel 本地预览请使用：
 
 ```bash
 npx vercel dev
 ```
 
-> 说明：`@astrojs/vercel` 不支持 `astro preview`，本地生产预览请走 `vercel dev`。
+## Supabase 准备
 
-## Supabase 生产准备
+数据库：
 
-1. 创建或确认 Supabase 项目。
-2. 配置 `public-media` 和 `private-media` buckets。
-3. 确认 `public-media` 可公开读取。
-4. 确认 `private-media` 保持非公开。
-5. 运行 `supabase/migrations` 下的迁移。
-6. 确认 RLS 已启用。
-7. 确认后台写操作只通过服务端 service role 执行。
+- 迁移文件位于 `supabase/migrations`
+- 初始 schema 包含 `users`、`sessions`、`posts`、`categories`、`tags`、`post_tags`、`media_assets`、`site_settings`
+- 所有后台写操作必须经过服务端管理员校验
 
-## 数据库迁移
+Storage buckets：
 
-项目的 schema 与 seed 以 `supabase/migrations` 为准。
+- `public-media`：公开读取，用于公开图片、音频、视频
+- `private-media`：必须保持私有，只通过服务端 signed URL 给管理员查看
 
-如果要在本地 Supabase 里核对生产准备，可以执行仓库内的校验脚本：
+校验 Supabase 基础状态：
 
 ```bash
 npm run verify:supabase
 ```
 
-迁移脚本：
+## 部署
 
-- `npm run migrate:lilisong`
-- `npm run migrate:lilisong-media`
-- `npm run gallery:feature`
+当前项目准备使用 Vercel 部署。
 
-## Storage 准备
+Vercel 设置：
 
-- `public-media`
-  - 公开读取
-  - 前台直接展示
-- `private-media`
-  - 保持私有
-  - 只允许服务端生成 signed URL
+- Framework Preset：Astro
+- Build Command：`npm run build`
+- Output Directory：保持默认
+- 环境变量：按 `.env.example` 在 Vercel Project Settings 中配置
 
-不要把 `private-media` 改成公开 bucket。
+部署后先验证：
+
+- 首页、登录页、后台首页可访问
+- 访客只能看到公开已发布文章
+- 普通用户不能进入后台
+- 管理员能进入后台
+- `public-media` 正常展示
+- `private-media` 仅管理员授权视图可见
 
 ## 初始管理员
 
-仓库当前的初始化约定里保留了 `root / 1212`。
+迁移 seed 中保留了初始化管理员约定：`root / 1212`。
 
-上线前建议：
+生产上线前必须修改默认管理员密码，或创建新的强密码管理员后停用默认账号。
 
-- 首次登录后立即修改管理员密码
-- 如果已经是生产库，优先替换为强密码或创建新管理员后停用默认账号
+## 已知构建提示
 
-## Vercel 部署步骤
+`npm run build` 可能出现 Vite chunk size warning。当前主要来源是后台文章编辑器 `PostEditor` / Milkdown Crepe，不影响前台公开页面加载，也不阻塞上线。
 
-1. 把代码推到 GitHub / GitLab / Bitbucket。
-2. 在 Vercel 里导入仓库。
-3. Vercel 会自动识别 Astro 和 `@astrojs/vercel`。
-4. 构建命令保持默认 `npm run build`。
-5. 输出目录保持默认，不要手工改成静态导出。
-6. 在 Vercel 项目设置里填入环境变量。
-7. 部署后先打开首页、登录页、后台首页做 smoke test。
+## 相关文档
 
-## 上线前检查清单
+- `docs_new/管理员使用说明.md`
+- `docs_new/已知限制与后续建议.md`
+- `docs_new/备份与恢复建议.md`
+- `docs_new/上线前QA清单.md`
 
-- `npm run check`
-- `npm test`
-- `npm run build`
-- `npx vercel dev`
-- 访客只能访问公开已发布文章
-- 普通用户不能进入 `/admin`
-- 管理员可进入后台并看到私密 / 草稿 / 归档标识
-- `public-media` 正常显示
-- `private-media` 仅管理员授权视图可见
-- 没有真实密钥进入仓库
-
-## 目录
-
-- `src/`：当前项目代码
-- `supabase/`：数据库迁移与配置
-- `docs_new/`：V2 设计文档
-- `lilisong/`：旧博客源项目，仅作迁移参考

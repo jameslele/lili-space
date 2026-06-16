@@ -9,6 +9,8 @@ dist/
 __MACOSX/
 .migration-cache/
 doc*
+!docs_new/
+!docs_new/**
 lilisong
 .playwright*
 qa*
