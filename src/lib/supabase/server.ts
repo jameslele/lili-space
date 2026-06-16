@@ -1,6 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
+import type { RealtimeClientOptions } from "@supabase/supabase-js";
+import WebSocket from "ws";
 
 import { supabaseEnv } from "../supabase-env";
+
+const realtimeOptions: RealtimeClientOptions = {
+  // EdgeOne currently runs Node 20 in some deployments, which has no native WebSocket.
+  // Supabase initializes Realtime during createClient(), so provide a server transport.
+  transport: WebSocket as RealtimeClientOptions["transport"],
+};
 
 export function createServerSupabaseClient() {
   if (!supabaseEnv.url || !supabaseEnv.anonKey) {
@@ -13,6 +21,7 @@ export function createServerSupabaseClient() {
       autoRefreshToken: false,
       detectSessionInUrl: false,
     },
+    realtime: realtimeOptions,
   });
 }
 
@@ -27,5 +36,6 @@ export function createServiceRoleSupabaseClient() {
       autoRefreshToken: false,
       detectSessionInUrl: false,
     },
+    realtime: realtimeOptions,
   });
 }
